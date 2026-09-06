@@ -1,0 +1,161 @@
+*autocorrect.txt* Automatic spelling corrections for Neovim prose buffers
+
+Author: Samuel Roeca
+
+                                                       *nvim-autocorrect*
+Table of Contents
+
+1. Introduction ... |autocorrect-intro|
+2. Configuration .. |autocorrect-configuration|
+3. Commands ....... |autocorrect-commands|
+4. Mappings ....... |autocorrect-mappings|
+5. Dictionary ..... |autocorrect-dictionary|
+6. Credits ........ |autocorrect-credits|
+
+==============================================================================
+                                                          *autocorrect-intro*
+1. INTRODUCTION~
+
+nvim-autocorrect expands lowercase misspellings using native insert-mode
+abbreviations. It includes 1,000,029 typo mappings and defaults to Markdown and
+Git commit buffers. No external dictionaries are needed while editing.
+
+Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
+Tested on Neovim v0.13.0-dev-1536+g050fa30632. Vim is not supported.
+
+Corrections apply to whole lowercase keyword tokens, respecting 'iskeyword'.
+Capitalized and mixed-case words, acronyms, and embedded typo suffixes are
+preserved. Correction applies throughout a configured buffer, including code
+blocks. It does not inspect syntax or rewrite existing text on save.
+
+The dictionary is partitioned and read on demand. Buffers share its cache.
+During insertion, at most two internal abbreviations are installed. Existing
+user abbreviations take precedence. Normal mode retains no plugin abbreviations.
+
+Loading the plugin enables the defaults. No setup call or installation hook is
+required. On first load, a background Neovim process builds the dictionary under
+stdpath("cache")/nvim-autocorrect/. Correction begins when that build finishes;
+text typed earlier stays unchanged. Later sessions reuse the cache. Source or
+builder changes trigger rebuilding on the next plugin load. The checkout may
+be read-only. Run make build to prepare the cache before opening an editor.
+
+==============================================================================
+                                                  *autocorrect-configuration*
+2. CONFIGURATION~
+
+*autocorrect.setup()*
+
+Configure the plugin from Lua: >lua
+
+  require("autocorrect").setup({
+    filetypes = { "markdown", "gitcommit", "text" },
+  })
+<
+filetypes~
+Type: List of strings
+Default: { "gitcommit", "markdown" }
+
+Replaces the enabled filetypes. An empty list disables corrections. Calling
+setup() repeatedly replaces the configuration and does not duplicate hooks.
+Calling setup() with no arguments restores defaults.
+
+*g:nvim_autocorrect*
+Type: Dictionary
+Default: {}
+
+Options passed to setup() when the plugin loads. Set before loading the plugin.
+A prior setup() call takes precedence. To change configuration after loading,
+call setup() again.
+
+==============================================================================
+                                                       *autocorrect-commands*
+3. COMMANDS~
+
+:AutocorrectBuild                                          *:AutocorrectBuild*
+
+  Rebuild the local cache from data/corrections.json in a separate headless
+  Neovim process. Reload the result when complete. A loaded dictionary remains
+  usable during the build. Errors are reported without replacing good data.
+  Concurrent requests are queued so the final source state wins.
+
+  Saving the plugin's data/corrections.json automatically triggers this command's
+  rebuild behavior. Files with the same name elsewhere do not trigger it.
+
+==============================================================================
+                                                       *autocorrect-mappings*
+4. MAPPINGS~
+
+No default key mappings are provided. Native abbreviation controls apply:
+
+  Separator   Expand a matching word and insert the separator.
+  CTRL-]      Expand without inserting a separator.
+  CTRL-V      Quote the next separator to bypass its expansion.
+  Escape      Expand a matching complete token when leaving Insert mode.
+
+Escape and CTRL-] preserve a token when keyword characters follow the cursor.
+Undo/redo and macros follow native abbreviation behavior. See |abbreviations|.
+
+==============================================================================
+                                                     *autocorrect-dictionary*
+5. DICTIONARY~
+
+Edit data/corrections.json in the plugin directory. Keys are correct spellings;
+values are explicit arrays of accepted typos. Example subsets: >json
+
+  {
+    "definitely": ["definately"],
+    "separately": ["seperately", "sepparately"]
+  }
+<
+Only lowercase ASCII words are allowed. Keep keys and typo lists sorted, with
+one typo per line. Empty lists, duplicate keys or typos, conflicting corrections,
+and mappings to the same word fail the build. An empty object disables all
+mappings. See CONTRIBUTING.md for editing conventions and validation details.
+
+From the plugin repository, run:
+
+  make build                  Build the local cache and print its path.
+  make check                  Build, validate, and test from a fresh checkout.
+  make benchmark              Measure editing with the shipped dictionary.
+  make benchmark-dictionary   Measure bucket loading and retained memory.
+
+Commit the source and refreshed data/audit.json; generated caches are not tracked
+in Git. See CONTRIBUTING.md for cache details, source credits, and the separate
+linguistic audit. An old data/dictionary.mpack in the checkout is unused.
+
+Screening protects known words, names, and corpus tokens before ranking any
+correction. It cannot protect every unlisted lowercase name or specialized term.
+
+A unique adjacent-letter swap takes precedence over alternatives that delete
+one letter: "requirse" becomes "requires", taking precedence over "require".
+When this cannot resolve an ambiguity, the most frequent candidate can win if
+it occurs at least 10 times per million words and is at least 100 times more
+frequent than every alternative. For example, "abotu" becomes "about". Close
+alternatives remain uncorrected. Frequencies are a heuristic for user intent.
+
+Five-letter swaps such as "mgiht" to "might" may qualify under these preferences;
+other five-letter edits require documentation. "hte" to "the" is an exact,
+reviewed, codespell-confirmed exception to length and ambiguity rules. Other
+shorter inputs remain excluded. No exception overrides protected input or case
+and boundary checks: "trial", "trail", "HTE", and "Hte" stay unchanged.
+See CONTRIBUTING.md for the complete selection rules.
+
+data/protected-words.json supplements the reference dictionaries with documented
+legitimate terms such as "buidl". These tokens cannot be corrected and also count
+as competing candidates. Entries require a reason and source URL. After changing
+the list, refresh the catalog and audit, rebuild, and reload the dictionary; the
+list is maintenance input, not read during editing. See CONTRIBUTING.md for the
+full workflow. make check verifies the audit's supplemental-list hash too.
+
+==============================================================================
+                                                        *autocorrect-credits*
+6. CREDITS~
+
+Extracted from Samuel Roeca's Neovim configuration. Documentation structure
+follows vim-filetype-formatter. Distributed under the MIT license.
+
+Dictionary screening uses SCOWL, CMUdict, wordfreq, and codespell as maintenance
+references. Versions, attribution, selection rules, and audit instructions are
+in CONTRIBUTING.md. These packages are not runtime dependencies.
+
+vim:tw=78:ts=8:ft=help:norl:

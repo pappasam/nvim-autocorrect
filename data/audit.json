@@ -1,0 +1,53 @@
+{
+  "alternative_dictionary_tokens": 626444,
+  "destinations": 11771,
+  "documented_frequency_exceptions": 1524,
+  "documented_multi_edit_corrections": 3677,
+  "documented_short_corrections": 1,
+  "entries": 1000029,
+  "failure_counts": {},
+  "failure_examples": {},
+  "five_letter_transposition_exceptions": 2134,
+  "frequency_preference": {
+    "minimum_frequency": 1e-05,
+    "minimum_ratio": 100
+  },
+  "mapping_sha256": "7944667627066ffceb7fafd3e6d48ff4f080f331c9381a29850a8c21b93d2738",
+  "packages": {
+    "cmudict": "1.1.1",
+    "codespell": "2.4.1",
+    "wordfreq": "3.1.1"
+  },
+  "passed": true,
+  "preferred_frequency_corrections": 78134,
+  "preferred_transposition_corrections": 8251,
+  "protected_dictionary_tokens": 626435,
+  "protected_frequency_tokens": 321180,
+  "rejected_typos": [],
+  "scowl_lists_sha256": "64834a47766ddcafff4e28918e4eaa72095a1016aa041aceb1cd4befcce251cf",
+  "single_edit_corrections": 996352,
+  "supplemental_protected_sha256": "57431aaa92d7e2e2728f0b3b6c222d51cbee168b16606419e9a3eff44946327c",
+  "supplemental_protected_tokens": 2,
+  "technical_destinations": [
+    "booleans",
+    "cacheable",
+    "composability",
+    "composable",
+    "deallocate",
+    "deallocated",
+    "deallocates",
+    "deallocating",
+    "deallocation",
+    "deallocations",
+    "filesystem",
+    "filesystems",
+    "lifecycle",
+    "lifecycles",
+    "middleware",
+    "namespace",
+    "namespaces",
+    "runtimes",
+    "templated",
+    "templating"
+  ]
+}

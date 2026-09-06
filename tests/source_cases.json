@@ -1,0 +1,123 @@
+[
+  {
+    "name": "empty catalog",
+    "source": "{}",
+    "expected": {}
+  },
+  {
+    "name": "grouped variants",
+    "source": "{\"separate\":[\"seperate\",\"sepparate\"],\"would\":[\"woudl\"]}",
+    "expected": {
+      "seperate": "separate",
+      "sepparate": "separate",
+      "woudl": "would"
+    }
+  },
+  {
+    "name": "escaped letters",
+    "source": "{\"w\\u006frd\":[\"ty\\u0070o\"]}",
+    "expected": {
+      "typo": "word"
+    }
+  },
+  {
+    "name": "duplicate correction",
+    "source": "{\"word\":[\"typo\"],\"word\":[\"other\"]}"
+  },
+  {
+    "name": "escaped duplicate correction",
+    "source": "{\"word\":[\"typo\"],\"w\\u006frd\":[\"other\"]}"
+  },
+  {
+    "name": "duplicate typo",
+    "source": "{\"word\":[\"typo\",\"typo\"]}"
+  },
+  {
+    "name": "conflicting typo",
+    "source": "{\"word\":[\"typo\"],\"another\":[\"typo\"]}"
+  },
+  {
+    "name": "identity",
+    "source": "{\"word\":[\"word\"]}"
+  },
+  {
+    "name": "uppercase correction",
+    "source": "{\"Word\":[\"typo\"]}"
+  },
+  {
+    "name": "uppercase typo",
+    "source": "{\"word\":[\"Typo\"]}"
+  },
+  {
+    "name": "nonword correction",
+    "source": "{\"not a word\":[\"typo\"]}"
+  },
+  {
+    "name": "nonword typo",
+    "source": "{\"word\":[\"not a word\"]}"
+  },
+  {
+    "name": "empty correction",
+    "source": "{\"\":[\"typo\"]}"
+  },
+  {
+    "name": "empty typo",
+    "source": "{\"word\":[\"\"]}"
+  },
+  {
+    "name": "empty list",
+    "source": "{\"word\":[]}"
+  },
+  {
+    "name": "object instead of list",
+    "source": "{\"word\":{}}"
+  },
+  {
+    "name": "indexed object instead of list",
+    "source": "{\"word\":{\"1\":\"typo\"}}"
+  },
+  {
+    "name": "string instead of list",
+    "source": "{\"word\":\"typo\"}"
+  },
+  {
+    "name": "null list",
+    "source": "{\"word\":null}"
+  },
+  {
+    "name": "null typo",
+    "source": "{\"word\":[null]}"
+  },
+  {
+    "name": "number typo",
+    "source": "{\"word\":[1]}"
+  },
+  {
+    "name": "nested list",
+    "source": "{\"word\":[[\"typo\"]]}"
+  },
+  {
+    "name": "root array",
+    "source": "[]"
+  },
+  {
+    "name": "root null",
+    "source": "null"
+  },
+  {
+    "name": "root string",
+    "source": "\"word\""
+  },
+  {
+    "name": "malformed JSON",
+    "source": "{\"word\":[\"typo\"]"
+  },
+  {
+    "name": "escaped quote",
+    "source": "{\"word\":[\"ty\\\"po\"]}"
+  },
+  {
+    "name": "escaped backslash",
+    "source": "{\"word\":[\"ty\\\\po\"]}"
+  }
+]

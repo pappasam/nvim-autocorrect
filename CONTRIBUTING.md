@@ -1,0 +1,173 @@
+# Contributing to nvim-autocorrect
+
+The catalog contains 1,000,029 lowercase typo-to-word mappings across 11,771 destination words.
+
+## Editing and rebuilding
+
+Edit `data/corrections.json`: keys are correct spellings; values list accepted typos.
+
+```json
+{
+  "definitely": [
+    "definately"
+  ],
+  "separately": [
+    "seperately",
+    "sepparately"
+  ]
+}
+```
+
+Use lowercase ASCII words. Sort keys and typo lists alphabetically, with one typo per line. Empty lists, duplicate keys or typos, conflicting destinations, and identity mappings are rejected. An empty object disables all mappings. Put explanations here; JSON does not support comments.
+
+Saving the source with the plugin loaded rebuilds and reloads the dictionary in the background. Otherwise, run `:AutocorrectBuild` or `make build`. Failed builds preserve the previous dictionary. Commit the source and refreshed audit; compiled dictionaries are local cache files, never repository artifacts. `make build` prints the cache path.
+
+On plugin load, missing or stale caches build automatically in a separate headless Neovim process. The cache lives under `stdpath("cache")/nvim-autocorrect/`, keyed by the plugin's canonical directory so symlinked installations share a cache and separate checkouts remain isolated. The source JSON and Lua builder, parser, reader, and cache code contribute file size, inode, mtime, and ctime to a freshness fingerprint. Startup checks file metadata and a small dictionary header; it does not read the full JSON or decode dictionary buckets.
+
+The build records that fingerprint in the header and checks it again before publishing. A temporary file and atomic rename preserve existing readers' snapshots. Dictionary contents are deterministic for unchanged inputs; the header's local freshness metadata is not intended to be identical across machines. An invalid or truncated header/cache triggers rebuilding. Deleting the cache is safe while Neovim is closed; it will be recreated on the next load. Old repository-local `data/dictionary.mpack` files are ignored and unused.
+
+The first build leaves correction inactive until completion, without changing text already typed. An editor with a loaded dictionary continues using it during a rebuild. Updates made outside Neovim are detected on the next plugin load; use `:AutocorrectBuild` to refresh an existing session. Building needs only Neovim and a writable cache directory, including when the plugin checkout is read-only.
+
+Build validation checks structure and conflicts, not linguistic safety. Refresh the audit below after changing mappings or supplemental protected words; `make check` requires both recorded hashes to match their sources.
+
+## Selection rules
+
+Protect valid input first; for an eligible typo, choose a well-supported correction even when obscure alternatives exist. Corpus ranking is evidence of relative usage, not a guarantee of what the writer intended.
+
+- Only whole lowercase keyword tokens are eligible. Preserve capitalization, acronyms, identifiers, and embedded suffixes.
+- Exclude every token found in SCOWL, CMUdict, or `data/protected-words.json`, including normalized names, abbreviations, regional spellings, and accented or punctuated forms. No preference or exception can override this protection.
+- Exclude wordfreq tokens unless codespell documents the same unambiguous correction.
+- Destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Supplemental protection does not authorize a destination.
+- Generated typos use a single missing/repeated letter, adjacent transposition, or adjacent-QWERTY-key substitution/insertion. Other misspellings require independent documentation.
+- Generated typos normally contain at least six letters. At five letters, require a documented correction or an adjacent swap selected by the preferences below. Shorter inputs require an exact reviewed exception.
+
+For ambiguity checks, enumerate all single-edit candidates, including every protected token, name, normalized form, and word outside the destination catalog. Apply these preferences in order:
+
+1. An exact reviewed short correction, confirmed by codespell.
+2. A unique adjacent swap that preserves all input letters, when every competing candidate is one letter shorter.
+3. A clearly dominant common candidate under the frequency rule below.
+
+A sole candidate needs no ambiguity preference. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
+
+### Adjacent-swap preference
+
+The destination must differ only by swapping exactly one adjacent pair of distinct letters, preserving the input's length and letter counts. Every other known single-edit candidate must be exactly one letter shorter. For `requirse`, prefer `requires` over `require` because the swap preserves all letters.
+
+Other same-length or longer candidates prevent this particular preference; they may still be resolved by frequency. This preserves the previously agreed swap preference even when a shorter candidate is more common.
+
+### Frequency preference
+
+When the adjacent-swap preference does not select a candidate, choose the most frequent candidate only if its wordfreq frequency is both:
+
+- At least `0.00001` (10 occurrences per million words).
+- At least 100 times the frequency of every competing candidate.
+
+Use the pinned English wordfreq corpus for all candidates, including names and words outside the catalog. Missing corpus entries have frequency zero. Equal frequencies, close alternatives, and rare winners do not qualify. The threshold is a conservative heuristic, not a measured error probability; review corpus coverage and supplemental protections when maintaining the catalog.
+
+`abotu` now selects `about` despite the rare candidates `abote` and `Abott`. `seperate` similarly selects `separate` over its rare alternatives. Valid input is still protected regardless of how frequent a possible correction is: `trial`, `trail`, and `buidl` remain untouched.
+
+The constants live in `scripts/dictionary_policy.py`. The audit records the thresholds in `frequency_preference` and counts resolutions in `preferred_frequency_corrections`.
+
+### Five-letter adjacent swaps
+
+An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns still require codespell documentation. Protection of real words and corpus tokens always applies.
+
+The audit records mappings needing this length exception as `five_letter_transposition_exceptions`. `preferred_transposition_corrections` counts swaps that override shorter competing candidates.
+
+### Reviewed short corrections
+
+`DOCUMENTED_SHORT_CORRECTIONS` in `scripts/dictionary_policy.py` contains exact reviewed exceptions to the minimum-length and ambiguity rules. Currently only `hte` → `the` is approved for common prose usage. Codespell must confirm that exact mapping; an undocumented or different destination cannot use the exception.
+
+These exceptions never override protected input, corpus screening, destination validation, or lowercase whole-word matching. `HTE`, `Hte`, and `foo_hte` remain untouched. Other short typos, including `teh`, remain excluded. Additions require explicit review and documentation here; do not generate a general class of short-word overrides. The audit counts accepted exceptions in `documented_short_corrections`.
+
+### Supplemental protected words
+
+Use `data/protected-words.json` for legitimate terms missing from the reference dictionaries. Each key is an exact lowercase ASCII token to preserve, with a nonempty `reason` and an HTTP(S) `source` URL establishing intentional usage. Sort keys alphabetically. For example:
+
+```json
+{
+  "buidl": {
+    "reason": "Intentional cryptocurrency slang, not an accidental spelling of build.",
+    "source": "https://www.coingecko.com/en/glossary/buidl"
+  }
+}
+```
+
+List normalized spellings explicitly when accents or punctuation are relevant, and add inflections individually when supported by evidence. Entries are exact words, not patterns. The audit validates the file's structure; contributors review the evidence. Duplicate keys, invalid tokens, missing evidence, and a missing or malformed file fail validation. An explicit empty object is allowed.
+
+Supplemental tokens cannot appear as typos, even when codespell, frequency, swap, or reviewed short-correction rules otherwise permit correction. They also join the full set of competing single-edit candidates, using the preferences above. Listing a word does not authorize it as a correction destination. `buidl` is protected this way, preserving intentional usage while ordinary `build` remains unchanged.
+
+After editing the list, run the full audit and remove any flagged mappings from `data/corrections.json`, including ambiguous neighbors. Refresh `data/audit.json`, then run `make check`. Commit the list, corrected catalog, and audit together. The audit records `supplemental_protected_tokens` and a canonical `supplemental_protected_sha256` covering tokens and evidence. `make check` rejects stale supplemental audit data and direct protected-word mappings.
+
+The supplemental list is maintenance input; Neovim uses the rebuilt dictionary. Editing or saving the list alone does not change an already loaded dictionary. Run `:AutocorrectBuild` after updating the catalog to rebuild and reload it in an open editor, or restart Neovim after `make build`.
+
+## Catalog expansion
+
+The 1,000,029-entry catalog adds 499,966 mappings to the prior 500,063 entries, preserving every existing mapping. It includes 5,698 new destination words. Candidates combine missing variants of existing destinations with lowercase SCOWL words through size 60 that occur at least once per million words in the pinned wordfreq corpus. Destinations are considered in descending frequency, with alphabetical ties, using the generated edit patterns and documented codespell corrections above. Expansion stops after a complete destination group crosses 1,000,000 mappings.
+
+All additions pass the same protected-word, corpus, length, destination, and ambiguity checks; the expansion does not relax the selection rules. The lowest-frequency destination expanded in this batch occurs about 2.95 times per million words. The frequency threshold for resolving ambiguous corrections remains 10 occurrences per million words with a 100-fold lead; less frequent destinations must qualify without that preference.
+
+## Reference data and audit
+
+Maintenance references:
+
+- [SCOWL 2020.12.07](https://wordlist.aspell.net/), Kevin Atkinson and contributors: all distributed lists for exclusions; word lists through size 80 for destinations. Its `Copyright` file contains licensing and contributor credits.
+- [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
+- [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
+- [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections.
+
+These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
+
+With `uv` installed, download and extract SCOWL, then run the audit:
+
+```sh
+curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/scowl_2020.12.07.orig.tar.gz
+# SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
+tar -xzf /tmp/scowl.tar.gz -C /tmp
+uv run scripts/audit-dictionary.py \
+  --scowl /tmp/scowl-2020.12.07 --expect 1000029 \
+  --report data/audit.json
+```
+
+The audit independently enumerates single-edit alternatives against the explicit JSON mappings. Adjust `--expect` for intentional catalog-size changes.
+
+## Performance and validation
+
+The dictionary uses 256 hash buckets, read on demand and cached across buffers. An open file descriptor preserves a consistent snapshot during atomic rebuilds, including through Stow symlinks. First access reads and decodes a bucket synchronously; later lookups use its cached table.
+
+During Insert/Replace mode in enabled buffers, `vim.on_key` installs at most two native abbreviations and reads a bounded region around the cursor. Neovim handles expansion, preserving punctuation, undo/redo, macros, and Ctrl-V bypass. User abbreviations take precedence. Avoid scanning or installing the full catalog during editing.
+
+Run from the repository root with Neovim, StyLua, and Python 3.11+ installed:
+
+```sh
+make check
+make benchmark
+make benchmark-dictionary
+```
+
+`make check` and `make test` build the local cache first, so both work from a fresh checkout. Checks cover all mappings, capitalization, native abbreviation behavior, boundaries, long lines, shared Lua/Python validation fixtures, audit consistency, automatic builds, cache reuse and invalidation, read-only installations, snapshots, symlinks, determinism, and recovery from invalid input or truncated cache data. Benchmarks isolate plugin costs; compare results on the same Neovim version and machine. Building and normal editing require no Python.
+
+`make benchmark` measures setup, filetype activation, first insertion, 6,000 repeated words, and a subsequent buffer. Fixture construction happens before timing. `make benchmark-dictionary` measures opening the compiled dictionary, decoding all 256 buckets, cached lookups, and retained Lua heap after garbage collection. A cold bucket means it has not been decoded in that process; the operating system may already cache its bytes.
+
+To compare saved catalogs, pass a source JSON or compiled dictionary path respectively:
+
+```sh
+nvim -u NONE --headless -i NONE -l tests/benchmark.lua /path/to/corrections.json
+nvim -u NONE --headless -i NONE -l tests/benchmark_dictionary.lua /path/to/dictionary.mpack
+```
+
+Before the automatic cache-build workflow was introduced, the expansion was measured using the actual prior and expanded catalogs, with five fresh-process samples per catalog, alternating their order, on Neovim `v0.13.0-dev-1536+g050fa30632`. The OS file cache was warm. These historical measurements compare catalog sizes; they exclude the initial build and the new startup freshness check. They are medians from this machine, not latency guarantees:
+
+| Measurement | 500,063 mappings | 1,000,029 mappings |
+| --- | ---: | ---: |
+| Compiled dictionary | 9.37 MiB | 19.14 MiB |
+| Plugin setup | 0.85 ms | 0.89 ms |
+| First insertion | 4.80 ms | 9.83 ms |
+| 6,000 repeated words | 179.58 ms | 181.38 ms |
+| Cold bucket, median | 0.55 ms | 1.40 ms |
+| Cold bucket, 95th percentile | 2.19 ms | 3.99 ms |
+| Cached lookup, synthetic miss | 0.148 µs | 0.146 µs |
+| Retained Lua heap after first bucket | 0.22 MiB | 0.46 MiB |
+| Retained Lua heap after all buckets | 33.44 MiB | 66.64 MiB |
+
+The main costs are approximately double the compiled size and retained dictionary memory, plus longer synchronous decoding when a bucket is first needed. Repeated editing in this sample changed little, but it uses only three distinct words; broader vocabulary encounters more cold buckets. Cached buckets remain shared across buffers and are retained until the dictionary is closed or reloaded. Heap measurements are incremental dictionary allocations, not total process memory or transient peaks; full-cache memory is reached only after every bucket has been accessed.
