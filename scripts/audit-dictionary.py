@@ -135,6 +135,7 @@ def main() -> int:
     frequency_exceptions = 0
     single_edits = 0
     transposition_preferences = 0
+    rare_alternative_transpositions = 0
     five_letter_transpositions = 0
     frequency_preferences = 0
     short_preferences = 0
@@ -165,13 +166,17 @@ def main() -> int:
                 frequency_exceptions += 1
         other = neighbors - {correction}
         if other:
-            swap = preferred_transposition(typo, neighbors)
+            swap = preferred_transposition(typo, neighbors, frequencies)
             if short_preference:
                 pass
             elif frequency_short:
                 frequency_preferences += 1
+            elif any(frequency_short_correction(typo, word, neighbors, frequencies) for word in other):
+                failures["competing_correction"].append(pair + [sorted(other)])
             elif swap == correction:
                 transposition_preferences += 1
+                if preferred_transposition(typo, neighbors) is None:
+                    rare_alternative_transpositions += 1
             elif swap is None and preferred_frequency(neighbors, frequencies) == correction:
                 frequency_preferences += 1
             else:
@@ -192,6 +197,14 @@ def main() -> int:
         "documented_multi_edit_corrections": len(entries) - single_edits,
         "documented_frequency_exceptions": frequency_exceptions,
         "preferred_transposition_corrections": transposition_preferences,
+        "rare_alternative_transposition_corrections": rare_alternative_transpositions,
+        "transposition_preference": {
+            "rare_alternative_minimum_length": 5,
+            "minimum_frequency": MIN_CORRECTION_FREQUENCY,
+            "minimum_ratio": MIN_FREQUENCY_RATIO,
+            "frequency_competitors": "same-length non-swap alternatives",
+            "longer_alternatives": "block",
+        },
         "preferred_frequency_corrections": frequency_preferences,
         "documented_short_corrections": short_preferences,
         "frequency_short_corrections": frequency_short_preferences,

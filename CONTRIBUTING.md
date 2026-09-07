@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,007,039 lowercase typo-to-word mappings across 12,093 destination words.
+The catalog contains 1,007,938 lowercase typo-to-word mappings across 12,093 destination words.
 
 ## Editing and rebuilding
 
@@ -45,16 +45,20 @@ For ambiguity checks, enumerate all single-edit candidates, including every prot
 
 1. An exact reviewed short correction, confirmed by codespell.
 2. For the common short-word rule, a destination with at least 100 occurrences per million and a 100-fold frequency lead over every alternative. A swap cannot bypass this requirement.
-3. Otherwise, a unique adjacent swap that preserves all input letters, when every competing candidate is one letter shorter.
+3. Otherwise, a unique adjacent swap that preserves all input letters, beating deletion candidates and, at five or more letters, sufficiently rare same-length alternatives as described below.
 4. A clearly dominant common candidate under the frequency rule below.
 
 A sole candidate needs no ambiguity preference, but still needs the frequency floor when using the common short-word rule. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
 
 ### Adjacent-swap preference
 
-The destination must differ only by swapping exactly one adjacent pair of distinct letters, preserving the input's length and letter counts. Every other known single-edit candidate must be exactly one letter shorter. For `requirse`, prefer `requires` over `require` because the swap preserves all letters.
+The destination must differ only by swapping exactly one adjacent pair of distinct letters, preserving the input's length and letter counts. If every competing candidate is one letter shorter, retain the original swap preference: `requirse` → `requires` wins over `require`, even when the deletion candidate is more common.
 
-Other same-length or longer candidates prevent this particular preference; they may still be resolved by frequency. This preserves the previously agreed swap preference even when a shorter candidate is more common.
+For inputs with at least five letters, a unique swap may also beat same-length non-swap alternatives when its frequency is at least 10 occurrences per million and at least 100 times that of every such alternative. Compare the complete same-length candidate set, including names and protected terms outside the destination catalog. Missing corpus frequencies count as zero. Shorter deletion candidates are excluded from this frequency comparison, preserving the original preference for keeping all letters.
+
+This admits `hwere` → `where`: `twere` is sufficiently rare, and `here` and `were` are deletion candidates. A second possible swap or any longer candidate still blocks the swap preference; the general frequency rule may independently resolve them. Close same-length alternatives and rare swap destinations do not qualify for the refinement. The stricter common short-word rule has priority: `wehat` still selects `what`, which dominates all alternatives, including `wheat`.
+
+The refinement never overrides protected input, corpus screening, destination validation, or word boundaries. The audit records its thresholds in `transposition_preference` and counts mappings using it in `rare_alternative_transposition_corrections`.
 
 ### Frequency preference
 
@@ -73,7 +77,7 @@ The constants live in `scripts/dictionary_policy.py`. The audit records the thre
 
 An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns require codespell documentation or the common short-word rule below. Protection of real words and corpus tokens always applies.
 
-The audit records mappings needing this length exception as `five_letter_transposition_exceptions`. `preferred_transposition_corrections` counts swaps that override shorter competing candidates.
+The audit records mappings needing this length exception as `five_letter_transposition_exceptions`. `preferred_transposition_corrections` counts swaps that override deletion candidates or sufficiently rare same-length alternatives.
 
 ### Common three- and four-letter words
 
@@ -130,11 +134,27 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1007039 \
+  --source /tmp/short-word-corrections.json --expect 1007938 \
   --report /tmp/short-word-audit.json
 ```
 
 The expansion writes a separate proposed catalog and reports additions and rejected candidate pairs. Starting from the shipped catalog produces zero additions and identical catalog contents. Review the proposal and audit before replacing `data/corrections.json` and `data/audit.json`.
+
+### Swaps with rare alternatives
+
+The refinement adds 899 adjacent-swap mappings across 769 existing destination words, preserving every previous mapping. Of these additions, 426 have five letters. The catalog now contains 1,007,938 mappings across the same 12,093 destinations.
+
+Reproduce the batch with the pinned maintenance references:
+
+```sh
+uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
+  --output /tmp/transposition-corrections.json
+uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
+  --source /tmp/transposition-corrections.json --expect 1007938 \
+  --report /tmp/transposition-audit.json
+```
+
+The script considers only swaps of existing destinations admitted by the refinement. It preserves the common short-word preference and reports conflicting existing mappings for review. Starting from the shipped catalog produces zero additions and identical contents.
 
 ## Reference data and audit
 
@@ -154,7 +174,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1007039 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1007938 \
   --report data/audit.json
 ```
 

@@ -2,7 +2,7 @@
 
 **Warning: I plan to force push with history corrections until this stabilizes to prevent the repo's history from getting to large as I experiment with code design**
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,007,039 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,007,938 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 
@@ -80,7 +80,7 @@ After protecting known words, names, and corpus tokens, the dictionary can prefe
 
 ### How are swapped letters handled?
 
-When a unique adjacent-letter swap preserves all letters and every competing correction deletes one, the swap wins: `requirse` becomes `requires`, even though deleting `s` would give `require`. When this swap preference cannot resolve the alternatives, a common candidate may win if it is at least 100 times more frequent than every competitor. Known valid words remain protected. See the [selection rules](CONTRIBUTING.md#adjacent-swap-preference).
+A unique adjacent-letter swap can beat alternatives that delete one letter: `requirse` becomes `requires`, even though deleting `s` would give `require`. At five or more letters, it can also beat same-length alternatives when the swapped word occurs at least 10 times per million and is at least 100 times more frequent than each of them. This admits `hwere` → `where` despite `twere`; shorter candidates `here` and `were` retain their existing treatment. Longer candidates block the swap preference. Known valid words remain protected. See the [selection rules](CONTRIBUTING.md#adjacent-swap-preference).
 
 This also permits five-letter swaps such as `mgiht` → `might`, subject to the same word, name, and corpus filters. Typos of common three- and four-letter words use a stricter frequency rule below. The exact reviewed exception `hte` → `the` also applies.
 

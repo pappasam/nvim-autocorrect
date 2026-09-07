@@ -41,6 +41,36 @@ for typo, candidates, expected in cases:
     assert preferred_transposition(typo, candidates) == expected, (typo, candidates)
 print(f"PASS: {len(cases)} transposition preference cases")
 
+# The refined preference compares substitutions separately from deletions.
+where_candidates = {"where", "here", "were", "twere"}
+where_frequencies = {"where": 0.001, "here": 0.002, "were": 0.003, "twere": 1e-7}
+refined_cases = [
+    ("hwere", where_candidates, where_frequencies, "where"),
+    ("hwere", where_candidates, {**where_frequencies, "twere": 1e-5}, "where"),
+    ("hwere", where_candidates, {**where_frequencies, "twere": 1.01e-5}, None),
+    ("hwere", where_candidates, {"where": 1e-5}, "where"),
+    ("hwere", where_candidates, {"where": 9.9e-6}, None),
+    ("hwere", where_candidates, {}, None),
+    # No same-length competitors: preserve the original preference without data.
+    ("hwere", {"where", "here", "were"}, {}, "where"),
+    # Longer candidates and multiple swaps block this preference even if rare.
+    ("hwere", where_candidates | {"hweres"}, where_frequencies, None),
+    ("hwere", where_candidates | {"hewre"}, where_frequencies, None),
+    ("hwere", where_candidates - {"where"}, where_frequencies, None),
+    # A real alternative outside the destination catalog must also compete.
+    ("hwere", where_candidates | {"hwore"}, {**where_frequencies, "hwore": 0.0001}, None),
+    # Keep short-word frequency rules: this refinement starts at five letters.
+    ("acbd", {"abcd", "acbe", "acd"}, {"abcd": 0.001}, None),
+    # Works at the end of a word too, with a frequent deletion competitor.
+    ("requirse", {"requires", "require", "requirze"}, {"requires": 1e-4, "require": 0.1}, "requires"),
+]
+for typo, candidates, frequencies, expected in refined_cases:
+    assert preferred_transposition(typo, candidates, frequencies) == expected, (typo, candidates)
+assert valid_typo_length("hwere", "where", where_candidates, frequencies=where_frequencies)
+assert not valid_typo_length("hwere", "twere", where_candidates, frequencies=where_frequencies)
+assert not valid_typo_length("hwere", "where", where_candidates)
+print(f"PASS: {len(refined_cases)} rare-alternative swap cases and five-letter eligibility")
+
 # The length gate does not grant exceptions for arbitrary five-letter edits.
 length_cases = [
     ("mgiht", "might", {"might"}, None, True),

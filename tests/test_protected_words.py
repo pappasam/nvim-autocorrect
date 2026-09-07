@@ -63,6 +63,7 @@ with tempfile.TemporaryDirectory() as directory:
     # make check independent of Python packages and external dictionary downloads.
     (root / "final").mkdir()
     (root / "final/english-words.10").write_text("build\nmight\nrequire\nrequires\nabout\nabote\nthe\nhe\nwith\nwhit\nwight\nfrom\nform\n")
+    (root / "final/english-words.20").write_text("where\nhere\nwere\ntwere\nwhat\nwheat\nwehet\n")
     (root / "data").mkdir()
     (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\n")
     frequencies = {
@@ -71,6 +72,8 @@ with tempfile.TemporaryDirectory() as directory:
         "require": 0.001, "requires": 1e-7,
         "with": 0.007, "whit": 1e-6, "wight": 1e-6, "wiht": 1e-7, "wth": 1e-6,
         "from": 0.004, "form": 0.0005,
+        "where": 0.001, "here": 0.002, "were": 0.003, "twere": 1e-7,
+        "hwore": 0.0001, "what": 0.002, "wheat": 1e-5,
     }
     modules = {
         "cmudict": SimpleNamespace(words=lambda: []),
@@ -107,6 +110,15 @@ with tempfile.TemporaryDirectory() as directory:
             ({"with": ["witx"]}, {}, "short_ambiguous_token"),
             ({"from": ["fomr"]}, {}, "competing_correction"),
             ({"require": ["requirse"]}, {}, "competing_correction"),
+            ({"where": ["hwere"]}, {}, None),
+            ({"where": ["hwere"]}, {"hwere": evidence}, "protected_word_or_name"),
+            ({"where": ["hwere"]}, {"hwore": evidence}, "competing_correction"),
+            ({"where": ["hwere"]}, {"hweres": evidence}, "competing_correction"),
+            ({"where": ["hwere"]}, {"hewre": evidence}, "competing_correction"),
+            ({"twere": ["hwere"]}, {}, "competing_correction"),
+            # The existing short-word rule still takes precedence over a swap.
+            ({"what": ["wehat"]}, {}, None),
+            ({"wheat": ["wehat"]}, {}, "competing_correction"),
         ]
         for groups, protected, failure in cases:
             source.write_text(json.dumps(groups))
@@ -124,6 +136,9 @@ with tempfile.TemporaryDirectory() as directory:
             assert report["supplemental_protected_tokens"] == len(protected), report
             if failure:
                 assert report["failure_counts"].get(failure), report
+            elif "hwere" in groups.get("where", []):
+                assert report["rare_alternative_transposition_corrections"] == 1, report
+                assert report["five_letter_transposition_exceptions"] == 1, report
 
 print(
     "PASS: protected-word schema, missing-file rejection, "

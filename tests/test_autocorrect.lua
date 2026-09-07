@@ -113,6 +113,9 @@ for typo, correction in pairs({
   yuo = "you",
   tthe = "the",
   knwo = "know",
+  hwere = "where",
+  aviod = "avoid",
+  birng = "bring",
 }) do
   assert(dictionary.lookup(typo) == correction, typo)
 end
@@ -148,12 +151,18 @@ local protected = "algin adust belive grammer siad teh thier form from staring "
   .. " Hte HTE Abotu ABOTU foo_hte foo_abotu"
   .. " buidling Buidling BUIDLING"
   .. " wth mayu th fo ot Wiht WIHT foo_wiht whit with form from"
+  .. " where here were twere Hwere HWERE foo_hwere"
 assert(run({ "i" .. protected .. " <Esc>" }, false)[1] == protected .. " ")
 assert(
   run({ "iwiht wtih taht thsi yuo tthe knwo.<Esc>" }, false)[1]
     == "with with that this you the know."
 )
 assert(run({ "iwiht<C-V> <Esc>" }, false)[1] == "wiht ")
+assert(
+  run({ "ihwere aviod birng wehat.<Esc>" }, false)[1]
+    == "where avoid bring what."
+)
+assert(run({ "ihwere<C-V> <Esc>" }, false)[1] == "hwere ")
 assert(run({ "Adefinately <Esc>", "prefix" }, false)[1] == "prefixdefinately ")
 assert(run({ "Adefinately <Esc>", "Name" }, false)[1] == "Namedefinately ")
 assert(run({ "Adefinately <Esc>", "foo_" }, false)[1] == "foo_definately ")

@@ -70,22 +70,27 @@ def adjacent_swap(typo: str, correction: str) -> bool:
     )
 
 
-def preferred_transposition(typo: str, candidates: set[str]) -> str | None:
-    """Prefer one adjacent swap only when every other candidate is one letter shorter.
+def preferred_transposition(
+    typo: str, candidates: set[str], frequencies: dict[str, float] | None = None
+) -> str | None:
+    """Prefer a unique swap over deletions and sufficiently rare substitutions.
 
     Candidates must include all known single-edit words, including names and words
-    outside the destination catalog. This does not bypass protected-token,
-    frequency, minimum-length, or destination validation.
+    outside the destination catalog. Longer candidates always block this rule.
+    At five or more letters, same-length non-swap competitors may qualify for
+    frequency screening. Shorter inputs retain their stricter existing rules.
+    Protected-token, corpus, length, and destination checks still apply.
     """
-    longest = {word for word in candidates if len(word) >= len(typo)}
-    if len(longest) != 1:
+    if any(len(word) not in (len(typo) - 1, len(typo)) for word in candidates):
         return None
-    correction = next(iter(longest))
-    if len(correction) != len(typo):
+    swaps = {word for word in candidates if adjacent_swap(typo, word)}
+    if len(swaps) != 1:
         return None
-    if any(len(word) != len(typo) - 1 for word in candidates - {correction}):
-        return None
-    if adjacent_swap(typo, correction):
+    correction = next(iter(swaps))
+    same_length = {word for word in candidates if len(word) == len(typo)}
+    if same_length == {correction}:
+        return correction
+    if len(typo) >= 5 and preferred_frequency(same_length, frequencies or {}) == correction:
         return correction
     return None
 
@@ -137,10 +142,10 @@ def valid_typo_length(
         return frequency_short_correction(typo, correction, candidates, frequencies or {})
     return len(typo) == 5 and (
         documented_correction == correction
-        or preferred_transposition(typo, candidates) == correction
+        or preferred_transposition(typo, candidates, frequencies) == correction
         or (
             adjacent_swap(typo, correction)
-            and preferred_transposition(typo, candidates) is None
+            and preferred_transposition(typo, candidates, frequencies) is None
             and preferred_frequency(candidates, frequencies or {}) == correction
         )
     )
