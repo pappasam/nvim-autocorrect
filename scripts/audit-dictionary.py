@@ -25,13 +25,17 @@ import cmudict
 import codespell_lib
 import wordfreq
 
-from dictionary_source import load_protected_words, load_source
+from dictionary_source import (
+    load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source,
+)
 from dictionary_policy import (
     MIN_CORRECTION_FREQUENCY,
     MIN_FREQUENCY_RATIO,
     MIN_SHORT_CORRECTION_FREQUENCY,
+    MIN_FIVE_LETTER_FREQUENCY,
     documented_short_correction,
     frequency_short_correction,
+    frequency_five_letter_correction,
     preferred_frequency,
     preferred_transposition,
     short_corpus_exception,
@@ -41,6 +45,7 @@ from dictionary_policy import (
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "data/corrections.json"
 PROTECTED_WORDS = ROOT / "data/protected-words.json"
+REVIEWED_CORRECTIONS = ROOT / "data/reviewed-corrections.json"
 # Existing, correctly spelled computing terms missing from SCOWL's <=80 words.
 # This allowlist validates destinations only; it never permits a protected typo.
 TECHNICAL_WORDS = {
@@ -93,6 +98,7 @@ def main() -> int:
     parser.add_argument("--scowl", required=True, type=Path)
     parser.add_argument("--source", type=Path, default=SOURCE)
     parser.add_argument("--protected-words", type=Path, default=PROTECTED_WORDS)
+    parser.add_argument("--reviewed-corrections", type=Path, default=REVIEWED_CORRECTIONS)
     parser.add_argument("--expect", type=int)
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
@@ -117,12 +123,9 @@ def main() -> int:
     supplemental = load_protected_words(args.protected_words)
     protected.update(supplemental)
     frequencies = wordfreq.get_frequency_dict("en")
-    documented = {}
     codespell_path = Path(codespell_lib.__file__).parent / "data/dictionary.txt"
-    for line in codespell_path.read_text().splitlines():
-        typo, separator, correction = line.partition("->")
-        if separator and re.fullmatch("[a-z]+", correction):
-            documented[typo] = correction
+    reviewed = load_reviewed_corrections(args.reviewed_corrections)
+    documented = load_documented_corrections(codespell_path, reviewed)
 
     entries = load_source(args.source)
     valid_destinations = real_words | TECHNICAL_WORDS
@@ -140,14 +143,23 @@ def main() -> int:
     frequency_preferences = 0
     short_preferences = 0
     frequency_short_preferences = 0
+    frequency_five_letter_corrections = 0
+    reviewed_corrections = 0
+    reviewed_corpus_exceptions = 0
     for typo, correction in sorted(entries.items()):
         pair = [typo, correction]
         neighbors = {word for word in one_edit_words(typo) if word in alternatives}
         short_preference = documented_short_correction(typo, correction, documented.get(typo))
         frequency_short = frequency_short_correction(typo, correction, neighbors, frequencies)
+        frequency_five = frequency_five_letter_correction(typo, correction, neighbors, frequencies)
+        if frequency_five:
+            frequency_five_letter_corrections += 1
+        if typo in reviewed and reviewed[typo]["correction"] == correction:
+            reviewed_corrections += 1
+            reviewed_corpus_exceptions += int(typo in frequencies)
         if not valid_typo_length(typo, correction, neighbors, documented.get(typo), frequencies):
             failures["short_ambiguous_token"].append(pair)
-        elif len(typo) == 5 and len(correction) == 5 and documented.get(typo) != correction:
+        elif len(typo) == 5 and len(correction) == 5 and documented.get(typo) != correction and not frequency_five:
             five_letter_transpositions += 1
         if frequency_short and not short_preference:
             frequency_short_preferences += 1
@@ -208,6 +220,19 @@ def main() -> int:
         "preferred_frequency_corrections": frequency_preferences,
         "documented_short_corrections": short_preferences,
         "frequency_short_corrections": frequency_short_preferences,
+        "frequency_five_letter_corrections": frequency_five_letter_corrections,
+        "five_letter_preference": {
+            "minimum_frequency": MIN_FIVE_LETTER_FREQUENCY,
+            "minimum_ratio": MIN_FREQUENCY_RATIO,
+            "destination_lengths": [5],
+            "typo_lengths": [4, 5],
+        },
+        "reviewed_corrections": reviewed_corrections,
+        "reviewed_corpus_exceptions": reviewed_corpus_exceptions,
+        "reviewed_records": len(reviewed),
+        "reviewed_sha256": hashlib.sha256(
+            json.dumps(reviewed, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
         "short_word_preference": {
             "minimum_frequency": MIN_SHORT_CORRECTION_FREQUENCY,
             "minimum_ratio": MIN_FREQUENCY_RATIO,

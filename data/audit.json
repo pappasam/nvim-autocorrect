@@ -1,31 +1,47 @@
 {
   "alternative_dictionary_tokens": 626444,
   "destinations": 12093,
-  "documented_frequency_exceptions": 1557,
+  "documented_frequency_exceptions": 1566,
   "documented_multi_edit_corrections": 3677,
   "documented_short_corrections": 1,
-  "entries": 1007938,
+  "entries": 1009964,
   "failure_counts": {},
   "failure_examples": {},
-  "five_letter_transposition_exceptions": 2544,
+  "five_letter_preference": {
+    "destination_lengths": [
+      5
+    ],
+    "minimum_frequency": 0.0001,
+    "minimum_ratio": 100,
+    "typo_lengths": [
+      4,
+      5
+    ]
+  },
+  "five_letter_transposition_exceptions": 2206,
+  "frequency_five_letter_corrections": 2472,
   "frequency_preference": {
     "minimum_frequency": 1e-05,
     "minimum_ratio": 100
   },
   "frequency_short_corrections": 7053,
-  "mapping_sha256": "480752f8937e77afb4a15adbd88db6d52faa706f2b9b834f56688707cdb5d015",
+  "mapping_sha256": "085c470bbc508746e3e6a5ce5c8c14579ffc7527a76d3eb57fe4d63c347c1f0c",
   "packages": {
     "cmudict": "1.1.1",
     "codespell": "2.4.1",
     "wordfreq": "3.1.1"
   },
   "passed": true,
-  "preferred_frequency_corrections": 80925,
-  "preferred_transposition_corrections": 12114,
+  "preferred_frequency_corrections": 82606,
+  "preferred_transposition_corrections": 12115,
   "protected_dictionary_tokens": 626435,
   "protected_frequency_tokens": 321180,
-  "rare_alternative_transposition_corrections": 3863,
+  "rare_alternative_transposition_corrections": 3864,
   "rejected_typos": [],
+  "reviewed_corpus_exceptions": 2,
+  "reviewed_corrections": 5,
+  "reviewed_records": 5,
+  "reviewed_sha256": "6d3bfca4a3691692ca82149f2f813a3de0522adf94f3dfca9f6e8ac6a23812e9",
   "scowl_lists_sha256": "64834a47766ddcafff4e28918e4eaa72095a1016aa041aceb1cd4befcce251cf",
   "short_word_destinations": 367,
   "short_word_preference": {
@@ -42,7 +58,7 @@
       5
     ]
   },
-  "single_edit_corrections": 1004261,
+  "single_edit_corrections": 1006287,
   "supplemental_protected_sha256": "57431aaa92d7e2e2728f0b3b6c222d51cbee168b16606419e9a3eff44946327c",
   "supplemental_protected_tokens": 2,
   "technical_destinations": [

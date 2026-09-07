@@ -1,0 +1,27 @@
+{
+  "peolpe": {
+    "correction": "people",
+    "reason": "Observed adjacent swap listed under people in Norvig's collected spelling errors; corpus presence alone does not establish intentional usage.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "pepole": {
+    "correction": "people",
+    "reason": "Observed adjacent swap listed under people in Norvig's collected spelling errors; corpus presence alone does not establish intentional usage.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "probebly": {
+    "correction": "probably",
+    "reason": "Observed vowel substitution listed under probably in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "rimember": {
+    "correction": "remember",
+    "reason": "Observed vowel substitution listed under remember in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "thousend": {
+    "correction": "thousand",
+    "reason": "Observed vowel substitution listed under thousand in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  }
+}

@@ -3,6 +3,7 @@
 MIN_CORRECTION_FREQUENCY = 1e-5  # Ten occurrences per million words.
 MIN_FREQUENCY_RATIO = 100
 MIN_SHORT_CORRECTION_FREQUENCY = 1e-4  # One hundred occurrences per million words.
+MIN_FIVE_LETTER_FREQUENCY = 1e-4
 # Reviewed prose preference; codespell must confirm this exact mapping as well.
 DOCUMENTED_SHORT_CORRECTIONS = {"hte": "the"}
 
@@ -18,6 +19,13 @@ def short_word_typos(word: str) -> set[str]:
     """Plausible single keystroke errors; never produce one/two-letter inputs."""
     if len(word) not in (3, 4) or not word.isascii() or not word.isalpha() or not word.islower():
         return set()
+    return keyboard_typos(word)
+
+
+def keyboard_typos(word: str) -> set[str]:
+    """Single missing/repeated letter, adjacent swap or neighboring-key error."""
+    if not word.isascii() or not word.isalpha() or not word.islower():
+        return set()
     typos = set()
     for index, char in enumerate(word):
         before, after = word[:index], word[index + 1:]
@@ -30,6 +38,23 @@ def short_word_typos(word: str) -> set[str]:
             typos.add(before + neighbor + char + after)
             typos.add(before + char + neighbor + after)
     return {typo for typo in typos if len(typo) >= 3 and typo != word}
+
+
+def frequency_five_letter_correction(
+    typo: str, correction: str, candidates: set[str], frequencies: dict[str, float]
+) -> bool:
+    """Admit four/five-letter keyboard errors of dominant common five-letter words.
+
+    This extends length eligibility only; input protection, corpus screening and
+    the existing candidate-selection order still apply.
+    """
+    return (
+        len(correction) == 5
+        and len(typo) in (4, 5)
+        and frequencies.get(correction, 0) >= MIN_FIVE_LETTER_FREQUENCY
+        and typo in keyboard_typos(correction)
+        and preferred_frequency(candidates, frequencies) == correction
+    )
 
 
 def frequency_short_correction(
@@ -140,6 +165,8 @@ def valid_typo_length(
         return True
     if len(correction) in (3, 4):
         return frequency_short_correction(typo, correction, candidates, frequencies or {})
+    if frequency_five_letter_correction(typo, correction, candidates, frequencies or {}):
+        return True
     return len(typo) == 5 and (
         documented_correction == correction
         or preferred_transposition(typo, candidates, frequencies) == correction

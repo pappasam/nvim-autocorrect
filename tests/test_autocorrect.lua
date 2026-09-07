@@ -116,13 +116,27 @@ for typo, correction in pairs({
   hwere = "where",
   aviod = "avoid",
   birng = "bring",
+  whch = "which",
+  whih = "which",
+  wgich = "which",
+  probebly = "probably",
+  rimember = "remember",
+  thousend = "thousand",
+  peolpe = "people",
+  pepole = "people",
 }) do
   assert(dictionary.lookup(typo) == correction, typo)
 end
 assert(dictionary.lookup("wOuDl") == nil)
 assert(dictionary.lookup("correct") == nil)
--- Non-neighboring vowel substitutions are outside the generated typo patterns.
-assert(dictionary.lookup("thousend") == nil)
+assert(
+  run({ "iwhch wgich probebly rimember thousend peolpe pepole.<Esc>" }, false)[1]
+    == "which which probably remember thousand people people."
+)
+assert(
+  run({ "iWhch WGICH foo_peolpe peopelx dont alot.<Esc>" }, false)[1]
+    == "Whch WGICH foo_peolpe peopelx dont alot."
+)
 
 -- Preserve all letters when a unique adjacent swap competes only with deletions.
 assert(

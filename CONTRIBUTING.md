@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,007,938 lowercase typo-to-word mappings across 12,093 destination words.
+The catalog contains 1,009,964 lowercase typo-to-word mappings across 12,093 destination words.
 
 ## Editing and rebuilding
 
@@ -28,7 +28,7 @@ The build records that fingerprint in the header and checks it again before publ
 
 The first build leaves correction inactive until completion, without changing text already typed. An editor with a loaded dictionary continues using it during a rebuild. Updates made outside Neovim are detected on the next plugin load; use `:AutocorrectBuild` to refresh an existing session. Building needs only Neovim and a writable cache directory, including when the plugin checkout is read-only.
 
-Build validation checks structure and conflicts, not linguistic safety. Refresh the audit below after changing mappings or supplemental protected words; `make check` requires both recorded hashes to match their sources.
+Build validation checks structure and conflicts, not linguistic safety. Refresh the audit below after changing mappings, supplemental protected words, or reviewed correction evidence; `make check` requires all three recorded hashes to match their sources.
 
 ## Selection rules
 
@@ -36,10 +36,10 @@ Protect valid input first; for an eligible typo, choose a well-supported correct
 
 - Only whole lowercase keyword tokens are eligible. Preserve capitalization, acronyms, identifiers, and embedded suffixes.
 - Exclude every token found in SCOWL, CMUdict, or `data/protected-words.json`, including normalized names, abbreviations, regional spellings, and accented or punctuated forms. No preference or exception can override this protection.
-- Exclude wordfreq tokens unless codespell documents the same unambiguous correction. Three- and four-letter inputs additionally require an adjacent swap or repeated letter, except the exact reviewed `hte` preference.
+- Exclude wordfreq tokens unless codespell or `data/reviewed-corrections.json` documents the same unambiguous correction. For three- and four-letter destinations, three- and four-letter inputs additionally require an adjacent swap or repeated letter, except the exact reviewed `hte` preference.
 - Destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Supplemental protection does not authorize a destination.
 - Generated typos use a single missing/repeated letter, adjacent transposition, or adjacent-QWERTY-key substitution/insertion. Other misspellings require independent documentation.
-- Generated typos normally contain at least six letters. At five letters, require a documented correction, an adjacent swap selected by the preferences below, or the common short-word rule. Three- and four-letter inputs require the common short-word rule or an exact reviewed exception. One- and two-letter inputs remain excluded.
+- Generated typos normally contain at least six letters. At five letters, require a documented correction, an adjacent swap selected by the preferences below, or a common-word length rule. Four-letter inputs can also qualify for common five-letter destinations under the rule below; three-letter inputs still require the common short-word rule or an exact reviewed exception. One- and two-letter inputs remain excluded.
 
 For ambiguity checks, enumerate all single-edit candidates, including every protected token, name, normalized form, and word outside the destination catalog. Apply these preferences in order:
 
@@ -75,7 +75,7 @@ The constants live in `scripts/dictionary_policy.py`. The audit records the thre
 
 ### Five-letter adjacent swaps
 
-An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns require codespell documentation or the common short-word rule below. Protection of real words and corpus tokens always applies.
+An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns require documentation or one of the common-word rules below. Protection of real words and corpus tokens always applies.
 
 The audit records mappings needing this length exception as `five_letter_transposition_exceptions`. `preferred_transposition_corrections` counts swaps that override deletion candidates or sufficiently rare same-length alternatives.
 
@@ -85,11 +85,27 @@ Generate typos only for lowercase SCOWL words through size 60 with wordfreq freq
 
 Compare every known single-edit alternative, including protected names, normalized forms and words outside the destination catalog. The destination must be at least 100 times more frequent than every competitor, even when a unique adjacent swap exists. A sole candidate still needs the 100-per-million floor. Existing documented five-letter corrections retain their prior eligibility; the stricter rule admits new generated patterns.
 
-Protected inputs remain excluded. For new additions, a token already in wordfreq needs codespell confirmation of an adjacent swap or repeated-letter error. This extra restriction avoids expanding shorthand such as `wth` into `with` or `mayu` into `may`. The audit enforces this restriction for three- and four-letter inputs; documented five-letter inputs retain the existing codespell path. The expansion script also applies it to new five-letter inputs.
+Protected inputs remain excluded. For new additions, a token already in wordfreq needs documentary confirmation of an adjacent swap or repeated-letter error. This extra restriction avoids expanding shorthand such as `wth` into `with` or `mayu` into `may`. The audit enforces this restriction for three- and four-letter inputs; documented five-letter inputs retain their existing path. The expansion script also applies it to new five-letter inputs.
 
 `wiht` → `with` passes the same filters as other additions, without an exact override. Its [Wiktionary entry](https://en.wiktionary.org/wiki/wiht) describes Old English and Old Saxon. The catalog targets modern English prose and does not treat historical-language entries alone as modern English words. This does not override protection from the reference dictionaries. `whit`, `form`, `from`, `teh`, and common shorthand stay unchanged; `fomr` is too ambiguous to choose between `form` and `from`.
 
 The audit records `short_word_preference`, `frequency_short_corrections` (including previously shipped mappings that now also qualify), and `short_word_destinations`. These frequencies rank intended words; generated variants are plausible keystroke errors, not 7,010 individually observed common misspellings. Corpus coverage and context-free correction still limit precision.
+
+### Common five-letter words
+
+Four- and five-letter keyboard typos of five-letter destinations can qualify when the destination occurs at least 100 times per million words and is at least 100 times more frequent than every known single-edit alternative. A sole candidate still needs the frequency floor. The generator considers lowercase SCOWL words through size 60 and the single-edit patterns in `keyboard_typos`; arbitrary substitutions and multiple edits do not acquire a length exception.
+
+This admits `whch`, `whih`, and `wgich` → `which`. For four-letter inputs leading to five-letter words, documented omissions can pass corpus screening; the swap/repeat-only restriction on three- and four-letter destinations remains intact. All protected inputs, names, and normalized forms remain excluded.
+
+This rule extends length eligibility only. The short-word, swap, and frequency candidate-selection order remains unchanged. Existing documented and swap exceptions retain their prior eligibility. The audit records thresholds in `five_letter_preference` and counts qualifying mappings in `frequency_five_letter_corrections`.
+
+### Reviewed spelling evidence
+
+`data/reviewed-corrections.json` records exact externally documented typo-to-word pairs with `correction`, `reason`, and an HTTP(S) `source` URL. Contributors review whether each source establishes an actual spelling error. This evidence supplements codespell for corpus screening and documented spelling patterns; it does not override input protection, destination validation, length limits, or ambiguity checks. Conflicts with codespell, including multiple suggested destinations, fail validation.
+
+The initial five entries are `probebly` → `probably`, `rimember` → `remember`, `thousend` → `thousand`, and `peolpe`/`pepole` → `people`. Each pair appears in [Peter Norvig's collected spelling errors](https://www.norvig.com/ngrams/spell-errors.txt), compiled from Wikipedia and Roger Mitton's corpora. The source snapshot used for review has SHA-256 `a4abe6ce6c24280f9a8d0485cbf78ddd2e58279ca01293692630a08ba4b13407`. The first three document substitutions outside neighboring keys. The last two document adjacent swaps already present in wordfreq; corpus membership alone does not establish intentional usage. These are reviewed examples, not an automatic import of the entire collection or a ranking of modern typo frequency.
+
+The file is maintenance input only. After changing it, run `scripts/expand-common-words.py`, inspect the proposed catalog and rejected candidates, run the full audit, and update the catalog and audit together. Existing mappings are preserved by the generator, so remove any newly rejected mappings reported by the audit. Saving this evidence file alone does not rebuild the runtime dictionary. Missing or malformed evidence fails validation; an explicit empty object is permitted. The audit records `reviewed_records`, `reviewed_corrections`, `reviewed_corpus_exceptions`, and a canonical `reviewed_sha256` covering pairs and their evidence; `make check` rejects stale evidence.
 
 ### Reviewed short corrections
 
@@ -134,15 +150,29 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1007938 \
+  --source /tmp/short-word-corrections.json --expect 1009964 \
   --report /tmp/short-word-audit.json
 ```
 
 The expansion writes a separate proposed catalog and reports additions and rejected candidate pairs. Starting from the shipped catalog produces zero additions and identical catalog contents. Review the proposal and audit before replacing `data/corrections.json` and `data/audit.json`.
 
+### Common-word and reviewed-evidence expansion
+
+This batch adds 2,026 mappings across 214 existing destinations, preserving every previous mapping: 2,021 keyboard typos of common five-letter words and five reviewed corrections. The added inputs contain four letters (32), five letters (1,989), six letters (2), or eight letters (3). The resulting catalog contains 1,009,964 mappings across the same 12,093 destinations.
+
+```sh
+uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
+  --output /tmp/common-word-corrections.json
+uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
+  --source /tmp/common-word-corrections.json --expect 1009964 \
+  --report /tmp/common-word-audit.json
+```
+
+The generator reports additions, categories, and rejected candidate pairs, and fails on conflicting existing mappings. Starting from the shipped catalog produces zero additions and identical contents. No runtime dependencies or punctuation/space corrections are introduced.
+
 ### Swaps with rare alternatives
 
-The refinement adds 899 adjacent-swap mappings across 769 existing destination words, preserving every previous mapping. Of these additions, 426 have five letters. The catalog now contains 1,007,938 mappings across the same 12,093 destinations.
+The refinement added 899 adjacent-swap mappings across 769 existing destination words, preserving every previous mapping. Of these additions, 426 have five letters. That batch brought the catalog to 1,007,938 mappings across the same 12,093 destinations.
 
 Reproduce the batch with the pinned maintenance references:
 
@@ -150,7 +180,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1007938 \
+  --source /tmp/transposition-corrections.json --expect 1009964 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -164,6 +194,7 @@ Maintenance references:
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
 - [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): five manually reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -174,7 +205,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1007938 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1009964 \
   --report data/audit.json
 ```
 

@@ -24,7 +24,9 @@ from dictionary_policy import (
     frequency_short_correction,
     preferred_transposition,
 )
-from dictionary_source import load_protected_words, load_source
+from dictionary_source import (
+    load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -34,6 +36,7 @@ def main():
     parser.add_argument("--scowl", required=True, type=Path)
     parser.add_argument("--source", type=Path, default=ROOT / "data/corrections.json")
     parser.add_argument("--protected-words", type=Path, default=ROOT / "data/protected-words.json")
+    parser.add_argument("--reviewed-corrections", type=Path, default=ROOT / "data/reviewed-corrections.json")
     parser.add_argument("--output", type=Path, default=Path("/tmp/transposition-corrections.json"))
     args = parser.parse_args()
     if not (args.scowl / "final").is_dir():
@@ -48,12 +51,10 @@ def main():
     protected.update(normalized(word) for word in cmudict.words())
     protected.update(load_protected_words(args.protected_words))
     frequencies = wordfreq.get_frequency_dict("en")
-    documented = {}
-    path = Path(codespell_lib.__file__).parent / "data/dictionary.txt"
-    for line in path.read_text().splitlines():
-        typo, separator, correction = line.partition("->")
-        if separator and re.fullmatch("[a-z]+", correction):
-            documented[typo] = correction
+    documented = load_documented_corrections(
+        Path(codespell_lib.__file__).parent / "data/dictionary.txt",
+        load_reviewed_corrections(args.reviewed_corrections),
+    )
 
     entries = load_source(args.source)
     alternatives = protected | set(entries.values()) | audit["TECHNICAL_WORDS"]

@@ -7,6 +7,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from dictionary_policy import (
     documented_short_correction,
     frequency_short_correction,
+    frequency_five_letter_correction,
+    keyboard_typos,
     preferred_frequency,
     preferred_transposition,
     short_corpus_exception,
@@ -159,3 +161,26 @@ assert not {"with", "With", "witx", "whitt"} & short_word_typos("with")
 assert not short_word_typos("longer")
 assert not short_word_typos("The")
 print(f"PASS: {len(short_cases)} short-word frequency cases, edit patterns and corpus limits")
+
+five_cases = [
+    ("whch", "which", {"which", "wich"}, {"which": 0.002, "wich": 1e-6}, True),
+    ("wgich", "which", {"which"}, {"which": 1e-4}, True),
+    ("wgich", "which", {"which"}, {"which": 9.9e-5}, False),
+    ("wgich", "which", {"which", "wich"}, {"which": 0.002, "wich": 2e-5}, True),
+    ("wgich", "which", {"which", "wich"}, {"which": 0.002, "wich": 2.01e-5}, False),
+    ("wgich", "which", {"wich"}, {"which": 0.002}, False),
+    ("wgich", "which", {"which"}, {}, False),
+    ("which", "which", {"which"}, {"which": 0.002}, False),
+    ("wxich", "which", {"which"}, {"which": 0.002}, False),
+    ("wch", "which", {"which"}, {"which": 0.002}, False),
+    ("whci", "which", {"which"}, {"which": 0.002}, False),
+    # Common six-letter destinations do not acquire an undocumented length exception.
+    ("peple", "people", {"people"}, {"people": 0.002}, False),
+]
+for typo, correction, candidates, frequencies, expected in five_cases:
+    assert frequency_five_letter_correction(typo, correction, candidates, frequencies) == expected
+    assert valid_typo_length(typo, correction, candidates, frequencies=frequencies) == expected
+assert {"whch", "whih", "wgich", "whiich", "whicg", "whcih"} <= keyboard_typos("which")
+assert not {"which", "wxich", "whci"} & keyboard_typos("which")
+assert not keyboard_typos("Which")
+print(f"PASS: {len(five_cases)} common five-letter word policy cases")

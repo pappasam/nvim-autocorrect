@@ -8,8 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from dictionary_source import load_protected_words, load_source
-from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO, MIN_SHORT_CORRECTION_FREQUENCY
+from dictionary_source import load_protected_words, load_reviewed_corrections, load_source
+from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO, MIN_SHORT_CORRECTION_FREQUENCY, MIN_FIVE_LETTER_FREQUENCY
 
 cases = json.loads((ROOT / "tests/source_cases.json").read_text())
 with tempfile.TemporaryDirectory() as directory:
@@ -47,6 +47,12 @@ assert audit["short_word_preference"] == {
     "three_four_letter_corpus_exceptions": "documented adjacent swap or repeated letter",
 }, "Short-word policy audit snapshot is stale"
 assert len(entries) == audit["entries"]
+assert audit["five_letter_preference"] == {
+    "minimum_frequency": MIN_FIVE_LETTER_FREQUENCY,
+    "minimum_ratio": MIN_FREQUENCY_RATIO,
+    "destination_lengths": [5],
+    "typo_lengths": [4, 5],
+}, "Five-letter policy audit snapshot is stale"
 assert hashlib.sha256(canonical).hexdigest() == audit["mapping_sha256"], "Audit snapshot is stale"
 protected = load_protected_words(ROOT / "data/protected-words.json")
 protected_canonical = json.dumps(protected, sort_keys=True, separators=(",", ":")).encode()
@@ -56,4 +62,9 @@ assert (
     == audit["supplemental_protected_sha256"]
 ), "Protected-word audit snapshot is stale"
 assert not entries.keys() & protected.keys(), "Supplemental protected word is corrected"
-print(f"PASS: {len(cases)} Python source validation cases and both audit source hashes")
+reviewed = load_reviewed_corrections(ROOT / "data/reviewed-corrections.json")
+assert audit["reviewed_records"] == len(reviewed)
+assert hashlib.sha256(
+    json.dumps(reviewed, sort_keys=True, separators=(",", ":")).encode()
+).hexdigest() == audit["reviewed_sha256"], "Reviewed-correction audit snapshot is stale"
+print(f"PASS: {len(cases)} Python source validation cases and all audit source hashes")

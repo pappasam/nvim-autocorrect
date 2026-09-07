@@ -2,7 +2,7 @@
 
 **Warning: I plan to force push with history corrections until this stabilizes to prevent the repo's history from getting to large as I experiment with code design**
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,007,938 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,009,964 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 
@@ -96,9 +96,15 @@ The [Wiktionary entry for `wiht`](https://en.wiktionary.org/wiki/wiht) describes
 
 This screening cannot enumerate every lowercase name, brand, or specialized term. Automatic correction remains context-free; see the contributor guide for the selection rules and limitations.
 
-### Why isn't `thousend` corrected to `thousand`?
+### Does it correct missing letters in common five-letter words?
 
-The generated patterns cover neighboring-key substitutions, not arbitrary vowel substitutions. `a` and `e` are not neighboring keys, and the pinned codespell dictionary does not document this correction. This is a deliberate coverage limit; increasing the vocabulary does not change the allowed typo patterns.
+Yes. `whch` and `whih` become `which`, as does the neighboring-key typo `wgich`. Four- and five-letter inputs can qualify when a five-letter destination occurs at least 100 times per million words and has a 100-fold frequency lead over every alternative. Word protection, corpus screening, and the existing candidate-selection order still apply.
+
+### Does it correct spelling errors beyond neighboring keys?
+
+Yes, when independently documented. Reviewed entries include `probebly` → `probably`, `rimember` → `remember`, and `thousend` → `thousand`. The exact pairs and source evidence are recorded in `data/reviewed-corrections.json`; this does not generate arbitrary vowel substitutions.
+
+The same evidence mechanism permits documented corpus typos such as `peolpe` and `pepole` → `people`. Appearing in wordfreq alone need not block a reviewed spelling error. Known words and names remain protected, and all ambiguity checks still apply. See [reviewed spelling evidence](CONTRIBUTING.md#reviewed-spelling-evidence).
 
 ### What if a legitimate term gets corrected?
 

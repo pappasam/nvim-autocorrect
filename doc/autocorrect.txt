@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,007,938 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,009,964 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -139,11 +139,24 @@ frequent than every alternative. For example, "abotu" becomes "about". Close
 alternatives remain uncorrected. Frequencies are a heuristic for user intent.
 
 Five-letter swaps such as "mgiht" to "might" may qualify under these preferences;
-other five-letter edits require documentation or the common short-word rule.
+other five-letter edits require documentation or a common-word rule.
 Typos of three/four-letter words, such as "wiht" to "with", qualify when the
 word occurs at least 100 times per million and leads every alternative by at
 least 100-fold. Inputs may have three to five letters; shorter inputs remain
 excluded. This adds 7,010 corrections, including extra-keystroke errors.
+
+Four/five-letter keyboard typos of common five-letter words also qualify at
+100 occurrences per million and a 100-fold lead over all alternatives. This
+admits "whch", "whih", and "wgich" to "which", with protection and the existing
+candidate-selection order intact.
+
+data/reviewed-corrections.json supplements codespell with exact pairs and source
+evidence. Examples include "probebly" to "probably", "rimember" to "remember",
+and "thousend" to "thousand". Documented swaps "peolpe" and "pepole" to "people"
+can also pass corpus screening. Evidence does not override protected input or
+ambiguity checks. The common-word/evidence batch adds 2,026 corrections.
+After changing evidence, refresh the catalog and audit together; make check
+verifies the evidence hash. This file is not read during editing.
 
 "hte" to "the" is an exact, reviewed, codespell-confirmed exception to length
 and ambiguity rules. No exception overrides protected input or case and
@@ -166,7 +179,8 @@ Extracted from Samuel Roeca's Neovim configuration. Documentation structure
 follows vim-filetype-formatter. Distributed under the MIT license.
 
 Dictionary screening uses SCOWL, CMUdict, wordfreq, and codespell as maintenance
-references. Versions, attribution, selection rules, and audit instructions are
-in CONTRIBUTING.md. These packages are not runtime dependencies.
+references, plus reviewed pairs from Peter Norvig's collected spelling errors.
+Versions, attribution, selection rules, and audit instructions are in
+CONTRIBUTING.md. These packages are not runtime dependencies.
 
 vim:tw=78:ts=8:ft=help:norl:
