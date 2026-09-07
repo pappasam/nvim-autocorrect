@@ -6,8 +6,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from dictionary_policy import (
     documented_short_correction,
+    frequency_short_correction,
     preferred_frequency,
     preferred_transposition,
+    short_corpus_exception,
+    short_word_typos,
     valid_typo_length,
 )
 
@@ -56,7 +59,7 @@ length_cases = [
     # Existing documented five-letter corrections remain eligible for screening.
     ("woudl", "would", {"would"}, "would", True),
     ("mighx", "might", {"might"}, "might", True),
-    # Even a documented or unique swap cannot authorize fewer than five letters.
+    # Short words cannot qualify without frequency evidence, even documented swaps.
     ("abdc", "abcd", {"abcd"}, None, False),
     ("abdc", "abcd", {"abcd"}, "abcd", False),
     ("teh", "the", {"the"}, "the", False),
@@ -92,3 +95,37 @@ assert not valid_typo_length("teh", "the", {"the"}, "the")
 assert documented_short_correction("hte", "the", "the")
 assert not documented_short_correction("hte", "he", "he")
 print(f"PASS: {len(frequency_cases)} frequency cases and exact short-correction limits")
+
+short_cases = [
+    ("wiht", "with", {"with", "whit", "wight"}, {"with": 0.007, "whit": 1e-6, "wight": 1e-6}, True),
+    ("fomr", "from", {"form", "from"}, {"from": 0.004, "form": 0.0005}, False),
+    # Every short destination needs the higher frequency floor, even if unique.
+    ("wiht", "with", {"with"}, {"with": 0.0001}, True),
+    ("wiht", "with", {"with"}, {"with": 0.000099}, False),
+    ("wiht", "with", {"with", "whit"}, {"with": 0.001, "whit": 0.00001}, True),
+    ("wiht", "with", {"with", "whit"}, {"with": 0.00099, "whit": 0.00001}, False),
+    # A swap cannot override a common shorter competitor for short words.
+    ("hte", "the", {"the", "he"}, {"the": 0.05, "he": 0.005}, False),
+    ("tthe", "the", {"the"}, {"the": 0.05}, True),
+    ("witth", "with", {"with"}, {"with": 0.007}, True),
+    ("wiht", "with", {"whit"}, {"with": 0.007}, False),
+    ("wiht", "with", {"with"}, {}, False),
+    # Keep the two-letter exclusion and the limits on physical typing errors.
+    ("th", "the", {"the"}, {"the": 0.05}, False),
+    ("witx", "with", {"with"}, {"with": 0.007}, False),
+    ("whitt", "with", {"with"}, {"with": 0.007}, False),
+]
+for typo, correction, candidates, frequencies, expected in short_cases:
+    assert frequency_short_correction(typo, correction, candidates, frequencies) == expected
+    assert valid_typo_length(typo, correction, candidates, frequencies=frequencies) == expected
+assert valid_typo_length("ofrom", "from", {"from"}, "from")  # Existing documented path.
+assert short_corpus_exception("wiht", "with", "with")
+assert short_corpus_exception("tthe", "the", "the")
+assert not short_corpus_exception("wiht", "with", None)
+assert not short_corpus_exception("wth", "with", "with")
+assert not short_corpus_exception("mayu", "may", "may")
+assert {"wiht", "wtih", "witth", "wuth", "wijth"} <= short_word_typos("with")
+assert not {"with", "With", "witx", "whitt"} & short_word_typos("with")
+assert not short_word_typos("longer")
+assert not short_word_typos("The")
+print(f"PASS: {len(short_cases)} short-word frequency cases, edit patterns and corpus limits")

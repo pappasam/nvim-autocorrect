@@ -62,13 +62,15 @@ with tempfile.TemporaryDirectory() as directory:
     # Supply tiny reference corpora to the real audit entrypoint, keeping normal
     # make check independent of Python packages and external dictionary downloads.
     (root / "final").mkdir()
-    (root / "final/english-words.10").write_text("build\nmight\nrequire\nrequires\nabout\nabote\nthe\nhe\n")
+    (root / "final/english-words.10").write_text("build\nmight\nrequire\nrequires\nabout\nabote\nthe\nhe\nwith\nwhit\nwight\nfrom\nform\n")
     (root / "data").mkdir()
-    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\n")
+    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\n")
     frequencies = {
         "buidl": 1e-6, "build": 0.001, "about": 0.002, "the": 0.05,
         "he": 0.005, "hte": 1e-7, "might": 1e-4, "mgint": 1e-4,
         "require": 0.001, "requires": 1e-7,
+        "with": 0.007, "whit": 1e-6, "wight": 1e-6, "wiht": 1e-7, "wth": 1e-6,
+        "from": 0.004, "form": 0.0005,
     }
     modules = {
         "cmudict": SimpleNamespace(words=lambda: []),
@@ -96,7 +98,14 @@ with tempfile.TemporaryDirectory() as directory:
             ({"about": ["abotu"]}, {"abotu": evidence}, "protected_word_or_name"),
             ({"the": ["hte"]}, {}, None),
             ({"the": ["hte"]}, {"hte": evidence}, "protected_word_or_name"),
-            ({"the": ["teh"]}, {}, "short_ambiguous_token"),
+            # A short typo may pass frequency, but real dictionary names still win.
+            ({"the": ["teh"]}, {"teh": evidence}, "protected_word_or_name"),
+            ({"with": ["wiht", "witth"]}, {}, None),
+            ({"with": ["wiht"]}, {"wiht": evidence}, "protected_word_or_name"),
+            ({"with": ["wth"]}, {}, "unsafe_short_corpus_token"),
+            ({"with": ["iwth"]}, {"iwth": evidence}, "protected_word_or_name"),
+            ({"with": ["witx"]}, {}, "short_ambiguous_token"),
+            ({"from": ["fomr"]}, {}, "competing_correction"),
             ({"require": ["requirse"]}, {}, "competing_correction"),
         ]
         for groups, protected, failure in cases:

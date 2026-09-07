@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,000,029 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,007,039 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -134,10 +134,16 @@ frequent than every alternative. For example, "abotu" becomes "about". Close
 alternatives remain uncorrected. Frequencies are a heuristic for user intent.
 
 Five-letter swaps such as "mgiht" to "might" may qualify under these preferences;
-other five-letter edits require documentation. "hte" to "the" is an exact,
-reviewed, codespell-confirmed exception to length and ambiguity rules. Other
-shorter inputs remain excluded. No exception overrides protected input or case
-and boundary checks: "trial", "trail", "HTE", and "Hte" stay unchanged.
+other five-letter edits require documentation or the common short-word rule.
+Typos of three/four-letter words, such as "wiht" to "with", qualify when the
+word occurs at least 100 times per million and leads every alternative by at
+least 100-fold. Inputs may have three to five letters; shorter inputs remain
+excluded. This adds 7,010 corrections, including extra-keystroke errors.
+
+"hte" to "the" is an exact, reviewed, codespell-confirmed exception to length
+and ambiguity rules. No exception overrides protected input or case and
+boundary checks: "trial", "trail", "HTE", and "Hte" stay unchanged. Short-word
+screening also leaves "wth", "teh", and ambiguous "fomr" unchanged.
 See CONTRIBUTING.md for the complete selection rules.
 
 data/protected-words.json supplements the reference dictionaries with documented

@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,000,029 lowercase typo-to-word mappings across 11,771 destination words.
+The catalog contains 1,007,039 lowercase typo-to-word mappings across 12,093 destination words.
 
 ## Editing and rebuilding
 
@@ -36,18 +36,19 @@ Protect valid input first; for an eligible typo, choose a well-supported correct
 
 - Only whole lowercase keyword tokens are eligible. Preserve capitalization, acronyms, identifiers, and embedded suffixes.
 - Exclude every token found in SCOWL, CMUdict, or `data/protected-words.json`, including normalized names, abbreviations, regional spellings, and accented or punctuated forms. No preference or exception can override this protection.
-- Exclude wordfreq tokens unless codespell documents the same unambiguous correction.
+- Exclude wordfreq tokens unless codespell documents the same unambiguous correction. Three- and four-letter inputs additionally require an adjacent swap or repeated letter, except the exact reviewed `hte` preference.
 - Destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Supplemental protection does not authorize a destination.
 - Generated typos use a single missing/repeated letter, adjacent transposition, or adjacent-QWERTY-key substitution/insertion. Other misspellings require independent documentation.
-- Generated typos normally contain at least six letters. At five letters, require a documented correction or an adjacent swap selected by the preferences below. Shorter inputs require an exact reviewed exception.
+- Generated typos normally contain at least six letters. At five letters, require a documented correction, an adjacent swap selected by the preferences below, or the common short-word rule. Three- and four-letter inputs require the common short-word rule or an exact reviewed exception. One- and two-letter inputs remain excluded.
 
 For ambiguity checks, enumerate all single-edit candidates, including every protected token, name, normalized form, and word outside the destination catalog. Apply these preferences in order:
 
 1. An exact reviewed short correction, confirmed by codespell.
-2. A unique adjacent swap that preserves all input letters, when every competing candidate is one letter shorter.
-3. A clearly dominant common candidate under the frequency rule below.
+2. For the common short-word rule, a destination with at least 100 occurrences per million and a 100-fold frequency lead over every alternative. A swap cannot bypass this requirement.
+3. Otherwise, a unique adjacent swap that preserves all input letters, when every competing candidate is one letter shorter.
+4. A clearly dominant common candidate under the frequency rule below.
 
-A sole candidate needs no ambiguity preference. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
+A sole candidate needs no ambiguity preference, but still needs the frequency floor when using the common short-word rule. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
 
 ### Adjacent-swap preference
 
@@ -70,15 +71,27 @@ The constants live in `scripts/dictionary_policy.py`. The audit records the thre
 
 ### Five-letter adjacent swaps
 
-An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns still require codespell documentation. Protection of real words and corpus tokens always applies.
+An undocumented five-letter typo may qualify when exactly one adjacent pair is swapped and the resulting destination wins through the adjacent-swap or frequency preference. For `mgiht`, `might` is the only known single-edit candidate. Other five-letter edit patterns require codespell documentation or the common short-word rule below. Protection of real words and corpus tokens always applies.
 
 The audit records mappings needing this length exception as `five_letter_transposition_exceptions`. `preferred_transposition_corrections` counts swaps that override shorter competing candidates.
+
+### Common three- and four-letter words
+
+Generate typos only for lowercase SCOWL words through size 60 with wordfreq frequency at least `0.0001` (100 occurrences per million). Inputs may have three, four, or five letters, using one missing/repeated letter, adjacent swap, or adjacent-QWERTY-key substitution/insertion. `short_word_typos` in `scripts/dictionary_policy.py` defines the keyboard neighbors and edit patterns. Do not generate two-letter inputs.
+
+Compare every known single-edit alternative, including protected names, normalized forms and words outside the destination catalog. The destination must be at least 100 times more frequent than every competitor, even when a unique adjacent swap exists. A sole candidate still needs the 100-per-million floor. Existing documented five-letter corrections retain their prior eligibility; the stricter rule admits new generated patterns.
+
+Protected inputs remain excluded. For new additions, a token already in wordfreq needs codespell confirmation of an adjacent swap or repeated-letter error. This extra restriction avoids expanding shorthand such as `wth` into `with` or `mayu` into `may`. The audit enforces this restriction for three- and four-letter inputs; documented five-letter inputs retain the existing codespell path. The expansion script also applies it to new five-letter inputs.
+
+`wiht` → `with` passes the same filters as other additions, without an exact override. Its [Wiktionary entry](https://en.wiktionary.org/wiki/wiht) describes Old English and Old Saxon. The catalog targets modern English prose and does not treat historical-language entries alone as modern English words. This does not override protection from the reference dictionaries. `whit`, `form`, `from`, `teh`, and common shorthand stay unchanged; `fomr` is too ambiguous to choose between `form` and `from`.
+
+The audit records `short_word_preference`, `frequency_short_corrections` (including previously shipped mappings that now also qualify), and `short_word_destinations`. These frequencies rank intended words; generated variants are plausible keystroke errors, not 7,010 individually observed common misspellings. Corpus coverage and context-free correction still limit precision.
 
 ### Reviewed short corrections
 
 `DOCUMENTED_SHORT_CORRECTIONS` in `scripts/dictionary_policy.py` contains exact reviewed exceptions to the minimum-length and ambiguity rules. Currently only `hte` → `the` is approved for common prose usage. Codespell must confirm that exact mapping; an undocumented or different destination cannot use the exception.
 
-These exceptions never override protected input, corpus screening, destination validation, or lowercase whole-word matching. `HTE`, `Hte`, and `foo_hte` remain untouched. Other short typos, including `teh`, remain excluded. Additions require explicit review and documentation here; do not generate a general class of short-word overrides. The audit counts accepted exceptions in `documented_short_corrections`.
+These exceptions never override protected input, corpus screening, destination validation, or lowercase whole-word matching. `HTE`, `Hte`, and `foo_hte` remain untouched. Other short typos can qualify under the frequency rule above; `teh` remains excluded by reference-dictionary protection. Exact overrides require explicit review and documentation here; the common short-word rule does not bypass ambiguity checks. The audit counts accepted exceptions in `documented_short_corrections`.
 
 ### Supplemental protected words
 
@@ -103,9 +116,25 @@ The supplemental list is maintenance input; Neovim uses the rebuilt dictionary. 
 
 ## Catalog expansion
 
-The 1,000,029-entry catalog adds 499,966 mappings to the prior 500,063 entries, preserving every existing mapping. It includes 5,698 new destination words. Candidates combine missing variants of existing destinations with lowercase SCOWL words through size 60 that occur at least once per million words in the pinned wordfreq corpus. Destinations are considered in descending frequency, with alphabetical ties, using the generated edit patterns and documented codespell corrections above. Expansion stops after a complete destination group crosses 1,000,000 mappings.
+The previous expansion to 1,000,029 entries added 499,966 mappings to the prior 500,063 entries, preserving every existing mapping. It includes 5,698 new destination words. Candidates combine missing variants of existing destinations with lowercase SCOWL words through size 60 that occur at least once per million words in the pinned wordfreq corpus. Destinations are considered in descending frequency, with alphabetical ties, using the generated edit patterns and documented codespell corrections above. Expansion stops after a complete destination group crosses 1,000,000 mappings.
 
 All additions pass the same protected-word, corpus, length, destination, and ambiguity checks; the expansion does not relax the selection rules. The lowest-frequency destination expanded in this batch occurs about 2.95 times per million words. The frequency threshold for resolving ambiguous corrections remains 10 occurrences per million words with a 100-fold lead; less frequent destinations must qualify without that preference.
+
+### Short-word expansion
+
+This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
+
+Reproduce the expansion using the same pinned maintenance dependencies and SCOWL release as the audit:
+
+```sh
+uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
+  --output /tmp/short-word-corrections.json
+uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
+  --source /tmp/short-word-corrections.json --expect 1007039 \
+  --report /tmp/short-word-audit.json
+```
+
+The expansion writes a separate proposed catalog and reports additions and rejected candidate pairs. Starting from the shipped catalog produces zero additions and identical catalog contents. Review the proposal and audit before replacing `data/corrections.json` and `data/audit.json`.
 
 ## Reference data and audit
 
@@ -125,7 +154,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1000029 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1007039 \
   --report data/audit.json
 ```
 

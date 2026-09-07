@@ -29,9 +29,12 @@ from dictionary_source import load_protected_words, load_source
 from dictionary_policy import (
     MIN_CORRECTION_FREQUENCY,
     MIN_FREQUENCY_RATIO,
+    MIN_SHORT_CORRECTION_FREQUENCY,
     documented_short_correction,
+    frequency_short_correction,
     preferred_frequency,
     preferred_transposition,
+    short_corpus_exception,
     valid_typo_length,
 )
 
@@ -135,14 +138,18 @@ def main() -> int:
     five_letter_transpositions = 0
     frequency_preferences = 0
     short_preferences = 0
+    frequency_short_preferences = 0
     for typo, correction in sorted(entries.items()):
         pair = [typo, correction]
         neighbors = {word for word in one_edit_words(typo) if word in alternatives}
         short_preference = documented_short_correction(typo, correction, documented.get(typo))
+        frequency_short = frequency_short_correction(typo, correction, neighbors, frequencies)
         if not valid_typo_length(typo, correction, neighbors, documented.get(typo), frequencies):
             failures["short_ambiguous_token"].append(pair)
-        elif len(typo) == 5 and documented.get(typo) != correction:
+        elif len(typo) == 5 and len(correction) == 5 and documented.get(typo) != correction:
             five_letter_transpositions += 1
+        if frequency_short and not short_preference:
+            frequency_short_preferences += 1
         if short_preference:
             short_preferences += 1
         if correction not in valid_destinations:
@@ -152,6 +159,8 @@ def main() -> int:
         if typo in frequencies:
             if documented.get(typo) != correction:
                 failures["undocumented_corpus_token"].append(pair)
+            elif len(typo) < 5 and len(correction) in (3, 4) and not short_preference and not short_corpus_exception(typo, correction, documented.get(typo)):
+                failures["unsafe_short_corpus_token"].append(pair)
             else:
                 frequency_exceptions += 1
         other = neighbors - {correction}
@@ -159,6 +168,8 @@ def main() -> int:
             swap = preferred_transposition(typo, neighbors)
             if short_preference:
                 pass
+            elif frequency_short:
+                frequency_preferences += 1
             elif swap == correction:
                 transposition_preferences += 1
             elif swap is None and preferred_frequency(neighbors, frequencies) == correction:
@@ -183,6 +194,15 @@ def main() -> int:
         "preferred_transposition_corrections": transposition_preferences,
         "preferred_frequency_corrections": frequency_preferences,
         "documented_short_corrections": short_preferences,
+        "frequency_short_corrections": frequency_short_preferences,
+        "short_word_preference": {
+            "minimum_frequency": MIN_SHORT_CORRECTION_FREQUENCY,
+            "minimum_ratio": MIN_FREQUENCY_RATIO,
+            "destination_lengths": [3, 4],
+            "typo_lengths": [3, 4, 5],
+            "three_four_letter_corpus_exceptions": "documented adjacent swap or repeated letter",
+        },
+        "short_word_destinations": len({word for word in entries.values() if len(word) in (3, 4)}),
         "frequency_preference": {
             "minimum_frequency": MIN_CORRECTION_FREQUENCY,
             "minimum_ratio": MIN_FREQUENCY_RATIO,

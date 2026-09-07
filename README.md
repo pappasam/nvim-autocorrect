@@ -2,7 +2,7 @@
 
 **Warning: I plan to force push with history corrections until this stabilizes to prevent the repo's history from getting to large as I experiment with code design**
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,000,029 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,007,039 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 
@@ -82,7 +82,13 @@ After protecting known words, names, and corpus tokens, the dictionary can prefe
 
 When a unique adjacent-letter swap preserves all letters and every competing correction deletes one, the swap wins: `requirse` becomes `requires`, even though deleting `s` would give `require`. When this swap preference cannot resolve the alternatives, a common candidate may win if it is at least 100 times more frequent than every competitor. Known valid words remain protected. See the [selection rules](CONTRIBUTING.md#adjacent-swap-preference).
 
-This also permits five-letter swaps such as `mgiht` → `might`, subject to the same word, name, and corpus filters. The exact reviewed exception `hte` → `the` also applies; other inputs shorter than five letters remain excluded.
+This also permits five-letter swaps such as `mgiht` → `might`, subject to the same word, name, and corpus filters. Typos of common three- and four-letter words use a stricter frequency rule below. The exact reviewed exception `hte` → `the` also applies.
+
+### Does it correct short words such as `wiht`?
+
+Yes. `wiht` → `with`, `taht` → `that`, and `yuo` → `you` qualify under the short-word rule: the destination occurs at least 100 times per million words and is at least 100 times more frequent than every known alternative. The catalog adds 7,010 typos of common three- and four-letter words, including extra-keystroke inputs such as `tthe`. Known words and names, shorthand such as `wth`, and close alternatives such as `fomr` remain unchanged.
+
+The [Wiktionary entry for `wiht`](https://en.wiktionary.org/wiki/wiht) describes Old English and Old Saxon. This plugin targets modern English prose; historical-language entries alone do not disqualify a typo. Reference-dictionary protection still applies.
 
 ### Why does it correct `hte` but not `teh` or capitalized words?
 

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from dictionary_source import load_protected_words, load_source
-from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO
+from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO, MIN_SHORT_CORRECTION_FREQUENCY
 
 cases = json.loads((ROOT / "tests/source_cases.json").read_text())
 with tempfile.TemporaryDirectory() as directory:
@@ -32,6 +32,13 @@ assert audit["frequency_preference"] == {
     "minimum_frequency": MIN_CORRECTION_FREQUENCY,
     "minimum_ratio": MIN_FREQUENCY_RATIO,
 }, "Frequency policy audit snapshot is stale"
+assert audit["short_word_preference"] == {
+    "minimum_frequency": MIN_SHORT_CORRECTION_FREQUENCY,
+    "minimum_ratio": MIN_FREQUENCY_RATIO,
+    "destination_lengths": [3, 4],
+    "typo_lengths": [3, 4, 5],
+    "three_four_letter_corpus_exceptions": "documented adjacent swap or repeated letter",
+}, "Short-word policy audit snapshot is stale"
 assert len(entries) == audit["entries"]
 assert hashlib.sha256(canonical).hexdigest() == audit["mapping_sha256"], "Audit snapshot is stale"
 protected = load_protected_words(ROOT / "data/protected-words.json")
