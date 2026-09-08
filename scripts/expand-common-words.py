@@ -113,7 +113,7 @@ def main():
         # Preserve the audit's candidate-selection order, including short words.
         short = {word for word in candidates if frequency_short_correction(typo, word, candidates, frequencies)}
         winner = next(iter(short)) if short else (
-            preferred_transposition(typo, candidates, frequencies)
+            preferred_transposition(typo, candidates, frequencies, documented.get(typo))
             or preferred_frequency(candidates, frequencies)
         )
         if winner != correction:

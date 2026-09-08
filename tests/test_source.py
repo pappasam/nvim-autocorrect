@@ -38,6 +38,7 @@ assert audit["transposition_preference"] == {
     "minimum_ratio": MIN_FREQUENCY_RATIO,
     "frequency_competitors": "same-length non-swap alternatives",
     "longer_alternatives": "block",
+    "documented_swap_competitors": "strictly less frequent same-length alternatives",
 }, "Transposition policy audit snapshot is stale"
 assert audit["short_word_preference"] == {
     "minimum_frequency": MIN_SHORT_CORRECTION_FREQUENCY,

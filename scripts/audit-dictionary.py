@@ -142,6 +142,7 @@ def main() -> int:
     single_edits = 0
     transposition_preferences = 0
     rare_alternative_transpositions = 0
+    documented_transpositions = 0
     five_letter_transpositions = 0
     frequency_preferences = 0
     short_preferences = 0
@@ -192,7 +193,7 @@ def main() -> int:
                 frequency_exceptions += 1
         other = neighbors - {correction}
         if other:
-            swap = preferred_transposition(typo, neighbors, frequencies)
+            swap = preferred_transposition(typo, neighbors, frequencies, documented.get(typo))
             if short_preference:
                 pass
             elif frequency_short:
@@ -201,7 +202,9 @@ def main() -> int:
                 failures["competing_correction"].append(pair + [sorted(other)])
             elif swap == correction:
                 transposition_preferences += 1
-                if preferred_transposition(typo, neighbors) is None:
+                if preferred_transposition(typo, neighbors, frequencies) is None:
+                    documented_transpositions += 1
+                elif preferred_transposition(typo, neighbors) is None:
                     rare_alternative_transpositions += 1
             elif swap is None and preferred_frequency(neighbors, frequencies) == correction:
                 frequency_preferences += 1
@@ -233,12 +236,14 @@ def main() -> int:
         "documented_frequency_exceptions": frequency_exceptions,
         "preferred_transposition_corrections": transposition_preferences,
         "rare_alternative_transposition_corrections": rare_alternative_transpositions,
+        "documented_transposition_corrections": documented_transpositions,
         "transposition_preference": {
             "rare_alternative_minimum_length": 5,
             "minimum_frequency": MIN_CORRECTION_FREQUENCY,
             "minimum_ratio": MIN_FREQUENCY_RATIO,
             "frequency_competitors": "same-length non-swap alternatives",
             "longer_alternatives": "block",
+            "documented_swap_competitors": "strictly less frequent same-length alternatives",
         },
         "preferred_frequency_corrections": frequency_preferences,
         "documented_short_corrections": short_preferences,

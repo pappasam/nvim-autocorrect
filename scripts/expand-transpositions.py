@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["wordfreq==3.1.1", "cmudict==1.1.1", "codespell==2.4.1"]
 # ///
-"""Add adjacent swaps admitted by the rare same-length alternative refinement.
+"""Add adjacent swaps admitted by frequency or independent spelling evidence.
 
 Writes a separate proposed catalog by default. Run the full independent audit
 before adopting it. No runtime dependencies are added to the Neovim plugin.
@@ -88,7 +88,7 @@ def main():
                 continue
             if preferred_transposition(typo, candidates) is not None:
                 continue  # This batch covers only the refined rule.
-            if preferred_transposition(typo, candidates, frequencies) != correction:
+            if preferred_transposition(typo, candidates, frequencies, documented.get(typo)) != correction:
                 rejected["frequency_or_ambiguity"] += 1
                 continue
             if typo in entries:

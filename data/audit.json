@@ -1,10 +1,11 @@
 {
   "alternative_dictionary_tokens": 626455,
   "destinations": 12104,
-  "documented_frequency_exceptions": 1571,
+  "documented_frequency_exceptions": 1584,
   "documented_multi_edit_corrections": 3677,
   "documented_short_corrections": 1,
-  "entries": 1009975,
+  "documented_transposition_corrections": 133,
+  "entries": 1010108,
   "failure_counts": {},
   "failure_examples": {},
   "five_letter_preference": {
@@ -34,7 +35,7 @@
     "minimum_input_length": 6,
     "single_word_alternatives": "block"
   },
-  "mapping_sha256": "f2cc6dc1f7bd14dd01b3b3099b50dbaf957ff8c3f08957df314135cf45d643e9",
+  "mapping_sha256": "b9c6dd826a1771e5fb7e0ec217f0e35d44399e5031ee3b90f801e36d8bfd8a07",
   "packages": {
     "cmudict": "1.1.1",
     "codespell": "2.4.1",
@@ -42,7 +43,7 @@
   },
   "passed": true,
   "preferred_frequency_corrections": 82606,
-  "preferred_transposition_corrections": 12115,
+  "preferred_transposition_corrections": 12248,
   "protected_dictionary_tokens": 626435,
   "protected_frequency_tokens": 321180,
   "rare_alternative_transposition_corrections": 3864,
@@ -67,7 +68,7 @@
       5
     ]
   },
-  "single_edit_corrections": 1006287,
+  "single_edit_corrections": 1006420,
   "supplemental_protected_sha256": "57431aaa92d7e2e2728f0b3b6c222d51cbee168b16606419e9a3eff44946327c",
   "supplemental_protected_tokens": 2,
   "technical_destinations": [
@@ -93,6 +94,7 @@
     "templating"
   ],
   "transposition_preference": {
+    "documented_swap_competitors": "strictly less frequent same-length alternatives",
     "frequency_competitors": "same-length non-swap alternatives",
     "longer_alternatives": "block",
     "minimum_frequency": 1e-05,

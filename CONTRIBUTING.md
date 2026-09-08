@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,009,975 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
+The catalog contains 1,010,108 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -45,7 +45,7 @@ For single-word destinations, enumerate all single-edit candidates, including ev
 
 1. An exact reviewed short correction, confirmed by codespell.
 2. For the common short-word rule, a destination with at least 100 occurrences per million and a 100-fold frequency lead over every alternative. A swap cannot bypass this requirement.
-3. Otherwise, a unique adjacent swap that preserves all input letters, beating deletion candidates and, at five or more letters, sufficiently rare same-length alternatives as described below.
+3. Otherwise, a unique adjacent swap that preserves all input letters, beating deletion candidates and, at five or more letters, same-length alternatives under the frequency or documented-swap rules below.
 4. A clearly dominant common candidate under the frequency rule below.
 
 A sole candidate needs no ambiguity preference, but still needs the frequency floor when using the common short-word rule. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
@@ -57,6 +57,10 @@ The destination must differ only by swapping exactly one adjacent pair of distin
 For inputs with at least five letters, a unique swap may also beat same-length non-swap alternatives when its frequency is at least 10 occurrences per million and at least 100 times that of every such alternative. Compare the complete same-length candidate set, including names and protected terms outside the destination catalog. Missing corpus frequencies count as zero. Shorter deletion candidates are excluded from this frequency comparison, preserving the original preference for keeping all letters.
 
 This admits `hwere` → `where`: `twere` is sufficiently rare, and `here` and `were` are deletion candidates. A second possible swap or any longer candidate still blocks the swap preference; the general frequency rule may independently resolve them. Close same-length alternatives and rare swap destinations do not qualify for the refinement. The stricter common short-word rule has priority: `wehat` still selects `what`, which dominates all alternatives, including `wheat`.
+
+Independently documented swaps of at least five letters can also win when the destination occurs at least 10 times per million and is strictly more frequent than every same-length alternative. The exact pair must appear unambiguously in codespell or the reviewed evidence file. A frequency tie, a second swap, or a longer candidate still blocks this preference; short-word precedence and all input protections still apply. Undocumented swaps retain the 100-fold requirement.
+
+This fixes `wehther` → `whether`: codespell documents the swap, but the previous rule rejected it because `weather` is another single-edit candidate and `whether` is only about 2.8 times more frequent. Treating a documented swap like an undocumented substitution also excluded `recieve` → `receive` and `chagned` → `changed`. The expansion adds 133 mappings across 126 existing destinations, including 30 five-letter inputs, preserving all previous mappings. The audit counts mappings requiring documentary preference separately in `documented_transposition_corrections`; `rare_alternative_transposition_corrections` continues to count those admitted by the 100-fold refinement. These are selection heuristics, not measured error rates.
 
 The refinement never overrides protected input, corpus screening, destination validation, or word boundaries. The audit records its thresholds in `transposition_preference` and counts mappings using it in `rare_alternative_transposition_corrections`.
 
@@ -101,7 +105,7 @@ This rule extends length eligibility only. The short-word, swap, and frequency c
 
 ### Reviewed spelling evidence
 
-`data/reviewed-corrections.json` records exact externally documented typo-to-word pairs with `correction`, `reason`, and an HTTP(S) `source` URL. Contributors review whether each source establishes an actual spelling error. This evidence supplements codespell for corpus screening and documented spelling patterns; it does not override input protection, destination validation, length limits, or ambiguity checks. Conflicts with codespell, including multiple suggested destinations, fail validation.
+`data/reviewed-corrections.json` records exact externally documented typo-to-word pairs with `correction`, `reason`, and an HTTP(S) `source` URL. Contributors review whether each source establishes an actual spelling error. This evidence supplements codespell for corpus screening, documented spelling patterns, and the documented-swap preference; it does not override input protection, destination validation, length limits, or ambiguity checks. Conflicts with codespell, including multiple suggested destinations, fail validation.
 
 The initial five entries are `probebly` → `probably`, `rimember` → `remember`, `thousend` → `thousand`, and `peolpe`/`pepole` → `people`. Each pair appears in [Peter Norvig's collected spelling errors](https://www.norvig.com/ngrams/spell-errors.txt), compiled from Wikipedia and Roger Mitton's corpora. The source snapshot used for review has SHA-256 `a4abe6ce6c24280f9a8d0485cbf78ddd2e58279ca01293692630a08ba4b13407`. The first three document substitutions outside neighboring keys. The last two document adjacent swaps already present in wordfreq; corpus membership alone does not establish intentional usage. These are reviewed examples, not an automatic import of the entire collection or a ranking of modern typo frequency.
 
@@ -164,7 +168,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1009975 \
+  --source /tmp/short-word-corrections.json --expect 1010108 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -178,7 +182,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1009975 \
+  --source /tmp/common-word-corrections.json --expect 1010108 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -194,11 +198,11 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1009975 \
+  --source /tmp/transposition-corrections.json --expect 1010108 \
   --report /tmp/transposition-audit.json
 ```
 
-The script considers only swaps of existing destinations admitted by the refinement. It preserves the common short-word preference and reports conflicting existing mappings for review. Starting from the shipped catalog produces zero additions and identical contents.
+The script considers swaps of existing destinations admitted by the frequency refinement or documented-swap rule. It preserves the common short-word preference and reports conflicting existing mappings for review. Starting from the shipped catalog produces zero additions and identical contents.
 
 ## Reference data and audit
 
@@ -219,7 +223,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1009975 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1010108 \
   --report data/audit.json
 ```
 

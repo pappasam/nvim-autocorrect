@@ -45,6 +45,27 @@ for typo, candidates, expected in cases:
     assert preferred_transposition(typo, candidates) == expected, (typo, candidates)
 print(f"PASS: {len(cases)} transposition preference cases")
 
+# Documentary evidence can resolve a common swap without a 100-fold lead.
+whether_candidates = {"whether", "weather", "werther", "wether"}
+whether_frequencies = {"whether": 2e-4, "weather": 7e-5, "werther": 1e-7, "wether": 6e-7}
+assert preferred_transposition("wehther", whether_candidates, whether_frequencies) is None
+documented_cases = [
+    (whether_candidates, whether_frequencies, "whether", "whether"),
+    (whether_candidates, whether_frequencies, "weather", None),
+    (whether_candidates, {**whether_frequencies, "weather": 2e-4}, "whether", None),
+    (whether_candidates, {**whether_frequencies, "weather": 3e-4}, "whether", None),
+    (whether_candidates, {"whether": 9.9e-6, "weather": 1e-6}, "whether", None),
+    (whether_candidates, {"whether": 1e-5, "weather": 1e-6}, "whether", "whether"),
+    (whether_candidates, {}, "whether", None),
+    (whether_candidates | {"wehthers"}, whether_frequencies, "whether", None),
+    (whether_candidates | {"ewhther"}, whether_frequencies, "whether", None),
+    (whether_candidates - {"whether"}, whether_frequencies, "whether", None),
+]
+for candidates, frequencies, documented, expected in documented_cases:
+    assert preferred_transposition("wehther", candidates, frequencies, documented) == expected
+assert preferred_transposition("acbd", {"abcd", "acbe"}, {"abcd": 2e-4, "acbe": 1e-4}, "abcd") is None
+print(f"PASS: {len(documented_cases) + 2} documented transposition cases")
+
 # The refined preference compares substitutions separately from deletions.
 where_candidates = {"where", "here", "were", "twere"}
 where_frequencies = {"where": 0.001, "here": 0.002, "were": 0.003, "twere": 1e-7}

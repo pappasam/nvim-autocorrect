@@ -119,9 +119,9 @@ with tempfile.TemporaryDirectory() as directory:
     (root / "final/english-words.10").write_text("build\nmight\nrequire\nrequires\nabout\nabote\nthe\nhe\nwith\nwhit\nwight\nfrom\nform\n")
     (root / "final/english-words.20").write_text("where\nhere\nwere\ntwere\nwhat\nwheat\nwehet\n")
     (root / "final/english-words.30").write_text("which\nwich\npeople\nprobably\nremember\nthousand\n")
-    (root / "final/english-words.40").write_text("each\nother\nwant\nto\n")
+    (root / "final/english-words.40").write_text("each\nother\nwant\nto\nwhether\nweather\nwerther\nwether\n")
     (root / "data").mkdir()
-    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\nwhch->which\neachother->each other\nwantto->want to\n")
+    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\nwhch->which\neachother->each other\nwantto->want to\nwehther->whether\n")
     frequencies = {
         "buidl": 1e-6, "build": 0.001, "about": 0.002, "the": 0.05,
         "he": 0.005, "hte": 1e-7, "might": 1e-4, "mgint": 1e-4,
@@ -136,6 +136,7 @@ with tempfile.TemporaryDirectory() as directory:
         "wgiah": 0.001, "peolpes": 0.001,
         "each": 0.001, "other": 0.001, "want": 0.001, "to": 0.001,
         "eachother": 1e-6,
+        "whether": 2e-4, "weather": 7e-5, "werther": 1e-7, "wether": 6e-7,
     }
     modules = {
         "cmudict": SimpleNamespace(words=lambda: []),
@@ -178,6 +179,11 @@ with tempfile.TemporaryDirectory() as directory:
             ({"where": ["hwere"]}, {"hweres": evidence}, "competing_correction"),
             ({"where": ["hwere"]}, {"hewre": evidence}, "competing_correction"),
             ({"twere": ["hwere"]}, {}, "competing_correction"),
+            ({"whether": ["wehther"]}, {}, None),
+            ({"whether": ["wehther"]}, {"wehther": evidence}, "protected_word_or_name"),
+            ({"whether": ["wehther"]}, {"wehthers": evidence}, "competing_correction"),
+            ({"whether": ["wehther"]}, {"ewhther": evidence}, "competing_correction"),
+            ({"weather": ["wehther"]}, {}, "competing_correction"),
             # The existing short-word rule still takes precedence over a swap.
             ({"what": ["wehat"]}, {}, None),
             ({"wheat": ["wehat"]}, {}, "competing_correction"),
@@ -214,6 +220,9 @@ with tempfile.TemporaryDirectory() as directory:
             assert report["supplemental_protected_tokens"] == len(protected), report
             if failure:
                 assert report["failure_counts"].get(failure), report
+            elif "wehther" in groups.get("whether", []):
+                assert report["documented_transposition_corrections"] == 1, report
+                assert report["rare_alternative_transposition_corrections"] == 0, report
             elif "hwere" in groups.get("where", []):
                 assert report["rare_alternative_transposition_corrections"] == 1, report
                 assert report["five_letter_transposition_exceptions"] == 1, report

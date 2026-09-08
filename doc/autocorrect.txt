@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,009,975 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,010,108 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -133,8 +133,11 @@ one letter: "requirse" becomes "requires", taking precedence over "require".
 At five or more letters, a unique swap can also beat same-length non-swap
 alternatives with a 100-fold frequency lead and at least 10 occurrences per
 million. This admits "hwere" to "where" despite "twere"; shorter "here" and
-"were" retain their existing treatment. Longer candidates block the swap
-preference. This refinement adds 899 corrections and preserves valid input.
+"were" retain their existing treatment. Independently documented swaps such as
+"wehther" to "whether" need only a strict frequency lead over each same-length
+alternative, with the same 10-per-million floor and five-letter minimum.
+Longer candidates and multiple swaps block the swap preference. The documented
+rule adds 133 corrections; the earlier frequency refinement added 899.
 When this cannot resolve an ambiguity, the most frequent candidate can win if
 it occurs at least 10 times per million words and is at least 100 times more
 frequent than every alternative. For example, "abotu" becomes "about". Close

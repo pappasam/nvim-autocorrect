@@ -123,6 +123,7 @@ for typo, correction in pairs({
   tthe = "the",
   knwo = "know",
   hwere = "where",
+  wehther = "whether",
   aviod = "avoid",
   birng = "bring",
   whch = "which",
@@ -141,6 +142,13 @@ for typo, correction in pairs({
 end
 assert(dictionary.lookup("wOuDl") == nil)
 assert(dictionary.lookup("correct") == nil)
+assert(
+  run(
+    { "iwehther weather whether Wehther WEHTHER foo_wehther wehtherx.<Esc>" },
+    false
+  )[1]
+    == "whether weather whether Wehther WEHTHER foo_wehther wehtherx."
+)
 assert(
   run({ "iwhch wgich probebly rimember thousend peolpe pepole.<Esc>" }, false)[1]
     == "which which probably remember thousand people people."
