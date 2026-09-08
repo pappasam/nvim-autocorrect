@@ -65,7 +65,7 @@ with tempfile.TemporaryDirectory() as directory:
         "[]", "null", "{", json.dumps({"Peolpe": reviewed_evidence}),
         json.dumps({"peolpe": evidence}),
         json.dumps({"peolpe": {**reviewed_evidence, "correction": "peolpe"}}),
-        json.dumps({"peolpe": {**reviewed_evidence, "correction": "two words"}}),
+        json.dumps({"peolpe": {**reviewed_evidence, "correction": "three whole words"}}),
         json.dumps({"peolpe": {**reviewed_evidence, "correction": 1}}),
         json.dumps({"peolpe": {**reviewed_evidence, "reason": " "}}),
         json.dumps({"peolpe": {**reviewed_evidence, "source": "file:///tmp/evidence"}}),
@@ -102,6 +102,8 @@ with tempfile.TemporaryDirectory() as directory:
     for text in ["", "peolpe->people"]:
         dictionary_path.write_text(text)
         assert load_documented_corrections(dictionary_path, reviewed) == {"peolpe": "people"}
+    dictionary_path.write_text("eachother->each other\nanumber->a number, number,\nisnt->isn't\n")
+    assert load_documented_corrections(dictionary_path, {}) == {"eachother": "each other"}
     try:
         load_documented_corrections(dictionary_path, {"hte": {**evidence, "correction": "the"}})
     except ValueError:
@@ -117,8 +119,9 @@ with tempfile.TemporaryDirectory() as directory:
     (root / "final/english-words.10").write_text("build\nmight\nrequire\nrequires\nabout\nabote\nthe\nhe\nwith\nwhit\nwight\nfrom\nform\n")
     (root / "final/english-words.20").write_text("where\nhere\nwere\ntwere\nwhat\nwheat\nwehet\n")
     (root / "final/english-words.30").write_text("which\nwich\npeople\nprobably\nremember\nthousand\n")
+    (root / "final/english-words.40").write_text("each\nother\nwant\nto\n")
     (root / "data").mkdir()
-    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\nwhch->which\n")
+    (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\nwhch->which\neachother->each other\nwantto->want to\n")
     frequencies = {
         "buidl": 1e-6, "build": 0.001, "about": 0.002, "the": 0.05,
         "he": 0.005, "hte": 1e-7, "might": 1e-4, "mgint": 1e-4,
@@ -131,6 +134,8 @@ with tempfile.TemporaryDirectory() as directory:
         "people": 0.002, "peolpe": 1e-7, "pepole": 1e-7,
         "probably": 0.0002, "remember": 0.0002, "thousand": 0.00004,
         "wgiah": 0.001, "peolpes": 0.001,
+        "each": 0.001, "other": 0.001, "want": 0.001, "to": 0.001,
+        "eachother": 1e-6,
     }
     modules = {
         "cmudict": SimpleNamespace(words=lambda: []),
@@ -185,6 +190,13 @@ with tempfile.TemporaryDirectory() as directory:
             ({"people": ["peolpe"]}, {"peolpe": evidence}, "protected_word_or_name"),
             ({"people": ["peolpe"]}, {"peolpes": evidence}, "competing_correction"),
             ({"people": ["peopel"]}, {}, None),  # Unseen in corpus fixture.
+            ({"each other": ["eachother"], "want to": ["wantto"]}, {}, None),
+            ({"each other": ["eachother"]}, {"eachother": evidence}, "protected_word_or_name"),
+            ({"each other": ["eachother"]}, {"eachotter": evidence}, "unsafe_joined_word_correction"),
+            ({"each other": ["eachother"]}, {"ea": evidence, "chother": evidence}, "unsafe_joined_word_correction"),
+            ({"each other": ["eachothre"]}, {}, "unsafe_joined_word_correction"),
+            ({"other each": ["othereach"]}, {}, "unsafe_joined_word_correction"),
+            ({"some word": ["someword"]}, {}, "unsafe_joined_word_correction"),
         ]
         for groups, protected, failure in cases:
             source.write_text(json.dumps(groups))

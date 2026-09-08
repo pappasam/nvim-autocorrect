@@ -14,6 +14,8 @@ from dictionary_policy import (
     short_corpus_exception,
     short_word_typos,
     valid_typo_length,
+    joined_word_splits,
+    valid_joined_correction,
 )
 
 # Candidate sets model all single-edit dictionary words, not just destinations.
@@ -184,3 +186,29 @@ assert {"whch", "whih", "wgich", "whiich", "whicg", "whcih"} <= keyboard_typos("
 assert not {"which", "wxich", "whci"} & keyboard_typos("which")
 assert not keyboard_typos("Which")
 print(f"PASS: {len(five_cases)} common five-letter word policy cases")
+
+def joined(typo="eachother", correction="each other", documented="each other",
+           candidates=None, known=None, real=None, frequencies=None):
+    return valid_joined_correction(
+        typo, correction, documented, candidates or set(),
+        joined_word_splits(typo, known if known is not None else {"each", "other"}),
+        real if real is not None else {"each", "other"},
+        frequencies if frequencies is not None else {"each": 1e-4, "other": 1e-4},
+    )
+
+assert joined()
+assert not joined(documented=None)
+assert not joined(documented="each others")
+assert not joined(typo="eachothre")  # Does not repair a typo plus a missing space.
+assert not joined(typo="eachothe")
+assert not joined(correction="each  other")
+assert not joined(correction="each Other")
+assert not joined(candidates={"eachotter"})  # Even a rare single-word rival blocks.
+assert not joined(known={"each", "other", "ea", "chother"})
+assert not joined(real={"each"})
+assert not joined(frequencies={"each": 0.000099, "other": 0.001})
+assert not joined(frequencies={"each": 0.001})
+assert not joined(typo="atall", correction="at all", documented="at all",
+                  known={"at", "all"}, real={"at", "all"}, frequencies={"at": 1, "all": 1})
+assert joined_word_splits("anumber", {"a", "number", "an", "umber"}) == {"a number", "an umber"}
+print("PASS: joined-word documentation, vocabulary, frequency, edit and ambiguity limits")

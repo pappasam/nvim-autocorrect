@@ -2,7 +2,7 @@
 
 **Warning: I plan to force push with history corrections until this stabilizes to prevent the repo's history from getting to large as I experiment with code design**
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,009,964 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,009,975 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 
@@ -109,6 +109,12 @@ The same evidence mechanism permits documented corpus typos such as `peolpe` and
 ### What if a legitimate term gets corrected?
 
 Add it with a reason and source URL to `data/protected-words.json`, then refresh the catalog, audit, and generated dictionary as described in [supplemental protected words](CONTRIBUTING.md#supplemental-protected-words). This protects terms missing from the reference dictionaries, such as `buidl`, and checks their effect on ambiguous corrections.
+
+### Can it restore missing spaces or apostrophes?
+
+It restores a missing space in 11 documented pairs, including `eachother` → `each other`, `fromthe` → `from the`, and `wantto` → `want to`. Both words must be common, the split must be unique across the reference dictionaries, and no known single-edit word may compete. Native punctuation, undo/redo, macros, and Ctrl-V bypass still apply.
+
+Apostrophe restoration remains excluded: the reference dictionaries protect forms such as `dont`, `didnt`, and `isnt`, while `its`, `were`, and `well` also have valid ordinary uses. `alot` and `aswell` are protected too. Ambiguous joined forms such as `infact` and `overthere` remain unchanged. See [joined words](CONTRIBUTING.md#joined-words-and-contractions) for the selection rules and rationale.
 
 ### Can I use it in other filetypes?
 

@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,009,964 lowercase typo-to-word mappings across 12,093 destination words.
+The catalog contains 1,009,975 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -18,7 +18,7 @@ Edit `data/corrections.json`: keys are correct spellings; values list accepted t
 }
 ```
 
-Use lowercase ASCII words. Sort keys and typo lists alphabetically, with one typo per line. Empty lists, duplicate keys or typos, conflicting destinations, and identity mappings are rejected. An empty object disables all mappings. Put explanations here; JSON does not support comments.
+Inputs must be lowercase ASCII words. Destinations may be one word or exactly two lowercase ASCII words separated by one ordinary space, such as `"each other": ["eachother"]`. Apostrophes, other punctuation, tabs, newlines, leading/trailing spaces, repeated spaces, and longer phrases are rejected. Sort keys and typo lists alphabetically, with one typo per line. Empty lists, duplicate keys or typos, conflicting destinations, and identity mappings are rejected. An empty object disables all mappings. Put explanations here; JSON does not support comments.
 
 Saving the source with the plugin loaded rebuilds and reloads the dictionary in the background. Otherwise, run `:AutocorrectBuild` or `make build`. Failed builds preserve the previous dictionary. Commit the source and refreshed audit; compiled dictionaries are local cache files, never repository artifacts. `make build` prints the cache path.
 
@@ -37,11 +37,11 @@ Protect valid input first; for an eligible typo, choose a well-supported correct
 - Only whole lowercase keyword tokens are eligible. Preserve capitalization, acronyms, identifiers, and embedded suffixes.
 - Exclude every token found in SCOWL, CMUdict, or `data/protected-words.json`, including normalized names, abbreviations, regional spellings, and accented or punctuated forms. No preference or exception can override this protection.
 - Exclude wordfreq tokens unless codespell or `data/reviewed-corrections.json` documents the same unambiguous correction. For three- and four-letter destinations, three- and four-letter inputs additionally require an adjacent swap or repeated letter, except the exact reviewed `hte` preference.
-- Destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Supplemental protection does not authorize a destination.
+- Single-word destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Two-word destinations must pass the documented joined-word rule below, with both components in SCOWL. Supplemental protection does not authorize a destination.
 - Generated typos use a single missing/repeated letter, adjacent transposition, or adjacent-QWERTY-key substitution/insertion. Other misspellings require independent documentation.
 - Generated typos normally contain at least six letters. At five letters, require a documented correction, an adjacent swap selected by the preferences below, or a common-word length rule. Four-letter inputs can also qualify for common five-letter destinations under the rule below; three-letter inputs still require the common short-word rule or an exact reviewed exception. One- and two-letter inputs remain excluded.
 
-For ambiguity checks, enumerate all single-edit candidates, including every protected token, name, normalized form, and word outside the destination catalog. Apply these preferences in order:
+For single-word destinations, enumerate all single-edit candidates, including every protected token, name, normalized form, and word outside the destination catalog. Apply these preferences in order:
 
 1. An exact reviewed short correction, confirmed by codespell.
 2. For the common short-word rule, a destination with at least 100 occurrences per million and a 100-fold frequency lead over every alternative. A swap cannot bypass this requirement.
@@ -107,6 +107,20 @@ The initial five entries are `probebly` → `probably`, `rimember` → `remember
 
 The file is maintenance input only. After changing it, run `scripts/expand-common-words.py`, inspect the proposed catalog and rejected candidates, run the full audit, and update the catalog and audit together. Existing mappings are preserved by the generator, so remove any newly rejected mappings reported by the audit. Saving this evidence file alone does not rebuild the runtime dictionary. Missing or malformed evidence fails validation; an explicit empty object is permitted. The audit records `reviewed_records`, `reviewed_corrections`, `reviewed_corpus_exceptions`, and a canonical `reviewed_sha256` covering pairs and their evidence; `make check` rejects stale evidence.
 
+### Joined words and contractions
+
+Restore a missing space only for an exact pair documented by pinned codespell or reviewed evidence. The input must contain at least six letters and equal the concatenation of exactly two SCOWL words. Each component must occur at least 100 times per million words in wordfreq. These component frequencies establish common vocabulary; they are not phrase-frequency estimates.
+
+Protected input is always excluded. Enumerate every known single-edit word candidate and every two-token split, including normalized names, rare words, and supplemental protected terms. Any single-word candidate or alternative split blocks correction regardless of frequency. The only allowed edit is inserting the space: spelling errors combined with missing spaces do not qualify. No general word segmentation runs during editing.
+
+The 11 accepted pairs are `aboutthe` → `about the`, `alsoneeds` → `also needs`, `eachother` → `each other`, `fromthe` → `from the`, `onlyonce` → `only once`, `receivedfrom` → `received from`, `shortwhile` → `short while`, `somemore` → `some more`, `useanother` → `use another`, `wantto` → `want to`, and `whoknows` → `who knows`. Each is documented in [codespell 2.4.1's dictionary](https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt).
+
+`infact` stays unchanged because words such as `infant` and `intact` compete. `overthere` admits both `over there` and `overt here`. `alot` and `aswell` are protected reference tokens. The strict split check also rejects `atleast` because normalized names and terms admit `atle ast`.
+
+Contraction restoration does not fit the present protection policy: SCOWL/CMUdict protect apostrophe-free forms such as `dont`, `didnt`, and `isnt`, including normalization of their punctuated forms. Other candidates such as `its`, `were`, and `well` are ordinary words. Apostrophes remain outside the source format. Supporting those forms would require a separate deliberate change to protection policy or contextual editing.
+
+`scripts/expand-common-words.py` includes documented joined pairs and applies the same filters as the audit. This batch adds 11 mappings and preserves every prior mapping. The audit records `joined_word_policy` and `joined_word_corrections`; joined pairs are counted separately from single-word single-edit and documented multi-edit corrections. Two-word destinations use the existing native abbreviation engine and cache representation, with no runtime dependency or additional lookup work.
+
 ### Reviewed short corrections
 
 `DOCUMENTED_SHORT_CORRECTIONS` in `scripts/dictionary_policy.py` contains exact reviewed exceptions to the minimum-length and ambiguity rules. Currently only `hte` → `the` is approved for common prose usage. Codespell must confirm that exact mapping; an undocumented or different destination cannot use the exception.
@@ -150,7 +164,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1009964 \
+  --source /tmp/short-word-corrections.json --expect 1009975 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -164,11 +178,11 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1009964 \
+  --source /tmp/common-word-corrections.json --expect 1009975 \
   --report /tmp/common-word-audit.json
 ```
 
-The generator reports additions, categories, and rejected candidate pairs, and fails on conflicting existing mappings. Starting from the shipped catalog produces zero additions and identical contents. No runtime dependencies or punctuation/space corrections are introduced.
+The generator reports additions, categories, and rejected candidate pairs, and fails on conflicting existing mappings. Starting from the shipped catalog produces zero additions and identical contents. That batch introduced no runtime dependencies or punctuation/space corrections; the generator now also includes the joined-word batch described above.
 
 ### Swaps with rare alternatives
 
@@ -180,7 +194,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1009964 \
+  --source /tmp/transposition-corrections.json --expect 1009975 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -205,7 +219,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1009964 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1009975 \
   --report data/audit.json
 ```
 

@@ -34,8 +34,8 @@ function M.load(path)
   local entries = {}
   for correction, typos in pairs(groups) do
     assert(
-      correction:match("^[a-z]+$"),
-      "Corrections must be lowercase ASCII words"
+      correction:match("^[a-z]+$") or correction:match("^[a-z]+ [a-z]+$"),
+      "Corrections must be one or two lowercase ASCII words"
     )
     assert(
       type(typos) == "table" and vim.islist(typos),

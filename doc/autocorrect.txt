@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,009,964 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,009,975 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -107,7 +107,9 @@ values are explicit arrays of accepted typos. Example subsets: >json
     "separately": ["seperately", "sepparately"]
   }
 <
-Only lowercase ASCII words are allowed. Keep keys and typo lists sorted, with
+Inputs must be lowercase ASCII words. Destinations may contain one or two
+lowercase ASCII words separated by exactly one space. Apostrophes and other
+punctuation remain excluded. Keep keys and typo lists sorted, with
 one typo per line. Empty lists, duplicate keys or typos, conflicting corrections,
 and mappings to the same word fail the build. An empty object disables all
 mappings. See CONTRIBUTING.md for editing conventions and validation details.
@@ -162,6 +164,13 @@ verifies the evidence hash. This file is not read during editing.
 and ambiguity rules. No exception overrides protected input or case and
 boundary checks: "trial", "trail", "HTE", and "Hte" stay unchanged. Short-word
 screening also leaves "wth", "teh", and ambiguous "fomr" unchanged.
+Eleven documented joined words, including "eachother" to "each other", "fromthe"
+to "from the", and "wantto" to "want to", restore a missing space. The input must
+have at least six letters, both components must be SCOWL words occurring at
+least 100 times per million, the split must be unique, and no known single-edit
+word may compete. The audit records these separately as joined_word_corrections.
+Protected tokens such as "alot", "aswell", "dont", "didnt", and "isnt" remain
+unchanged. Apostrophe restoration is excluded by the current protection policy.
 See CONTRIBUTING.md for the complete selection rules.
 
 data/protected-words.json supplements the reference dictionaries with documented

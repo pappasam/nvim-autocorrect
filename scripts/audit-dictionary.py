@@ -33,6 +33,7 @@ from dictionary_policy import (
     MIN_FREQUENCY_RATIO,
     MIN_SHORT_CORRECTION_FREQUENCY,
     MIN_FIVE_LETTER_FREQUENCY,
+    MIN_JOINED_COMPONENT_FREQUENCY,
     documented_short_correction,
     frequency_short_correction,
     frequency_five_letter_correction,
@@ -40,6 +41,8 @@ from dictionary_policy import (
     preferred_transposition,
     short_corpus_exception,
     valid_typo_length,
+    joined_word_splits,
+    valid_joined_correction,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -146,6 +149,7 @@ def main() -> int:
     frequency_five_letter_corrections = 0
     reviewed_corrections = 0
     reviewed_corpus_exceptions = 0
+    joined_corrections = 0
     for typo, correction in sorted(entries.items()):
         pair = [typo, correction]
         neighbors = {word for word in one_edit_words(typo) if word in alternatives}
@@ -157,6 +161,18 @@ def main() -> int:
         if typo in reviewed and reviewed[typo]["correction"] == correction:
             reviewed_corrections += 1
             reviewed_corpus_exceptions += int(typo in frequencies)
+        if typo in protected:
+            failures["protected_word_or_name"].append(pair)
+        if " " in correction:
+            if not valid_joined_correction(
+                typo, correction, documented.get(typo), neighbors,
+                joined_word_splits(typo, alternatives), real_words, frequencies,
+            ):
+                failures["unsafe_joined_word_correction"].append(pair)
+            joined_corrections += 1
+            if typo in frequencies and documented.get(typo) == correction:
+                frequency_exceptions += 1
+            continue
         if not valid_typo_length(typo, correction, neighbors, documented.get(typo), frequencies):
             failures["short_ambiguous_token"].append(pair)
         elif len(typo) == 5 and len(correction) == 5 and documented.get(typo) != correction and not frequency_five:
@@ -167,8 +183,6 @@ def main() -> int:
             short_preferences += 1
         if correction not in valid_destinations:
             failures["unverified_destination"].append(pair)
-        if typo in protected:
-            failures["protected_word_or_name"].append(pair)
         if typo in frequencies:
             if documented.get(typo) != correction:
                 failures["undocumented_corpus_token"].append(pair)
@@ -206,7 +220,16 @@ def main() -> int:
         "entries": len(entries),
         "destinations": len(set(entries.values())),
         "single_edit_corrections": single_edits,
-        "documented_multi_edit_corrections": len(entries) - single_edits,
+        "documented_multi_edit_corrections": len(entries) - single_edits - joined_corrections,
+        "joined_word_corrections": joined_corrections,
+        "joined_word_policy": {
+            "minimum_input_length": 6,
+            "minimum_component_frequency": MIN_JOINED_COMPONENT_FREQUENCY,
+            "destination_words": 2,
+            "documentation_required": True,
+            "single_word_alternatives": "block",
+            "alternative_splits": "block",
+        },
         "documented_frequency_exceptions": frequency_exceptions,
         "preferred_transposition_corrections": transposition_preferences,
         "rare_alternative_transposition_corrections": rare_alternative_transpositions,
@@ -251,7 +274,7 @@ def main() -> int:
         "supplemental_protected_sha256": hashlib.sha256(supplemental_canonical).hexdigest(),
         "alternative_dictionary_tokens": len(alternatives),
         "protected_frequency_tokens": len(frequencies),
-        "technical_destinations": sorted(set(entries.values()) - real_words),
+        "technical_destinations": sorted(word for word in set(entries.values()) - real_words if " " not in word),
         "mapping_sha256": hashlib.sha256(canonical).hexdigest(),
         "scowl_lists_sha256": corpus_hash.hexdigest(),
         "packages": {

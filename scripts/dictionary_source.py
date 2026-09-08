@@ -7,6 +7,8 @@ from urllib.parse import urlsplit
 
 from dictionary_policy import DOCUMENTED_SHORT_CORRECTIONS
 
+CORRECTION_PATTERN = r"[a-z]+(?: [a-z]+)?"
+
 
 def unique_object(pairs):
     result = {}
@@ -23,8 +25,8 @@ def load_source(path: Path) -> dict[str, str]:
         raise ValueError("Corrections must be a JSON object")
     entries = {}
     for correction, typos in groups.items():
-        if not re.fullmatch("[a-z]+", correction):
-            raise ValueError("Corrections must be lowercase ASCII words")
+        if not re.fullmatch(CORRECTION_PATTERN, correction):
+            raise ValueError("Corrections must be one or two lowercase ASCII words")
         if not isinstance(typos, list):
             raise ValueError("Typos must be a JSON array")
         if not typos:
@@ -78,7 +80,7 @@ def load_reviewed_corrections(path: Path) -> dict[str, dict[str, str]]:
             raise ValueError(f"Reviewed correction requires correction, reason and source: {typo}")
         if any(not isinstance(v, str) or not v.strip() for v in record.values()):
             raise ValueError(f"Reviewed evidence must be nonempty strings: {typo}")
-        if not re.fullmatch("[a-z]+", record["correction"]) or record["correction"] == typo:
+        if not re.fullmatch(CORRECTION_PATTERN, record["correction"]) or record["correction"] == typo:
             raise ValueError(f"Invalid reviewed destination: {typo}")
         url = urlsplit(record["source"])
         if url.scheme not in {"http", "https"} or not url.hostname or any(
@@ -99,7 +101,7 @@ def load_documented_corrections(
             continue
         if typo in reviewed and correction != reviewed[typo]["correction"]:
             raise ValueError(f"Reviewed correction conflicts with codespell: {typo}")
-        if re.fullmatch("[a-z]+", correction):
+        if re.fullmatch(CORRECTION_PATTERN, correction):
             documented[typo] = correction
     for typo, record in reviewed.items():
         # External evidence cannot independently activate an exact short override.

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from dictionary_source import load_protected_words, load_reviewed_corrections, load_source
-from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO, MIN_SHORT_CORRECTION_FREQUENCY, MIN_FIVE_LETTER_FREQUENCY
+from dictionary_policy import MIN_CORRECTION_FREQUENCY, MIN_FREQUENCY_RATIO, MIN_SHORT_CORRECTION_FREQUENCY, MIN_FIVE_LETTER_FREQUENCY, MIN_JOINED_COMPONENT_FREQUENCY
 
 cases = json.loads((ROOT / "tests/source_cases.json").read_text())
 with tempfile.TemporaryDirectory() as directory:
@@ -47,6 +47,18 @@ assert audit["short_word_preference"] == {
     "three_four_letter_corpus_exceptions": "documented adjacent swap or repeated letter",
 }, "Short-word policy audit snapshot is stale"
 assert len(entries) == audit["entries"]
+assert audit["joined_word_policy"] == {
+    "minimum_input_length": 6,
+    "minimum_component_frequency": MIN_JOINED_COMPONENT_FREQUENCY,
+    "destination_words": 2,
+    "documentation_required": True,
+    "single_word_alternatives": "block",
+    "alternative_splits": "block",
+}, "Joined-word policy audit snapshot is stale"
+assert audit["joined_word_corrections"] == sum(" " in word for word in entries.values())
+assert audit["entries"] == sum(audit[key] for key in (
+    "single_edit_corrections", "documented_multi_edit_corrections", "joined_word_corrections",
+))
 assert audit["five_letter_preference"] == {
     "minimum_frequency": MIN_FIVE_LETTER_FREQUENCY,
     "minimum_ratio": MIN_FREQUENCY_RATIO,

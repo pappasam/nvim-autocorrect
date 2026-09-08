@@ -59,7 +59,10 @@ def main():
     entries = load_source(args.source)
     alternatives = protected | set(entries.values()) | audit["TECHNICAL_WORDS"]
     # Refresh swaps only for existing verified destinations, preserving vocabulary.
-    destinations = {word for word in entries.values() if len(word) >= 5}
+    destinations = {
+        word for word in entries.values()
+        if len(word) >= 5 and re.fullmatch("[a-z]+", word)
+    }
     additions = {}
     conflicts = {}
     rejected = collections.Counter()

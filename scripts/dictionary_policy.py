@@ -4,6 +4,7 @@ MIN_CORRECTION_FREQUENCY = 1e-5  # Ten occurrences per million words.
 MIN_FREQUENCY_RATIO = 100
 MIN_SHORT_CORRECTION_FREQUENCY = 1e-4  # One hundred occurrences per million words.
 MIN_FIVE_LETTER_FREQUENCY = 1e-4
+MIN_JOINED_COMPONENT_FREQUENCY = 1e-4
 # Reviewed prose preference; codespell must confirm this exact mapping as well.
 DOCUMENTED_SHORT_CORRECTIONS = {"hte": "the"}
 
@@ -13,6 +14,38 @@ QWERTY_NEIGHBORS = dict(zip(
      "qwsz", "awedxz", "serfcx", "drtgvc", "ftyhbv", "gyujnb", "huikmn", "jiolm", "kop",
      "asx", "zsdc", "xdfv", "cfgb", "vghn", "bhjm", "njk"),
 ))
+
+
+def joined_word_splits(typo: str, known_words: set[str]) -> set[str]:
+    """Include every two-token split, including names and normalized forms."""
+    return {
+        typo[:i] + " " + typo[i:]
+        for i in range(1, len(typo))
+        if typo[:i] in known_words and typo[i:] in known_words
+    }
+
+
+def valid_joined_correction(
+    typo: str, correction: str, documented: str | None,
+    candidates: set[str], splits: set[str], real_words: set[str],
+    frequencies: dict[str, float],
+) -> bool:
+    """Exact documented missing spaces with no single-word or split competitors.
+
+    Input protection remains mandatory in the caller. Component frequencies
+    establish common vocabulary; they are not estimates of phrase frequency.
+    """
+    parts = correction.split(" ")
+    return (
+        len(parts) == 2
+        and all(part.isascii() and part.isalpha() and part.islower() for part in parts)
+        and len(typo) >= 6
+        and typo == "".join(parts)
+        and documented == correction
+        and not candidates
+        and splits == {correction}
+        and all(part in real_words and frequencies.get(part, 0) >= MIN_JOINED_COMPONENT_FREQUENCY for part in parts)
+    )
 
 
 def short_word_typos(word: str) -> set[str]:

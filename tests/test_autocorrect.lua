@@ -20,6 +20,8 @@ local reference = {
   woudl = "would",
   definately = "definitely",
   seperately = "separately",
+  eachother = "each other",
+  fromthe = "from the",
 }
 local cases = {
   { "iwoudl <Esc>" },
@@ -41,6 +43,13 @@ local cases = {
   { "gRwoudl <Esc>", "xxxxx" },
   { "iwoudl<C-o>0<End> <Esc>" },
   { "ifoo-woudl woudl <Esc>", "", 0, "@,48-57,_,-" },
+  { "ieachother fromthe.<Esc>" },
+  { "ieachother<CR>fromthe<C-]>!<Esc>" },
+  { "ieachother<C-V> <Esc>" },
+  { "ieachother fromthe <Esc>u<C-r>" },
+  { "ieachother <Esc>0." },
+  { "qbieachother <Esc>qo<Esc>@b" },
+  { "ieachother<Tab>fromthe,eachother!<Esc>" },
 }
 
 local function feed(keys)
@@ -124,6 +133,9 @@ for typo, correction in pairs({
   thousend = "thousand",
   peolpe = "people",
   pepole = "people",
+  eachother = "each other",
+  fromthe = "from the",
+  wantto = "want to",
 }) do
   assert(dictionary.lookup(typo) == correction, typo)
 end
@@ -136,6 +148,18 @@ assert(
 assert(
   run({ "iWhch WGICH foo_peolpe peopelx dont alot.<Esc>" }, false)[1]
     == "Whch WGICH foo_peolpe peopelx dont alot."
+)
+assert(
+  run(
+    { "iEachother EACHOTHER foo_eachother eachotherx xeachother.<Esc>" },
+    false
+  )[1] == "Eachother EACHOTHER foo_eachother eachotherx xeachother."
+)
+assert(
+  run(
+    { "idont didnt isnt its were well alot aswell infact overthere.<Esc>" },
+    false
+  )[1] == "dont didnt isnt its were well alot aswell infact overthere."
 )
 
 -- Preserve all letters when a unique adjacent swap competes only with deletions.

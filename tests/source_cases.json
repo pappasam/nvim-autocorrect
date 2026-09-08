@@ -119,5 +119,63 @@
   {
     "name": "escaped backslash",
     "source": "{\"word\":[\"ty\\\\po\"]}"
+  },
+  {
+    "name": "two-word destination",
+    "source": "{\"each other\": [\"eachother\"]}",
+    "expected": {
+      "eachother": "each other"
+    }
+  },
+  {
+    "name": "escaped space in destination",
+    "source": "{\"each\\u0020other\":[\"eachother\"]}",
+    "expected": {
+      "eachother": "each other"
+    }
+  },
+  {
+    "name": "leading space destination",
+    "source": "{\" each other\": [\"eachother\"]}"
+  },
+  {
+    "name": "trailing space destination",
+    "source": "{\"each other \": [\"eachother\"]}"
+  },
+  {
+    "name": "repeated space destination",
+    "source": "{\"each  other\": [\"eachother\"]}"
+  },
+  {
+    "name": "tab destination",
+    "source": "{\"each\\tother\": [\"eachother\"]}"
+  },
+  {
+    "name": "newline destination",
+    "source": "{\"each\\nother\": [\"eachother\"]}"
+  },
+  {
+    "name": "nonbreaking space destination",
+    "source": "{\"each\\u00a0other\": [\"eachother\"]}"
+  },
+  {
+    "name": "uppercase phrase destination",
+    "source": "{\"Each other\": [\"eachother\"]}"
+  },
+  {
+    "name": "apostrophe destination",
+    "source": "{\"isn't\": [\"eachother\"]}"
+  },
+  {
+    "name": "punctuation destination",
+    "source": "{\"each-other\": [\"eachother\"]}"
+  },
+  {
+    "name": "key notation destination",
+    "source": "{\"each<CR>other\": [\"eachother\"]}"
+  },
+  {
+    "name": "duplicate escaped phrase",
+    "source": "{\"each other\":[\"eachother\"],\"each\\u0020other\":[\"eeachother\"]}"
   }
 ]

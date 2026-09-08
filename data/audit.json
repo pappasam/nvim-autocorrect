@@ -1,10 +1,10 @@
 {
-  "alternative_dictionary_tokens": 626444,
-  "destinations": 12093,
-  "documented_frequency_exceptions": 1566,
+  "alternative_dictionary_tokens": 626455,
+  "destinations": 12104,
+  "documented_frequency_exceptions": 1571,
   "documented_multi_edit_corrections": 3677,
   "documented_short_corrections": 1,
-  "entries": 1009964,
+  "entries": 1009975,
   "failure_counts": {},
   "failure_examples": {},
   "five_letter_preference": {
@@ -25,7 +25,16 @@
     "minimum_ratio": 100
   },
   "frequency_short_corrections": 7053,
-  "mapping_sha256": "085c470bbc508746e3e6a5ce5c8c14579ffc7527a76d3eb57fe4d63c347c1f0c",
+  "joined_word_corrections": 11,
+  "joined_word_policy": {
+    "alternative_splits": "block",
+    "destination_words": 2,
+    "documentation_required": true,
+    "minimum_component_frequency": 0.0001,
+    "minimum_input_length": 6,
+    "single_word_alternatives": "block"
+  },
+  "mapping_sha256": "f2cc6dc1f7bd14dd01b3b3099b50dbaf957ff8c3f08957df314135cf45d643e9",
   "packages": {
     "cmudict": "1.1.1",
     "codespell": "2.4.1",

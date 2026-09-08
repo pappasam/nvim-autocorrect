@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["wordfreq==3.1.1", "cmudict==1.1.1", "codespell==2.4.1"]
 # ///
-"""Add common five-letter keyboard corrections and exact reviewed spellings.
+"""Add common five-letter keyboard corrections, reviewed spellings and joined words.
 
 Writes a separate proposal; run the full independent audit before adopting it.
 """
@@ -27,6 +27,8 @@ from dictionary_policy import (
     preferred_transposition,
     short_corpus_exception,
     valid_typo_length,
+    joined_word_splits,
+    valid_joined_correction,
 )
 from dictionary_source import (
     load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source,
@@ -47,13 +49,13 @@ def main():
         parser.error("--scowl must contain the SCOWL final/ directory")
     audit = runpy.run_path(str(ROOT / "scripts/audit-dictionary.py"))
     normalized, one_edit_words = audit["normalized"], audit["one_edit_words"]
-    protected, destinations, valid_destinations = set(), set(), set(audit["TECHNICAL_WORDS"])
+    protected, destinations, real_words = set(), set(), set()
     for path in sorted((args.scowl / "final").iterdir()):
         level = int(path.suffix[1:])
         for word in path.read_text(encoding="latin1").splitlines():
             protected.add(normalized(word))
             if "-words." in path.name and level <= 80 and re.fullmatch("[A-Za-z]+", word):
-                valid_destinations.add(word.lower())
+                real_words.add(word.lower())
             if "-words." in path.name and level <= 60 and re.fullmatch("[a-z]{5}", word):
                 destinations.add(word)
     protected.update(normalized(word) for word in cmudict.words())
@@ -64,8 +66,10 @@ def main():
         Path(codespell_lib.__file__).parent / "data/dictionary.txt", reviewed,
     )
     entries = load_source(args.source)
+    valid_destinations = real_words | audit["TECHNICAL_WORDS"]
     alternatives = protected | valid_destinations | set(entries.values())
     proposed = {(typo, record["correction"]) for typo, record in reviewed.items()}
+    proposed.update((typo, correction) for typo, correction in documented.items() if " " in correction)
     for correction in destinations:
         if frequencies.get(correction, 0) >= MIN_FIVE_LETTER_FREQUENCY:
             proposed.update((typo, correction) for typo in keyboard_typos(correction) if len(typo) in (4, 5))
@@ -74,7 +78,7 @@ def main():
     for typo, correction in sorted(proposed):
         if entries.get(typo) == correction:
             continue
-        if correction not in valid_destinations:
+        if " " not in correction and correction not in valid_destinations:
             rejected["unverified_destination"] += 1
             continue
         if typo in protected:
@@ -87,6 +91,19 @@ def main():
             rejected["unsafe_short_corpus_token"] += 1
             continue
         candidates = {word for word in one_edit_words(typo) if word in alternatives}
+        if " " in correction:
+            if not valid_joined_correction(
+                typo, correction, documented.get(typo), candidates,
+                joined_word_splits(typo, alternatives), real_words, frequencies,
+            ):
+                rejected["unsafe_joined_word_correction"] += 1
+                continue
+            if typo in entries:
+                conflicts[typo] = [entries[typo], correction]
+                continue
+            additions[typo] = correction
+            categories["joined_words"] += 1
+            continue
         if not valid_typo_length(typo, correction, candidates, documented.get(typo), frequencies):
             rejected["length"] += 1
             continue
