@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,010,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
+The catalog contains 1,011,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -160,6 +160,14 @@ The previous expansion to 1,000,029 entries added 499,966 mappings to the prior 
 
 All additions pass the same protected-word, corpus, length, destination, and ambiguity checks; the expansion does not relax the selection rules. The lowest-frequency destination expanded in this batch occurs about 2.95 times per million words. The frequency threshold for resolving ambiguous corrections remains 10 occurrences per million words with a 100-fold lead; less frequent destinations must qualify without that preference.
 
+### Thousand reviewed spelling variants
+
+This batch adds 1,000 documented variants across 549 existing destinations, bringing the catalog to 1,011,136 mappings. Examples include `applacation` → `application`, `compitition` → `competition`, `conferance` → `conference`, and `emergancy` → `emergency`. Every previous mapping is preserved, and no destination words or runtime rules change.
+
+The pairs come from the same pinned Norvig snapshot described under [reviewed spelling evidence](#reviewed-spelling-evidence). Each differs by one insertion, deletion, substitution, or adjacent swap and passes the existing linguistic audit. Selection excludes conflicting destinations in the source, conflicts with codespell, known words and names, and exact or normalized wordfreq tokens. Review also holds out plausible intentional spellings, names, colloquial forms, and joined phrases. This batch therefore needs no new corpus-token exceptions.
+
+Eligible destinations occur at least 10 times per million words. Selection orders them by decreasing destination frequency, then decreasing source observation count, then alphabetical destination and typo, admits at most five variants per destination, and stops at 1,000 pairs. The least frequent selected destination occurs about 12.88 times per million words. These are batch selection criteria, not changes to the general policy or estimates of typo prevalence. All exact pairs and evidence are recorded in `data/reviewed-corrections.json`; the existing common-word expansion script reproduces the catalog from that reviewed evidence.
+
 ### Short-word expansion
 
 This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
@@ -170,7 +178,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1010136 \
+  --source /tmp/short-word-corrections.json --expect 1011136 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -184,7 +192,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1010136 \
+  --source /tmp/common-word-corrections.json --expect 1011136 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -200,7 +208,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1010136 \
+  --source /tmp/transposition-corrections.json --expect 1011136 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -214,7 +222,7 @@ Maintenance references:
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
 - [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 33 manually reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 1,033 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -225,7 +233,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1010136 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1011136 \
   --report data/audit.json
 ```
 

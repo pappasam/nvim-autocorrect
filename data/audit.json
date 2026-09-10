@@ -4,8 +4,8 @@
   "documented_frequency_exceptions": 1589,
   "documented_multi_edit_corrections": 3689,
   "documented_short_corrections": 1,
-  "documented_transposition_corrections": 133,
-  "entries": 1010136,
+  "documented_transposition_corrections": 144,
+  "entries": 1011136,
   "failure_counts": {},
   "failure_examples": {},
   "five_letter_preference": {
@@ -35,23 +35,23 @@
     "minimum_input_length": 6,
     "single_word_alternatives": "block"
   },
-  "mapping_sha256": "dd53086f51ff03254e4d0c9587029263cf45b41ced4d2cd6e854a159a62d8013",
+  "mapping_sha256": "a4e565be6dd0c9be3d123142a813de29e21a31e18d9958dee97be665efd67bfb",
   "packages": {
     "cmudict": "1.1.1",
     "codespell": "2.4.1",
     "wordfreq": "3.1.1"
   },
   "passed": true,
-  "preferred_frequency_corrections": 82611,
-  "preferred_transposition_corrections": 12248,
+  "preferred_frequency_corrections": 82933,
+  "preferred_transposition_corrections": 12259,
   "protected_dictionary_tokens": 626435,
   "protected_frequency_tokens": 321180,
   "rare_alternative_transposition_corrections": 3864,
   "rejected_typos": [],
   "reviewed_corpus_exceptions": 7,
-  "reviewed_corrections": 33,
-  "reviewed_records": 33,
-  "reviewed_sha256": "986cf7493ace50b64c659f692e7228742e80de730715c5a11d589d669c230354",
+  "reviewed_corrections": 1033,
+  "reviewed_records": 1033,
+  "reviewed_sha256": "f2670a7e89515c19fc0e631c3e456d1c43e68de3e1d7ea7d0c8b2de257ae5a68",
   "scowl_lists_sha256": "64834a47766ddcafff4e28918e4eaa72095a1016aa041aceb1cd4befcce251cf",
   "short_word_destinations": 367,
   "short_word_preference": {
@@ -68,7 +68,7 @@
       5
     ]
   },
-  "single_edit_corrections": 1006436,
+  "single_edit_corrections": 1007436,
   "supplemental_protected_sha256": "57431aaa92d7e2e2728f0b3b6c222d51cbee168b16606419e9a3eff44946327c",
   "supplemental_protected_tokens": 2,
   "technical_destinations": [
