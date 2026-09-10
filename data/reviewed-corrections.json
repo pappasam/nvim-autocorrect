@@ -1,4 +1,14 @@
 {
+  "accommedate": {
+    "correction": "accommodate",
+    "reason": "Observed spelling error listed under accommodate in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "accommodiation": {
+    "correction": "accommodation",
+    "reason": "Observed spelling error listed under accommodation in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "avilible": {
     "correction": "available",
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
@@ -24,9 +34,29 @@
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "embaress": {
+    "correction": "embarrass",
+    "reason": "Observed spelling error listed under embarrass in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "expereance": {
     "correction": "experience",
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "governemt": {
+    "correction": "government",
+    "reason": "Observed spelling error listed under government in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "immediatily": {
+    "correction": "immediately",
+    "reason": "Observed spelling error listed under immediately in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "independenent": {
+    "correction": "independent",
+    "reason": "Observed spelling error listed under independent in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "informasion": {
@@ -39,9 +69,29 @@
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "langwage": {
+    "correction": "language",
+    "reason": "Observed spelling error listed under language in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "necassary": {
     "correction": "necessary",
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "occoasionally": {
+    "correction": "occasionally",
+    "reason": "Observed spelling error listed under occasionally in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "opertunity": {
+    "correction": "opportunity",
+    "reason": "Observed spelling error listed under opportunity in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "oppotunity": {
+    "correction": "opportunity",
+    "reason": "Observed spelling error listed under opportunity in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "peolpe": {
@@ -69,9 +119,29 @@
     "reason": "Observed vowel substitution listed under probably in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "reccomnend": {
+    "correction": "recommend",
+    "reason": "Observed spelling error listed under recommend in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "receave": {
     "correction": "receive",
     "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "responsibality": {
+    "correction": "responsibility",
+    "reason": "Observed spelling error listed under responsibility in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "restaurent": {
+    "correction": "restaurant",
+    "reason": "Observed spelling error listed under restaurant in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "restruant": {
+    "correction": "restaurant",
+    "reason": "Observed spelling error listed under restaurant in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "rimember": {
