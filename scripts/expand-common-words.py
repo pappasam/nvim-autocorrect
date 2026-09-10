@@ -110,12 +110,19 @@ def main():
         if typo not in reviewed and not frequency_five_letter_correction(typo, correction, candidates, frequencies):
             rejected["frequency_or_ambiguity"] += 1
             continue
-        # Preserve the audit's candidate-selection order, including short words.
-        short = {word for word in candidates if frequency_short_correction(typo, word, candidates, frequencies)}
-        winner = next(iter(short)) if short else (
-            preferred_transposition(typo, candidates, frequencies, documented.get(typo))
-            or preferred_frequency(candidates, frequencies)
-        )
+        # The audit needs no preference when there is no competing word. This
+        # includes documented multi-edit errors with no single-edit candidates.
+        if not candidates - {correction} and (
+            correction in candidates or documented.get(typo) == correction
+        ):
+            winner = correction
+        else:
+            # Preserve the audit's candidate-selection order, including short words.
+            short = {word for word in candidates if frequency_short_correction(typo, word, candidates, frequencies)}
+            winner = next(iter(short)) if short else (
+                preferred_transposition(typo, candidates, frequencies, documented.get(typo))
+                or preferred_frequency(candidates, frequencies)
+            )
         if winner != correction:
             rejected["frequency_or_ambiguity"] += 1
             continue

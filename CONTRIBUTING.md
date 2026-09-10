@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,011,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
+The catalog contains 1,012,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -168,6 +168,14 @@ The pairs come from the same pinned Norvig snapshot described under [reviewed sp
 
 Eligible destinations occur at least 10 times per million words. Selection orders them by decreasing destination frequency, then decreasing source observation count, then alphabetical destination and typo, admits at most five variants per destination, and stops at 1,000 pairs. The least frequent selected destination occurs about 12.88 times per million words. These are batch selection criteria, not changes to the general policy or estimates of typo prevalence. All exact pairs and evidence are recorded in `data/reviewed-corrections.json`; the existing common-word expansion script reproduces the catalog from that reviewed evidence.
 
+### Second thousand reviewed variants
+
+The next batch adds 1,000 documented variants across 340 existing destinations: 203 with one edit and 797 with two. Examples include `proberbly` → `probably`, `imediatley` → `immediately`, `exsperence` → `experience`, and `sucsessfull` → `successful`. The catalog now contains 1,012,136 mappings, preserving all prior mappings and destination words.
+
+Selection uses the same pinned Norvig snapshot, source-conflict checks, dictionary protection, normalized corpus exclusions, and review of potentially intentional spellings as the preceding batch. Destinations occur at least 10 times per million words. Two-edit pairs additionally require at least seven letters in both words and matching first and last letters. Candidates are ordered by edit count, decreasing destination frequency, decreasing source observation count, then alphabetical destination and typo. Selection admits at most six variants per destination in this batch and stops at 1,000. All additions pass the existing audit without new corpus-token exceptions.
+
+The expansion script now matches the audit when a reviewed correction has no competing word. Previously it required a frequency or swap winner even when there were no single-edit candidates, so it skipped documented multi-edit errors such as `proberbly` → `probably`. It also skipped rare sole candidates that need no ambiguity preference. Regression checks cover both cases, protected inputs, competing words, and missing evidence, then independently audit the generated proposals. This fixes maintenance generation without changing the linguistic policy or runtime code.
+
 ### Short-word expansion
 
 This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
@@ -178,7 +186,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1011136 \
+  --source /tmp/short-word-corrections.json --expect 1012136 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -192,7 +200,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1011136 \
+  --source /tmp/common-word-corrections.json --expect 1012136 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -208,7 +216,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1011136 \
+  --source /tmp/transposition-corrections.json --expect 1012136 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -222,7 +230,7 @@ Maintenance references:
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
 - [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 1,033 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 2,033 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -233,7 +241,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1011136 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1012136 \
   --report data/audit.json
 ```
 

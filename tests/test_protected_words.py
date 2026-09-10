@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from dictionary_source import load_documented_corrections, load_protected_words, load_reviewed_corrections
+from dictionary_source import load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source
 
 evidence = {"reason": "Documented intentional spelling.", "source": "https://example.org/term"}
 
@@ -237,7 +237,39 @@ with tempfile.TemporaryDirectory() as directory:
             assert audit["main"]() == 1
         assert json.loads(output.getvalue())["failure_counts"]["undocumented_corpus_token"]
 
+        # Expansion must agree with the independent audit for reviewed spellings,
+        # including multiple edits and rare sole candidates, without bypassing
+        # protection or accepting a nearer competing word.
+        expand = runpy.run_path(str(ROOT / "scripts/expand-common-words.py"))
+        proposal = root / "proposal.json"
+        expansion_cases = [
+            ("proberbly", "probably", {}, True, True),
+            ("requxres", "requires", {}, True, True),
+            ("proberbly", "probably", {"proberbly": evidence}, True, False),
+            ("proberbly", "probably", {"proberblz": evidence}, True, False),
+            ("proberbly", "probably", {}, False, False),
+        ]
+        for typo, correction, protected, documented, accepted in expansion_cases:
+            source.write_text("{}")
+            path.write_text(json.dumps(protected))
+            reviewed_path.write_text(json.dumps({
+                typo: {**evidence, "correction": correction},
+            } if documented else {}))
+            common_args = ["--scowl", str(root), "--protected-words", str(path),
+                           "--reviewed-corrections", str(reviewed_path)]
+            argv = ["expand-common-words.py", *common_args, "--source", str(source),
+                    "--output", str(proposal)]
+            with patch.object(sys, "argv", argv), contextlib.redirect_stdout(io.StringIO()):
+                expand["main"]()
+            entries = load_source(proposal)
+            assert entries.get(typo) == (correction if accepted else None), (typo, protected, entries)
+            argv = ["audit-dictionary.py", *common_args, "--source", str(proposal)]
+            output = io.StringIO()
+            with patch.object(sys, "argv", argv), contextlib.redirect_stdout(output):
+                result = audit["main"]()
+            assert result == 0, output.getvalue()
+
 print(
     "PASS: protected-word schema, missing-file rejection, "
-    f"and {len(cases)} audit integration cases"
+    f"{len(cases)} audit integration cases, and {len(expansion_cases)} expansion cases"
 )
