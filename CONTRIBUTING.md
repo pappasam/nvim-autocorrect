@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,013,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
+The catalog contains 1,031,408 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -184,6 +184,16 @@ Selection considers existing destinations occurring at least once per million wo
 
 All 1,000 pairs and their individual source URLs are recorded in `data/reviewed-corrections.json`, which now contains 3,033 records. The codespell dictionary used for this review has SHA-256 `529ce45b16c55dfdb309145a740d3cf63f32cb5029125059948a0d28bca5ee70`. The existing expansion script imports the reviewed pairs without further policy or runtime changes.
 
+### Filling useful gaps without a count target
+
+This batch adds 18,272 mappings across 375 existing destinations, bringing the catalog to 1,031,408 mappings. It combines 17,777 generated keyboard variants with 511 documented spellings, with 16 pairs appearing in both groups. Every prior mapping and destination word is preserved. There are 17,818 new single-edit mappings and 454 documented multi-edit mappings. The runtime code and linguistic policy are unchanged.
+
+For existing single-word destinations occurring at least once per million words, maintenance enumerated every missing variant from `keyboard_typos`, then applied the existing length and ambiguity checks, reference-dictionary protection, and an additional exclusion of normalized wordfreq tokens. Of the initially missing candidate pairs, 210,861 failed ambiguity checks, 47,959 failed length checks, 36,865 were protected words or names, and 11,174 were normalized corpus tokens. Review excluded one further candidate, `alcoholicas`, because it represents normalized Spanish `alcohólicas`, as used in [WHO's Spanish text](https://www.who.int/es/news-room/fact-sheets/detail/alcohol). Generated variants represent plausible keystroke errors, not measured typo prevalence.
+
+The 511 documented additions comprise 129 codespell pairs and 382 Norvig pairs, using the previously pinned sources and the same protection, corpus, cross-source conflict, and frequency screening. Two-edit pairs still require at least seven letters and matching first and last letters. For this batch, a two-edit Norvig spelling additionally needs at least two observations in the source or a path consisting of two edits from `keyboard_typos`; more speculative spellings remain excluded. Manual review also holds out plausible intentional words and ambiguous spellings. The evidence file now contains 3,544 records.
+
+There is no count cutoff or per-destination quota in this batch. The stopping point reflects the useful gaps found under these criteria: ordinary keyboard errors for already-supported vocabulary and independently documented spelling errors. Broader arbitrary substitutions, longer edit sequences, new destination words, and weaker ambiguity preferences were not needed.
+
 ### Short-word expansion
 
 This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
@@ -194,7 +204,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1013136 \
+  --source /tmp/short-word-corrections.json --expect 1031408 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -208,7 +218,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1013136 \
+  --source /tmp/common-word-corrections.json --expect 1031408 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -224,7 +234,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1013136 \
+  --source /tmp/transposition-corrections.json --expect 1031408 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -237,8 +247,8 @@ Maintenance references:
 - [SCOWL 2020.12.07](https://wordlist.aspell.net/), Kevin Atkinson and contributors: all distributed lists for exclusions; word lists through size 80 for destinations. Its `Copyright` file contains licensing and contributor credits.
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
-- [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections, including 409 additional pairs recorded in the reviewed evidence file.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 2,624 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections, including 538 additional pairs recorded in the reviewed evidence file.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 3,006 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -249,7 +259,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1013136 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1031408 \
   --report data/audit.json
 ```
 
