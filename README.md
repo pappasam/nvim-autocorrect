@@ -2,7 +2,7 @@
 
 **Warning: I plan to force push with history corrections until this stabilizes to prevent the repo's history from getting to large as I experiment with code design**
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,012,136 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,013,136 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 

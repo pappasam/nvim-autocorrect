@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,012,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
+The catalog contains 1,013,136 lowercase typo mappings across 12,104 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -176,6 +176,14 @@ Selection uses the same pinned Norvig snapshot, source-conflict checks, dictiona
 
 The expansion script now matches the audit when a reviewed correction has no competing word. Previously it required a frequency or swap winner even when there were no single-edit candidates, so it skipped documented multi-edit errors such as `proberbly` → `probably`. It also skipped rare sole candidates that need no ambiguity preference. Regression checks cover both cases, protected inputs, competing words, and missing evidence, then independently audit the generated proposals. This fixes maintenance generation without changing the linguistic policy or runtime code.
 
+### Third thousand reviewed variants
+
+This batch adds 1,000 variants across 366 existing destinations, bringing the catalog to 1,013,136 mappings. It combines 409 corrections from codespell 2.4.1 with 591 from the pinned Norvig snapshot. There are 658 single-edit pairs and 342 two-edit pairs, including `authenatication` → `authentication`, `reopository` → `repository`, `depandencies` → `dependencies`, and `sycronization` → `synchronization`. All previous mappings and destination words are preserved.
+
+Selection considers existing destinations occurring at least once per million words, including less common vocabulary and computing terms. It prioritizes codespell, then edit count, decreasing destination frequency, decreasing Norvig observation count where available, and alphabetical destination and typo. This batch admits at most six variants per destination and stops at 1,000. Two-edit pairs retain the minimum length of seven letters and matching first and last letters. Dictionary protection, normalized corpus exclusions, manual review, and the existing ambiguity rules still apply. Conflicting source corrections are excluded; for example, Norvig associates `consciencious` with several words, so codespell's proposed correction is held out. No new corpus-token exceptions are needed. The lower destination frequency floor does not change the frequency threshold for resolving ambiguity: rare destinations still need to qualify without that preference.
+
+All 1,000 pairs and their individual source URLs are recorded in `data/reviewed-corrections.json`, which now contains 3,033 records. The codespell dictionary used for this review has SHA-256 `529ce45b16c55dfdb309145a740d3cf63f32cb5029125059948a0d28bca5ee70`. The existing expansion script imports the reviewed pairs without further policy or runtime changes.
+
 ### Short-word expansion
 
 This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
@@ -186,7 +194,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1012136 \
+  --source /tmp/short-word-corrections.json --expect 1013136 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -200,7 +208,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1012136 \
+  --source /tmp/common-word-corrections.json --expect 1013136 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -216,7 +224,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1012136 \
+  --source /tmp/transposition-corrections.json --expect 1013136 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -229,8 +237,8 @@ Maintenance references:
 - [SCOWL 2020.12.07](https://wordlist.aspell.net/), Kevin Atkinson and contributors: all distributed lists for exclusions; word lists through size 80 for destinations. Its `Copyright` file contains licensing and contributor credits.
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
-- [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 2,033 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections, including 409 additional pairs recorded in the reviewed evidence file.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 2,624 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -241,7 +249,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1012136 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1013136 \
   --report data/audit.json
 ```
 
