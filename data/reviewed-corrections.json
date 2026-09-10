@@ -1,4 +1,49 @@
 {
+  "avilible": {
+    "correction": "available",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "begause": {
+    "correction": "because",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "beginig": {
+    "correction": "beginning",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "deffinately": {
+    "correction": "definitely",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "definetley": {
+    "correction": "definitely",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "expereance": {
+    "correction": "experience",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "informasion": {
+    "correction": "information",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "invironment": {
+    "correction": "environment",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "necassary": {
+    "correction": "necessary",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "peolpe": {
     "correction": "people",
     "reason": "Observed adjacent swap listed under people in Norvig's collected spelling errors; corpus presence alone does not establish intentional usage.",
@@ -9,9 +54,24 @@
     "reason": "Observed adjacent swap listed under people in Norvig's collected spelling errors; corpus presence alone does not establish intentional usage.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "probabally": {
+    "correction": "probably",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "probally": {
+    "correction": "probably",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "probebly": {
     "correction": "probably",
     "reason": "Observed vowel substitution listed under probably in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "receave": {
+    "correction": "receive",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "rimember": {
@@ -22,6 +82,16 @@
   "thousend": {
     "correction": "thousand",
     "reason": "Observed vowel substitution listed under thousand in Norvig's collected spelling errors, outside neighboring-QWERTY generation.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "thousnand": {
+    "correction": "thousand",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "tomorow": {
+    "correction": "tomorrow",
+    "reason": "Observed spelling error listed under the destination in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   }
 }

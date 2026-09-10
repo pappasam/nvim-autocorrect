@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,010,108 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,010,122 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
