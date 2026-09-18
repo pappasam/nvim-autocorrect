@@ -29,6 +29,7 @@ from dictionary_source import (
     load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source,
 )
 from dictionary_policy import (
+    capitalized_corrections,
     MIN_CORRECTION_FREQUENCY,
     MIN_FREQUENCY_RATIO,
     MIN_SHORT_CORRECTION_FREQUENCY,
@@ -218,8 +219,19 @@ def main() -> int:
     supplemental_canonical = json.dumps(
         supplemental, sort_keys=True, separators=(",", ":")
     ).encode()
+    capitalized = capitalized_corrections(entries, documented)
     report = {
         "passed": not failures,
+        "capitalized_policy": {
+            "minimum_input_length": 6,
+            "destination_words": 1,
+            "documentation_required": True,
+            "input_case": "initial capital only",
+        },
+        "capitalized_corrections": len(capitalized),
+        "capitalized_sha256": hashlib.sha256(
+            json.dumps(capitalized, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
         "entries": len(entries),
         "destinations": len(set(entries.values())),
         "single_edit_corrections": single_edits,

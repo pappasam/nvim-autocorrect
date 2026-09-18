@@ -16,6 +16,14 @@ QWERTY_NEIGHBORS = dict(zip(
 ))
 
 
+def capitalized_corrections(entries: dict[str, str], documented: dict[str, str]) -> dict[str, str]:
+    """Narrow accepted lowercase mappings to documented initial-capital candidates."""
+    return {
+        typo: correction for typo, correction in entries.items()
+        if len(typo) >= 6 and " " not in correction and documented.get(typo) == correction
+    }
+
+
 def joined_word_splits(typo: str, known_words: set[str]) -> set[str]:
     """Include every two-token split, including names and normalized forms."""
     return {

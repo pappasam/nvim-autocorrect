@@ -76,6 +76,19 @@ assert (
 ), "Protected-word audit snapshot is stale"
 assert not entries.keys() & protected.keys(), "Supplemental protected word is corrected"
 reviewed = load_reviewed_corrections(ROOT / "data/reviewed-corrections.json")
+capitalized = load_source(ROOT / "data/capitalized-corrections.json")
+assert audit["capitalized_policy"] == {
+    "minimum_input_length": 6,
+    "destination_words": 1,
+    "documentation_required": True,
+    "input_case": "initial capital only",
+}
+assert len(capitalized) == audit["capitalized_corrections"]
+assert hashlib.sha256(
+    json.dumps(capitalized, sort_keys=True, separators=(",", ":")).encode()
+).hexdigest() == audit["capitalized_sha256"], "Capitalization audit snapshot is stale"
+for typo, correction in capitalized.items():
+    assert len(typo) >= 6 and " " not in correction and entries.get(typo) == correction
 assert audit["reviewed_records"] == len(reviewed)
 assert hashlib.sha256(
     json.dumps(reviewed, sort_keys=True, separators=(",", ":")).encode()

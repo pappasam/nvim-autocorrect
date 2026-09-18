@@ -141,6 +141,30 @@ vim.system = system
 feed("onewtypo <Esc>")
 assert(vim.api.nvim_get_current_line() == "newtypo ")
 assert(#vim.api.nvim_buf_get_keymap(0, "ia") == 0)
+
+-- Invalid eligibility cannot publish a new cache or silently broaden corrections.
+vim.fn.writefile(
+  { '{"probably":["probebly"],"with":["wiht"],"each other":["eachother"]}' },
+  source
+)
+local eligibility = config .. "/data/capitalized-corrections.json"
+previous_bytes = vim.fn.readfile(output, "b")
+for _, invalid in ipairs({
+  '{"probably":["missingg"]}',
+  '{"possibly":["probebly"]}',
+  '{"with":["wiht"]}',
+  '{"each other":["eachother"]}',
+  '{"Probably":["Probebly"]}',
+}) do
+  vim.fn.writefile({ invalid }, eligibility)
+  result = vim.system(command, { text = true }):wait()
+  assert(result.code ~= 0, "Accepted invalid eligibility: " .. invalid)
+  assert(vim.deep_equal(previous_bytes, vim.fn.readfile(output, "b")))
+end
+vim.fn.delete(eligibility)
+result = vim.system(command, { text = true }):wait()
+assert(result.code ~= 0, "Accepted missing capitalization evidence")
+assert(vim.deep_equal(previous_bytes, vim.fn.readfile(output, "b")))
 dofile("tests/helpers.lua").cleanup(config)
 print(
   "PASS: background rebuilds, queued saves, snapshots, Stow links, stale/invalid data"

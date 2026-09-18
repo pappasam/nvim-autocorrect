@@ -112,6 +112,50 @@ assert(cache.current(root) == nil)
 plugin.setup()
 wait_for_build(5)
 type_word("could ")
+
+-- Eligibility is a cache input, and saving it reloads existing opted-in editors.
+vim.fn.writefile({ '{"could":["woudl"],"probably":["probebly"]}' }, source)
+plugin.setup({ correct_capitalized = true })
+wait_for_build(6)
+local function type_capitalized(expected)
+  vim.cmd.enew({ bang = true })
+  vim.bo.filetype = "markdown"
+  vim.api.nvim_feedkeys(vim.keycode("iProbebly probebly <Esc>"), "xt", false)
+  assert(vim.api.nvim_get_current_line() == expected)
+end
+type_capitalized("Probebly probably ")
+local snapshot = require("autocorrect.dictionary").open(output)
+local eligibility = root .. "/data/capitalized-corrections.json"
+vim.cmd.edit({ args = { eligibility }, bang = true })
+vim.api.nvim_set_current_line('{"probably":["probebly"]}')
+vim.cmd.write()
+assert(cache.current(root) == nil)
+wait_for_build(7)
+type_capitalized("Probably probably ")
+assert(
+  snapshot.lookup("Probebly", true) == nil,
+  "Existing eligibility snapshot changed"
+)
+snapshot.close()
+
+-- The previous on-disk format is rebuilt automatically.
+local fd = assert(vim.uv.fs_open(output, "r", 438))
+bytes = assert(vim.uv.fs_read(fd, assert(vim.uv.fs_fstat(fd)).size, 0))
+assert(vim.uv.fs_close(fd))
+local size = assert(tonumber(bytes:sub(1, 8), 16))
+local header = vim.mpack.decode(bytes:sub(9, 8 + size))
+header[1] = 3
+local old_header = vim.mpack.encode(header)
+assert(#old_header == size)
+fd = assert(vim.uv.fs_open(output, "w", 420))
+assert(
+  vim.uv.fs_write(fd, bytes:sub(1, 8) .. old_header .. bytes:sub(9 + size), 0)
+)
+assert(vim.uv.fs_close(fd))
+assert(cache.current(root) == nil)
+plugin.setup({ correct_capitalized = true })
+wait_for_build(8)
+type_capitalized("Probably probably ")
 vim.system = system
 
 -- Failed process creation is reported and can be retried explicitly.

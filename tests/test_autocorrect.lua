@@ -257,18 +257,94 @@ feed("owoudl <Esc>")
 assert(vim.api.nvim_get_current_line() == "would ")
 
 -- Every source mapping must round-trip; capitalized/all-caps inputs are protected.
+local capitalized =
+  require("autocorrect.source").load("data/capitalized-corrections.json")
 local count_mappings = 0
 for typo, correction in
   pairs(require("autocorrect.source").load("data/corrections.json"))
 do
   assert(dictionary.lookup(typo) == correction, typo)
   assert(dictionary.lookup(typo:upper()) == nil, typo)
+  assert(dictionary.lookup(typo:upper(), true) == nil, typo)
   local title = typo:sub(1, 1):upper() .. typo:sub(2)
   assert(dictionary.lookup(title) == nil, title)
+  local expected_title = capitalized[typo]
+      and correction:sub(1, 1):upper() .. correction:sub(2)
+    or nil
+  assert(dictionary.lookup(title, true) == expected_title, title)
   count_mappings = count_mappings + 1
 end
 assert(dictionary.count == count_mappings)
 dictionary.close()
+
+-- Compare opt-in capitalization with native abbreviations, including editing controls.
+reference.Definately = "Definitely"
+reference.Recieve = "Receive"
+reference.Probebly = "Probably"
+reference.Peolpe = "People"
+local title_cases = {
+  { "iDefinately Recieve Probebly Peolpe.<Esc>" },
+  { "iDefinately<CR>Recieve<Tab>Probebly!Peolpe,<Esc>" },
+  { "iDefinately<C-]>!<Esc>" },
+  { "iDefinately<C-V> <Esc>" },
+  { "iDefinately<C-c>" },
+  { "iDefinately Recieve <Esc>u<C-r>" },
+  { "iDefinately <Esc>0." },
+  { "qciDefinately <Esc>qo<Esc>@c" },
+  { "RDefinately <Esc>", "xxxxxxxxxx" },
+  { "iDefinately <Esc>", "suffix" },
+  {
+    "iDEFINATELY DeFinately foo_Definately 1Definately éDefinately Definatelyé <Esc>",
+  },
+  { "iEachother Wiht Hte Teh Thier Buidl NASA SaaS OpenAI Abilityy <Esc>" },
+  { "ifoo-Definately Definately <Esc>", "", 0, "@,48-57,_,-" },
+}
+vim.api.nvim_clear_autocmds({ group = "NvimAutocorrect" })
+local title_expected = {}
+for i, case in ipairs(title_cases) do
+  title_expected[i] = run(case, true)
+end
+plugin.setup({ correct_capitalized = true })
+for i, case in ipairs(title_cases) do
+  assert(vim.deep_equal(run(case, false), title_expected[i]), case[1])
+  assert(
+    #vim.api.nvim_buf_get_keymap(0, "ia") == 0,
+    "Capitalized mappings leaked"
+  )
+end
+assert(run({ "iDefinately Recieve <Esc>" }, false)[1] == "Definitely Receive ")
+assert(run({ "iDefinately<Esc>", "suffix" }, false)[1] == "Definatelysuffix")
+assert(
+  run({ "ADefinately <Esc>", long_prefix }, false)[1]
+    == long_prefix .. "Definately "
+)
+assert(
+  run({ "iDefinately<C-]><Esc>", "suffix" }, false)[1] == "Definatelysuffix"
+)
+for _, invalid in ipairs({ "true", 1, {} }) do
+  assert(not pcall(plugin.setup, { correct_capitalized = invalid }))
+end
+assert(run({ "iDefinately <Esc>" }, false)[1] == "Definitely ")
+vim.cmd.enew({ bang = true })
+vim.bo.filetype = "markdown"
+vim.keymap.set("ia", "Definately", "custom", { buffer = 0 })
+feed("iDefinately <Esc>")
+assert(vim.api.nvim_get_current_line() == "custom ")
+assert(vim.fn.maparg("Definately", "i", true) == "custom")
+plugin.setup({ correct_capitalized = false })
+assert(
+  run({ "iDefinately definately <Esc>" }, false)[1] == "Definately definitely "
+)
+plugin.setup({ correct_capitalized = true })
+plugin.setup()
+assert(
+  run({ "iDefinately definately <Esc>" }, false)[1] == "Definately definitely "
+)
+print(
+  ("PASS: %d initial-capital native behavior comparisons and opt-in lifecycle"):format(
+    #title_cases
+  )
+)
 print(
   ("PASS: %d lowercase mappings plus capitalization guards"):format(
     count_mappings

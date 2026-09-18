@@ -16,6 +16,7 @@ function M.fixture()
   }) do
     assert(vim.uv.fs_copyfile(root .. "/" .. file, path .. "/" .. file))
   end
+  vim.fn.writefile({ "{}" }, path .. "/data/capitalized-corrections.json")
   return path
 end
 

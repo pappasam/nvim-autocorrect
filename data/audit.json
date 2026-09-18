@@ -1,5 +1,13 @@
 {
   "alternative_dictionary_tokens": 626455,
+  "capitalized_corrections": 29429,
+  "capitalized_policy": {
+    "destination_words": 1,
+    "documentation_required": true,
+    "input_case": "initial capital only",
+    "minimum_input_length": 6
+  },
+  "capitalized_sha256": "63f0219d3b8868d901fdca07bb5a52d0221eaeac02113123a60bff03d5009107",
   "destinations": 12104,
   "documented_frequency_exceptions": 1589,
   "documented_multi_edit_corrections": 5282,

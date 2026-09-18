@@ -9,6 +9,16 @@ local source = dofile(config .. "/lua/autocorrect/source.lua")
 local cache = dofile(config .. "/lua/autocorrect/cache.lua")
 local fingerprint = cache.fingerprint(config)
 local corrections = source.load(config .. "/data/corrections.json")
+local capitalized = source.load(config .. "/data/capitalized-corrections.json")
+for typo, correction in pairs(capitalized) do
+  assert(
+    #typo >= 6
+      and correction:match("^[a-z]+$")
+      and corrections[typo] == correction,
+    "Capitalized corrections must be accepted single-word mappings with at least six input letters: "
+      .. typo
+  )
+end
 local buckets = {}
 for index = 1, 256 do
   buckets[index] = {}
@@ -25,18 +35,22 @@ local offset = 0
 for index, typos in ipairs(buckets) do
   table.sort(typos)
   local entries = {}
+  local eligible = {}
   for _, typo in ipairs(typos) do
     table.insert(entries, typo)
     table.insert(entries, corrections[typo])
+    if capitalized[typo] then
+      table.insert(eligible, typo)
+    end
   end
-  local chunk = vim.mpack.encode(entries)
+  local chunk = vim.mpack.encode({ entries, eligible })
   locations[index] = { offset, #chunk }
   chunks[index] = chunk
   offset = offset + #chunk
 end
 -- Arrays keep the output deterministic across Lua hash iteration orders.
 local header =
-  vim.mpack.encode({ 3, count, max_length, locations, fingerprint })
+  vim.mpack.encode({ 4, count, max_length, locations, fingerprint })
 local bytes = ("%08x"):format(#header) .. header .. table.concat(chunks)
 local output = cache.path(config)
 output = vim.uv.fs_realpath(output) or output

@@ -14,6 +14,7 @@ function M.fingerprint(root)
   local inputs = {}
   for _, name in ipairs({
     "data/corrections.json",
+    "data/capitalized-corrections.json",
     "scripts/build-dictionary.lua",
     "lua/autocorrect/source.lua",
     "lua/autocorrect/dictionary.lua",

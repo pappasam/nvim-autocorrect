@@ -7,7 +7,7 @@ Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappi
 ## Differentiating Features
 
 - Corrects whole lowercase words when you type a separator or leave Insert mode.
-- Preserves capitalized words, acronyms, identifiers, and longer words containing a typo.
+- Preserves capitalized words by default, with optional initial-capital correction for documented typos. Acronyms, mixed-case words, identifiers, and longer words containing a typo remain protected.
 - Uses native abbreviation behavior for punctuation, undo/redo, macros, and Ctrl-V bypass.
 - Loads dictionary partitions on demand and shares them across buffers.
 - Installs at most two internal abbreviations during insertion, regardless of dictionary size.
@@ -26,6 +26,16 @@ require("autocorrect").setup({
 ```
 
 The list replaces the defaults. An empty list disables automatic correction. Calling `setup()` again safely replaces the previous configuration.
+
+To also correct documented initial-capital typos such as `Definately` → `Definitely` and `Recieve` → `Receive`:
+
+```lua
+require("autocorrect").setup({
+  correct_capitalized = true, -- Default: false
+})
+```
+
+This enables 29,429 existing mappings with documented spelling evidence, at least six input letters, and a single-word destination. All-caps, mixed-case words, short inputs, and joined phrases remain excluded from capitalization support. Known names stay protected, but unfamiliar names and brands can still collide with documented typos. Calling `setup()` without the option restores lowercase-only correction.
 
 ## Installation
 
@@ -53,7 +63,7 @@ This plugin provides no default key mappings. Neovim's abbreviation controls app
 - Press Ctrl-] to expand without inserting a separator.
 - Press Ctrl-V before a separator to bypass expansion for that separator.
 
-For example, `definately` becomes `definitely `, while `Definately` and `foo_definately` remain unchanged.
+By default, `definately` becomes `definitely `, while `Definately` and `foo_definately` remain unchanged. With `correct_capitalized = true`, `Definately` becomes `Definitely ` too.
 
 ## Dictionary Maintenance
 
@@ -92,7 +102,7 @@ The [Wiktionary entry for `wiht`](https://en.wiktionary.org/wiki/wiht) describes
 
 ### Why does it correct `hte` but not `teh` or capitalized words?
 
-`hte` → `the` is an explicit reviewed preference. Other short ambiguous typos and tokens found in spelling/name dictionaries remain excluded. Only whole lowercase tokens are eligible; names and acronyms retain their capitalization.
+`hte` → `the` is an explicit reviewed preference. Other short ambiguous typos and tokens found in spelling/name dictionaries remain excluded. Only whole lowercase tokens are eligible by default. Opt in with `correct_capitalized = true` for the documented initial-capital subset; `Hte`, `Teh`, and acronyms remain unchanged.
 
 This screening cannot enumerate every lowercase name, brand, or specialized term. Automatic correction remains context-free; see the contributor guide for the selection rules and limitations.
 

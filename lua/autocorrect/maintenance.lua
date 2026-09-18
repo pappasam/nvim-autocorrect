@@ -51,13 +51,19 @@ function M.setup(root, group, reload)
   context = { root = root, reload = reload }
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = group,
-    pattern = "*/corrections.json",
+    pattern = { "*/corrections.json", "*/capitalized-corrections.json" },
     callback = function(event)
-      if
-        vim.uv.fs_realpath(event.file)
-        == vim.uv.fs_realpath(root .. "/data/corrections.json")
-      then
-        rebuild()
+      for _, name in ipairs({
+        "corrections.json",
+        "capitalized-corrections.json",
+      }) do
+        if
+          vim.uv.fs_realpath(event.file)
+          == vim.uv.fs_realpath(root .. "/data/" .. name)
+        then
+          rebuild()
+          return
+        end
       end
     end,
   })

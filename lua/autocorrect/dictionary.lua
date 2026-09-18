@@ -23,7 +23,7 @@ function M.open(path)
     local size = assert(vim.uv.fs_fstat(fd)).size
     assert(header_size <= size - 8, "Truncated abbreviation header")
     header = vim.mpack.decode(read(header_size, 8))
-    assert(header[1] == 3, "Unsupported abbreviation dictionary version")
+    assert(header[1] == 4, "Unsupported abbreviation dictionary version")
     assert(type(header[5]) == "string", "Missing dictionary fingerprint")
     local last = header[4][256]
     assert(
@@ -42,24 +42,40 @@ function M.open(path)
     fingerprint = header[5],
   }
 
-  function dictionary.lookup(word)
-    -- Names and acronyms are open-ended: protect their usual capitalization
-    -- rather than trying to enumerate every possible proper noun or acronym.
+  function dictionary.lookup(word, correct_capitalized)
+    local capitalized = correct_capitalized and word:match("^[A-Z][a-z]+$")
+    if capitalized then
+      word = word:lower()
+    end
+    -- All-caps, mixed case, and identifiers remain protected in either mode.
     if not word:match("^[a-z]+$") then
       return nil
     end
     local bucket = M.bucket(word)
     if not buckets[bucket] then
       local location = header[4][bucket]
-      local entries =
+      local partition =
         vim.mpack.decode(read(location[2], 8 + header_size + location[1]))
+      local entries = partition[1]
       local expanded = {}
       for index = 1, #entries, 2 do
         expanded[entries[index]] = entries[index + 1]
       end
-      buckets[bucket] = expanded
+      local eligible = {}
+      for _, typo in ipairs(partition[2]) do
+        eligible[typo] = true
+      end
+      buckets[bucket] = { expanded, eligible }
     end
-    return buckets[bucket][word]
+    local partition = buckets[bucket]
+    local correction = partition[1][word]
+    if capitalized then
+      if correction and partition[2][word] then
+        return correction:sub(1, 1):upper() .. correction:sub(2)
+      end
+      return nil
+    end
+    return correction
   end
 
   function dictionary.close()

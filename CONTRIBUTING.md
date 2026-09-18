@@ -28,13 +28,13 @@ The build records that fingerprint in the header and checks it again before publ
 
 The first build leaves correction inactive until completion, without changing text already typed. An editor with a loaded dictionary continues using it during a rebuild. Updates made outside Neovim are detected on the next plugin load; use `:AutocorrectBuild` to refresh an existing session. Building needs only Neovim and a writable cache directory, including when the plugin checkout is read-only.
 
-Build validation checks structure and conflicts, not linguistic safety. Refresh the audit below after changing mappings, supplemental protected words, or reviewed correction evidence; `make check` requires all three recorded hashes to match their sources.
+Build validation checks structure and conflicts, not linguistic safety. After changing mappings or evidence, regenerate the initial-capital subset below; removing or changing one of its mappings requires updating both catalogs before building. To empty the catalog, set both catalog files to `{}`. Refresh the audit below after changing mappings, supplemental protected words, or reviewed correction evidence; `make check` requires all four recorded hashes to match their sources.
 
 ## Selection rules
 
 Protect valid input first; for an eligible typo, choose a well-supported correction even when obscure alternatives exist. Corpus ranking is evidence of relative usage, not a guarantee of what the writer intended.
 
-- Only whole lowercase keyword tokens are eligible. Preserve capitalization, acronyms, identifiers, and embedded suffixes.
+- Only whole lowercase keyword tokens are eligible by default. The opt-in initial-capital subset below retains all lowercase selection rules. Preserve acronyms, mixed-case words, identifiers, and embedded suffixes.
 - Exclude every token found in SCOWL, CMUdict, or `data/protected-words.json`, including normalized names, abbreviations, regional spellings, and accented or punctuated forms. No preference or exception can override this protection.
 - Exclude wordfreq tokens unless codespell or `data/reviewed-corrections.json` documents the same unambiguous correction. For three- and four-letter destinations, three- and four-letter inputs additionally require an adjacent swap or repeated letter, except the exact reviewed `hte` preference.
 - Single-word destinations must be SCOWL words or one of the 20 existing computing terms allowlisted in `scripts/audit-dictionary.py`. Two-word destinations must pass the documented joined-word rule below, with both components in SCOWL. Supplemental protection does not authorize a destination.
@@ -49,6 +49,21 @@ For single-word destinations, enumerate all single-edit candidates, including ev
 4. A clearly dominant common candidate under the frequency rule below.
 
 A sole candidate needs no ambiguity preference, but still needs the frequency floor when using the common short-word rule. When no preference resolves competing candidates, leave the typo uncorrected. All input-protection, corpus, edit-pattern, length, and destination checks still apply. Selection happens during maintenance; Neovim uses the explicit generated mappings.
+
+### Opt-in initial-capital corrections
+
+`setup({ correct_capitalized = true })` permits one initial ASCII capital followed by lowercase letters. Eligibility requires an accepted lowercase mapping, at least six input letters, a single-word destination, and the same exact correction documented unambiguously in pinned codespell or `data/reviewed-corrections.json`. This selects 29,429 mappings, including `Definately` → `Definitely`, `Recieve` → `Receive`, and `Probebly` → `Probably`. Short inputs, two-word destinations, all-caps, and mixed-case tokens remain excluded. No sentence-position heuristic is used; unfamiliar names and brands remain a possible source of false corrections.
+
+`data/capitalized-corrections.json` materializes this subset using the same grouped lowercase syntax as the main catalog. Regenerate it after changing the catalog or evidence:
+
+```sh
+uv run scripts/build-capitalized.py
+uv run scripts/build-capitalized.py --check
+```
+
+Then refresh the linguistic audit and build as described below. The audit independently derives eligibility from the accepted mappings and documentary evidence, recording the policy, count, and canonical hash. `make check` verifies the shipped subset against that hash and the main catalog. The generator needs only pinned codespell and Python; installation and editing still need only Neovim.
+
+The Lua builder rejects ineligible lengths, phrases, missing mappings, and mismatched destinations. Dictionary format 4 stores eligibility lists beside the existing lowercase entries in each of the 256 lazy buckets. Lookup preserves the initial capital without duplicating the full dictionary. Both JSON catalogs contribute to the cache fingerprint, and saving either in Neovim rebuilds and reloads the dictionary. Previous cache formats rebuild automatically. Source edits are structural validation only; evidence and linguistic safety are checked during maintenance.
 
 ### Adjacent-swap preference
 

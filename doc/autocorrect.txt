@@ -23,10 +23,11 @@ Git commit buffers. No external dictionaries are needed while editing.
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
 Tested on Neovim v0.13.0-dev-1536+g050fa30632. Vim is not supported.
 
-Corrections apply to whole lowercase keyword tokens, respecting 'iskeyword'.
-Capitalized and mixed-case words, acronyms, and embedded typo suffixes are
-preserved. Correction applies throughout a configured buffer, including code
-blocks. It does not inspect syntax or rewrite existing text on save.
+Corrections apply to whole lowercase keyword tokens by default, respecting
+'iskeyword'. Initial-capital correction is opt-in; mixed-case words, acronyms,
+and embedded typo suffixes remain protected. Correction applies throughout
+a configured buffer, including code blocks. It does not inspect syntax or
+rewrite existing text on save.
 
 The dictionary is partitioned and read on demand. Buffers share its cache.
 During insertion, at most two internal abbreviations are installed. Existing
@@ -59,6 +60,24 @@ Replaces the enabled filetypes. An empty list disables corrections. Calling
 setup() repeatedly replaces the configuration and does not duplicate hooks.
 Calling setup() with no arguments restores defaults.
 
+correct_capitalized~
+Type: Boolean
+Default: false
+
+Opt in to documented initial-capital corrections: >lua
+
+  require("autocorrect").setup({ correct_capitalized = true })
+<
+For example, "Definately" becomes "Definitely" and "Recieve" becomes "Receive".
+The 29,429 eligible mappings must already be accepted lowercase corrections,
+documented by codespell or reviewed evidence, with at least six input letters
+and a single-word destination. Only one initial ASCII capital followed by
+lowercase ASCII letters qualifies. All-caps, mixed-case words, short inputs,
+and joined phrases remain excluded: "DEFINATELY", "DeFinately", "Wiht", and
+"Eachother" stay unchanged. Known names remain protected; unlisted names and
+brands can still collide with documented typos. This option applies throughout
+enabled buffers, without sentence-start detection.
+
 *g:nvim_autocorrect*
 Type: Dictionary
 Default: {}
@@ -78,8 +97,9 @@ call setup() again.
   usable during the build. Errors are reported without replacing good data.
   Concurrent requests are queued so the final source state wins.
 
-  Saving the plugin's data/corrections.json automatically triggers this command's
-  rebuild behavior. Files with the same name elsewhere do not trigger it.
+  Saving the plugin's data/corrections.json or data/capitalized-corrections.json
+  automatically triggers this command's rebuild behavior. Files with the same
+  name elsewhere do not trigger it.
 
 ==============================================================================
                                                        *autocorrect-mappings*
@@ -162,6 +182,10 @@ can also pass corpus screening. Evidence does not override protected input or
 ambiguity checks. The common-word/evidence batch adds 2,026 corrections.
 After changing evidence, refresh the catalog and audit together; make check
 verifies the evidence hash. This file is not read during editing.
+
+data/capitalized-corrections.json is the derived initial-capital subset. It is
+compiled into the same lazy dictionary buckets; it adds no Python dependency
+at installation or while editing. See CONTRIBUTING.md for regeneration.
 
 "hte" to "the" is an exact, reviewed, codespell-confirmed exception to length
 and ambiguity rules. No exception overrides protected input or case and

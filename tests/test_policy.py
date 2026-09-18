@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from dictionary_policy import (
+    capitalized_corrections,
     documented_short_correction,
     frequency_short_correction,
     frequency_five_letter_correction,
@@ -17,6 +18,15 @@ from dictionary_policy import (
     joined_word_splits,
     valid_joined_correction,
 )
+
+# Evidence must match an accepted mapping; length and phrase restrictions still apply.
+assert capitalized_corrections(
+    {"probebly": "probably", "peolpe": "people", "wiht": "with",
+     "eachother": "each other", "undocummented": "undocumented", "recieve": "receive"},
+    {"probebly": "probably", "peolpe": "people", "wiht": "with",
+     "eachother": "each other", "recieve": "relieve", "missingg": "missing"},
+) == {"probebly": "probably", "peolpe": "people"}
+print("PASS: initial-capital evidence, accepted-mapping, length, and phrase restrictions")
 
 # Candidate sets model all single-edit dictionary words, not just destinations.
 cases = [

@@ -1,6 +1,7 @@
 local M = {}
 
 local enabled_filetypes = { gitcommit = true, markdown = true }
+local correct_capitalized = false
 local namespace = vim.api.nvim_create_namespace("NvimAutocorrect")
 local keyword = vim.regex([[^\k$]])
 local preceding_word = vim.regex([[\k\+$]])
@@ -92,7 +93,7 @@ local function on_key(key)
   if #word > dictionary.max_length then
     return
   end
-  local correction = dictionary.lookup(word)
+  local correction = dictionary.lookup(word, correct_capitalized)
   if correction then
     install(word, correction)
   end
@@ -133,6 +134,11 @@ end
 
 function M.setup(opts)
   opts = opts or {}
+  assert(
+    opts.correct_capitalized == nil
+      or type(opts.correct_capitalized) == "boolean",
+    "autocorrect.correct_capitalized must be a boolean"
+  )
   local filetypes = opts.filetypes or { "gitcommit", "markdown" }
   assert(type(filetypes) == "table", "autocorrect.filetypes must be a list")
   local enabled = {}
@@ -145,6 +151,7 @@ function M.setup(opts)
   end
   stop()
   enabled_filetypes = enabled
+  correct_capitalized = opts.correct_capitalized == true
   vim.g.loaded_nvim_autocorrect = true
   local group =
     vim.api.nvim_create_augroup("NvimAutocorrect", { clear = true })
