@@ -35,7 +35,7 @@ local function check(ft, before, keys, expected, syntax)
   assert(#vim.api.nvim_buf_get_keymap(0, "ia") == 0, "Context mappings leaked")
 end
 
-local function markdown_cases(syntax)
+local function markdown_cases(syntax, embedded_comments)
   local function md(before, keys, expected)
     check("markdown", before, keys, expected, syntax)
   end
@@ -61,11 +61,12 @@ local function markdown_cases(syntax)
     "GAdefinately <Esc>",
     { "> ```", "> code", "definitely " }
   )
-  md(
-    { "" },
-    "i```lua<CR>-- definately<CR>```<CR>definately <Esc>",
-    { "```lua", "-- definately", "```", "definitely " }
-  )
+  md({ "" }, "i```lua<CR>-- definately<CR>```<CR>definately <Esc>", {
+    "```lua",
+    embedded_comments and "-- definitely" or "-- definately",
+    "```",
+    "definitely ",
+  })
   md(
     { "~~~~lua", "", "~~~~" },
     "jidefinately <Esc>",
@@ -198,7 +199,7 @@ end
 assert(vim.treesitter.get_parser(0, "markdown"))
 assert(vim.treesitter.get_parser(0, "lua"))
 assert(vim.treesitter.get_parser(0, "c"))
-markdown_cases(false)
+markdown_cases(false, true)
 comment_cases(false)
 check(
   "markdown",

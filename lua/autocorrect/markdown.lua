@@ -25,7 +25,7 @@ local function advance(state, line)
     then
       return { ticks = 0 }, true
     end
-    return state, true
+    return state, true, true
   end
   if
     ticks == 0
@@ -89,14 +89,17 @@ function M.protected(buf, row, prefix)
       states[#states + 1] = state
     end
   end
-  local _, protected = advance(state, prefix)
-  return protected
+  local _, protected, fenced_content = advance(state, prefix)
+  return protected, fenced_content == true
 end
 
 function M.comment_protected(lines)
   local state, protected = { ticks = 0 }, false
   for _, line in ipairs(lines) do
     -- Strip common documentation-comment leaders before looking for fences.
+    while line:match("^%s*>") do
+      line = line:gsub("^%s*>%s?", "")
+    end
     line = line:gsub("^%s*[/#!*%-]+%s?", "")
     state, protected = advance(state, line)
   end

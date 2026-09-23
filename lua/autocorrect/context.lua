@@ -28,21 +28,8 @@ local function code_block(node)
   return false
 end
 
-local function tree_context(buf, row, col, is_markdown)
-  local parser = vim.treesitter.get_parser(buf)
-  if not parser then
-    return nil
-  end
-  -- on_key runs before the separator is inserted; refresh synchronously so
-  -- classification includes the word and any delimiters just typed.
-  parser:parse()
-  local node = vim.treesitter.get_node({ bufnr = buf, pos = { row, col } })
-  if not node then
-    return nil
-  end
-  if is_markdown then
-    return not code_block(node)
-  end
+local function tree_comment(buf, row, col, end_col, parser, first_content_row)
+  local node = parser:named_node_for_range({ row, col, row, end_col })
   local comment = comment_node(node)
   if not comment then
     return false
@@ -50,16 +37,26 @@ local function tree_context(buf, row, col, is_markdown)
   local first_row, first_col = comment:start()
   -- Consecutive line comments are separate nodes. Include them so fenced
   -- examples and multiline code spans in documentation stay protected.
-  while first_row > 0 do
+  while first_row > (first_content_row or 0) do
     local previous =
       vim.api.nvim_buf_get_lines(buf, first_row - 1, first_row, false)[1]
     local column = previous:find("%S")
+    -- Markdown blockquote markers are outside the injected language ranges.
+    while
+      first_content_row
+      and column
+      and previous:sub(column, column) == ">"
+    do
+      column = previous:find("%S", column + 1)
+    end
     if not column then
       break
     end
-    local prior = comment_node(vim.treesitter.get_node({
-      bufnr = buf,
-      pos = { first_row - 1, column - 1 },
+    local prior = comment_node(parser:named_node_for_range({
+      first_row - 1,
+      column - 1,
+      first_row - 1,
+      column,
     }))
     if not prior then
       break
@@ -67,6 +64,74 @@ local function tree_context(buf, row, col, is_markdown)
     first_row, first_col = prior:start()
   end
   return true, first_row, first_col
+end
+
+local function tree_context(buf, row, col, end_col, is_markdown)
+  local parser = vim.treesitter.get_parser(buf)
+  if not parser then
+    return nil
+  end
+  -- on_key runs before the separator is inserted; refresh synchronously so
+  -- classification includes the word and any delimiters just typed.
+  parser:parse()
+  if is_markdown then
+    local node = parser:named_node_for_range({ row, col, row, end_col })
+    return node and not code_block(node)
+  end
+  return tree_comment(buf, row, col, end_col, parser)
+end
+
+local function comment_allowed(
+  buf,
+  row,
+  end_col,
+  allowed,
+  first_row,
+  first_col
+)
+  if not allowed then
+    return false
+  end
+  local lines =
+    vim.api.nvim_buf_get_text(buf, first_row, first_col, row, end_col, {})
+  return not markdown.comment_protected(lines)
+end
+
+local function fenced_comment(buf, row, col, end_col)
+  local parser = vim.treesitter.get_parser(buf)
+  if not parser then
+    return false
+  end
+  -- Parse injections only around the candidate, never on the ordinary prose
+  -- path. The Markdown tree must confirm this is content, not a delimiter.
+  parser:parse({ row, row + 1 })
+  local range = { row, col, row, end_col }
+  local content = parser:named_node_for_range(range)
+  while content and content:type() ~= "code_fence_content" do
+    content = content:parent()
+  end
+  if not content then
+    return false
+  end
+  for _, child in pairs(parser:children()) do
+    if child:contains(range) then
+      local tree = child:tree_for_range(range)
+      -- Error recovery can classify # inside an unfinished Python string as
+      -- a comment. Only trust an injected tree that parsed without errors.
+      if not tree or tree:root():has_error() then
+        return false
+      end
+      -- Use the fenced language itself: an injection inside a string must
+      -- not turn that string into an eligible comment.
+      return comment_allowed(
+        buf,
+        row,
+        end_col,
+        tree_comment(buf, row, col, end_col, child, content:start())
+      )
+    end
+  end
+  return false
 end
 
 local function syntax_context(row, col, is_markdown)
@@ -115,8 +180,13 @@ function M.allowed(buf, row, col, end_col, key)
   end
   local is_markdown = ft == "markdown"
   if is_markdown then
+    local protected, fenced_content = markdown.protected(buf, row, prefix)
+    if fenced_content then
+      local ok, allowed = pcall(fenced_comment, buf, row, col, end_col)
+      return ok and allowed == true
+    end
     if
-      markdown.protected(buf, row, prefix)
+      protected
       or prefix:match("%]%([^)]*$")
       or not syntax_context(row, col, true)
     then
@@ -127,12 +197,12 @@ function M.allowed(buf, row, col, end_col, key)
     if not line:match("^    ") and not line:match("^\t") then
       return true
     end
-    local ok, allowed = pcall(tree_context, buf, row, col, true)
+    local ok, allowed = pcall(tree_context, buf, row, col, end_col, true)
     -- Without a parser, conservatively treat indentation as code.
     return ok and allowed == true
   end
   local ok, allowed, first_row, first_col =
-    pcall(tree_context, buf, row, col, false)
+    pcall(tree_context, buf, row, col, end_col, false)
   if not ok or allowed == nil then
     allowed = syntax_context(row, col, false)
     if allowed then
@@ -154,12 +224,7 @@ function M.allowed(buf, row, col, end_col, key)
       end
     end
   end
-  if not allowed then
-    return allowed
-  end
-  local lines =
-    vim.api.nvim_buf_get_text(buf, first_row, first_col, row, end_col, {})
-  return not markdown.comment_protected(lines)
+  return comment_allowed(buf, row, end_col, allowed, first_row, first_col)
 end
 
 return M

@@ -25,8 +25,9 @@ Tested on Neovim v0.13.0-dev-1536+g050fa30632. Vim is not supported.
 
 Corrections apply to whole lowercase keyword tokens by default, respecting
 'iskeyword'. Initial-capital correction is opt-in; mixed-case words, acronyms,
-and embedded typo suffixes remain protected. Markdown code is excluded; other
-filetypes except text and gitcommit correct only recognized comments. See
+and embedded typo suffixes remain protected. Markdown code is excluded except
+recognized comments in labeled fences; other filetypes except text and
+gitcommit correct only recognized comments. See
 |autocorrect-context|. Existing text is not rewritten on save.
 
 The dictionary is partitioned and read on demand. Buffers share its cache.
@@ -69,10 +70,25 @@ To enable comments in programming filetypes, add them explicitly: >lua
                                                     *autocorrect-context*
 Context detection~
 
-Markdown skips backtick code spans, backtick/tilde fences, and indented code.
-Unclosed spans and fences are protected while typing. Delimiter tracking works
+Markdown skips backtick code spans and indented code. Inside backtick/tilde
+fences labeled with a language, recognized comments can be corrected while
+code and strings stay unchanged. Both the Markdown and embedded-language
+Tree-sitter parsers, plus Markdown language injection queries, are required.
+For example, a python or bash fence can correct "# definately" to
+"# definitely". Only markdown needs to be enabled in filetypes; this does not
+enable correction in standalone Python or Bash buffers.
+
+Unlabeled fences, unavailable injections/parsers, and fenced blocks with parse
+errors stay unchanged. Error recovery can mistake an unfinished string for a
+comment, so the injected tree must parse cleanly. Syntax highlighting alone
+does not authorize comments in fences. Closing the fence is not required;
+comments can qualify as soon as its contents parse successfully.
+
+Unclosed inline spans stay protected while typing. Delimiter tracking works
 without a parser or syntax highlighting; cached line states are invalidated
-when text changes. Tree-sitter distinguishes indented code from nested prose
+when text changes. Embedded parsing runs only when a candidate is inside a
+fence, preserving the ordinary prose path. Tree-sitter distinguishes indented
+code from nested prose
 when a Markdown parser is available. Without it, lines starting with four
 spaces or a tab are conservatively excluded, including indented list prose.
 

@@ -7,7 +7,7 @@ Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappi
 ## Differentiating Features
 
 - Corrects whole lowercase words when you type a separator or leave Insert mode.
-- Skips Markdown code spans and fences; in enabled programming filetypes, corrects only recognized comments.
+- Protects Markdown code while correcting recognized comments inside labeled fences; in enabled programming filetypes, corrects only recognized comments.
 - Preserves capitalized words by default, with optional initial-capital correction for documented typos. Acronyms, mixed-case words, identifiers, and longer words containing a typo remain protected.
 - Uses native abbreviation behavior for punctuation, undo/redo, macros, and Ctrl-V bypass.
 - Loads dictionary partitions on demand and shares them across buffers.
@@ -36,7 +36,9 @@ require("autocorrect").setup({
 })
 ```
 
-Markdown skips inline code, fenced code, and indented code. In other filetypes besides `text` and `gitcommit`, only comments identified by Tree-sitter or existing syntax highlighting qualify; executable code and strings stay unchanged. Without either form of comment detection, correction stays off in that buffer. Backtick code spans, fenced examples, and recognizable URLs in comments are protected too. See `:help autocorrect-context` for details and fallback behavior.
+Markdown skips inline code and indented code. Inside labeled fences such as `python` or `bash`, it corrects comments when Tree-sitter recognizes the embedded language; code and strings stay unchanged. Only `markdown` needs to be enabled in `filetypes` for this. Missing parsers, unavailable language injections, and fenced blocks with parse errors leave the block untouched.
+
+In other filetypes besides `text` and `gitcommit`, only comments identified by Tree-sitter or existing syntax highlighting qualify; executable code and strings stay unchanged. Without either form of comment detection, correction stays off in that buffer. Backtick code spans, fenced examples, and recognizable URLs in comments are protected too. See `:help autocorrect-context` for details and fallback behavior.
 
 To also correct documented initial-capital typos such as `Definately` → `Definitely` and `Recieve` → `Receive`:
 
