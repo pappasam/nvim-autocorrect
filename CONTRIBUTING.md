@@ -284,7 +284,7 @@ The audit independently enumerates single-edit alternatives against the explicit
 
 The dictionary uses 256 hash buckets, read on demand and cached across buffers. An open file descriptor preserves a consistent snapshot during atomic rebuilds, including through Stow symlinks. First access reads and decodes a bucket synchronously; later lookups use its cached table.
 
-During Insert/Replace mode in enabled buffers, `vim.on_key` installs at most two native abbreviations and reads a bounded region around the cursor. Neovim handles expansion, preserving punctuation, undo/redo, macros, and Ctrl-V bypass. User abbreviations take precedence. Avoid scanning or installing the full catalog during editing.
+During Insert/Replace mode in enabled buffers, `vim.on_key` installs at most two native abbreviations and reads a bounded region around the cursor for dictionary lookup. Context checks run only for dictionary matches. Markdown delimiter tracking caches states for preceding lines and invalidates them from the first edited line; the initial check can scan from the buffer start. Most Markdown prose avoids parsing. Indented Markdown and programming comments use a synchronous Tree-sitter refresh; comment checks inspect the containing comment and adjacent preceding comment lines for code delimiters. Existing syntax groups provide the comment fallback. Neovim handles expansion, preserving punctuation, undo/redo, macros, and Ctrl-V bypass. User abbreviations take precedence. Avoid scanning or installing the full catalog during editing.
 
 Run from the repository root with Neovim, StyLua, and Python 3.11+ installed:
 
@@ -294,7 +294,7 @@ make benchmark
 make benchmark-dictionary
 ```
 
-`make check` and `make test` build the local cache first, so both work from a fresh checkout. Checks cover all mappings, capitalization, native abbreviation behavior, boundaries, long lines, shared Lua/Python validation fixtures, audit consistency, automatic builds, cache reuse and invalidation, read-only installations, snapshots, symlinks, determinism, and recovery from invalid input or truncated cache data. Benchmarks isolate plugin costs; compare results on the same Neovim version and machine. Building and normal editing require no Python.
+`make check` and `make test` build the local cache first, so both work from a fresh checkout. Checks cover all mappings, capitalization, native abbreviation behavior, Markdown code, programming comments, parser/syntax fallbacks, live delimiter edits, boundaries, long lines, shared Lua/Python validation fixtures, audit consistency, automatic builds, cache reuse and invalidation, read-only installations, snapshots, symlinks, determinism, and recovery from invalid input or truncated cache data. Context tests use Neovim's bundled Markdown, Lua, and C parsers. Benchmarks isolate plugin costs; compare results on the same Neovim version and machine. Building and normal editing require no Python.
 
 `make benchmark` measures setup, filetype activation, first insertion, 6,000 repeated words, and a subsequent buffer. Fixture construction happens before timing. `make benchmark-dictionary` measures opening the compiled dictionary, decoding all 256 buckets, cached lookups, and retained Lua heap after garbage collection. A cold bucket means it has not been decoded in that process; the operating system may already cache its bytes.
 

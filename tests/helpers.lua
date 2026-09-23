@@ -8,6 +8,8 @@ function M.fixture()
   end
   for _, file in ipairs({
     "lua/autocorrect/init.lua",
+    "lua/autocorrect/context.lua",
+    "lua/autocorrect/markdown.lua",
     "lua/autocorrect/dictionary.lua",
     "lua/autocorrect/source.lua",
     "lua/autocorrect/maintenance.lua",

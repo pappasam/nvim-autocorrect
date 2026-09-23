@@ -1,4 +1,5 @@
 local M = {}
+local context = require("autocorrect.context")
 
 local enabled_filetypes = { gitcommit = true, markdown = true }
 local correct_capitalized = false
@@ -94,7 +95,9 @@ local function on_key(key)
     return
   end
   local correction = dictionary.lookup(word, correct_capitalized)
-  if correction then
+  if
+    correction and context.allowed(buffer, row, start_col + first, col, key)
+  then
     install(word, correction)
   end
 end

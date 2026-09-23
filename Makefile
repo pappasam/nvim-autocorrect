@@ -21,6 +21,7 @@ test: build
 	$(PYTHON) tests/test_policy.py
 	$(PYTHON) tests/test_protected_words.py
 	$(NVIM_TEST) tests/test_autocorrect.lua
+	$(NVIM_TEST) tests/test_context.lua
 	$(NVIM_TEST) tests/test_build.lua
 	$(NVIM_TEST) tests/test_cache.lua
 	$(NVIM_TEST) tests/test_plugin.lua

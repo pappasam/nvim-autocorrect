@@ -25,9 +25,9 @@ Tested on Neovim v0.13.0-dev-1536+g050fa30632. Vim is not supported.
 
 Corrections apply to whole lowercase keyword tokens by default, respecting
 'iskeyword'. Initial-capital correction is opt-in; mixed-case words, acronyms,
-and embedded typo suffixes remain protected. Correction applies throughout
-a configured buffer, including code blocks. It does not inspect syntax or
-rewrite existing text on save.
+and embedded typo suffixes remain protected. Markdown code is excluded; other
+filetypes except text and gitcommit correct only recognized comments. See
+|autocorrect-context|. Existing text is not rewritten on save.
 
 The dictionary is partitioned and read on demand. Buffers share its cache.
 During insertion, at most two internal abbreviations are installed. Existing
@@ -60,6 +60,40 @@ Replaces the enabled filetypes. An empty list disables corrections. Calling
 setup() repeatedly replaces the configuration and does not duplicate hooks.
 Calling setup() with no arguments restores defaults.
 
+To enable comments in programming filetypes, add them explicitly: >lua
+
+  require("autocorrect").setup({
+    filetypes = { "markdown", "gitcommit", "text", "lua", "python" },
+  })
+<
+                                                    *autocorrect-context*
+Context detection~
+
+Markdown skips backtick code spans, backtick/tilde fences, and indented code.
+Unclosed spans and fences are protected while typing. Delimiter tracking works
+without a parser or syntax highlighting; cached line states are invalidated
+when text changes. Tree-sitter distinguishes indented code from nested prose
+when a Markdown parser is available. Without it, lines starting with four
+spaces or a tab are conservatively excluded, including indented list prose.
+
+For all other filetypes except text and gitcommit, correction requires a
+recognized comment. Tree-sitter is preferred and does not require highlighting
+to be enabled. When a parser is unavailable or fails, existing Vim syntax
+groups identifying comments are used. The plugin does not enable syntax or
+install parsers. Without either detector, these buffers are left unchanged.
+Strings (including docstrings) and executable code are excluded.
+
+Backtick spans and backtick/tilde fenced examples in comments are excluded,
+including unfinished delimiters and consecutive comment lines. Existing case
+and identifier protections still apply. Recognizable URL/email tokens are
+excluded in Markdown and comments; Markdown link destinations are excluded
+too. This is delimiter-based protection, not a complete Markdown parser or a
+classifier for unmarked code examples. An unmatched backtick can suppress
+correction until its matching delimiter or a blank line.
+
+The text and gitcommit filetypes retain whole-buffer correction. Existing
+user abbreviations remain authoritative and are not restricted by these checks.
+
 correct_capitalized~
 Type: Boolean
 Default: false
@@ -75,8 +109,8 @@ and a single-word destination. Only one initial ASCII capital followed by
 lowercase ASCII letters qualifies. All-caps, mixed-case words, short inputs,
 and joined phrases remain excluded: "DEFINATELY", "DeFinately", "Wiht", and
 "Eachother" stay unchanged. Known names remain protected; unlisted names and
-brands can still collide with documented typos. This option applies throughout
-enabled buffers, without sentence-start detection.
+brands can still collide with documented typos. This option applies in eligible
+prose and comments, without sentence-start detection.
 
 *g:nvim_autocorrect*
 Type: Dictionary
