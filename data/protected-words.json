@@ -6,5 +6,9 @@
   "buidling": {
     "reason": "Documented inflection of intentional cryptocurrency slang BUIDL; preserve this spelling rather than correcting it to building.",
     "source": "https://www.ledger.com/academy/glossary/buidl"
+  },
+  "surender": {
+    "reason": "Given name, as used by Surender Baswana; preserve it rather than interpreting it as a misspelling of surrender.",
+    "source": "https://www.cse.iitd.ac.in/~sbaswana/"
   }
 }

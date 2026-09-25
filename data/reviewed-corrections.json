@@ -64,12 +64,22 @@
     "reason": "Observed spelling error listed under ability in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "aboit": {
+    "correction": "about",
+    "reason": "Observed spelling error listed under about in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "abology": {
     "correction": "apology",
     "reason": "Observed spelling error listed under apology in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "abont": {
+    "correction": "about",
+    "reason": "Observed spelling error listed under about in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "abouy": {
     "correction": "about",
     "reason": "Observed spelling error listed under about in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -2104,6 +2114,11 @@
     "reason": "Observed spelling error listed under accordance in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "argueing": {
+    "correction": "arguing",
+    "reason": "Observed spelling error listed under arguing in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "arithemetic": {
     "correction": "arithmetic",
     "reason": "Exact spelling correction to arithmetic documented in the pinned codespell 2.4.1 dictionary.",
@@ -2784,6 +2799,16 @@
     "reason": "Observed spelling error listed under beautiful in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "beauitful": {
+    "correction": "beautiful",
+    "reason": "Observed spelling error listed under beautiful in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "beautful": {
+    "correction": "beautiful",
+    "reason": "Observed spelling error listed under beautiful in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "becining": {
     "correction": "beginning",
     "reason": "Observed spelling error listed under beginning in Norvig's collected spelling errors.",
@@ -3077,6 +3102,11 @@
   "brezze": {
     "correction": "breeze",
     "reason": "Observed spelling error listed under breeze in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "brithday": {
+    "correction": "birthday",
+    "reason": "Observed spelling error listed under birthday in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "brouther": {
@@ -5114,6 +5144,11 @@
     "reason": "Observed spelling error listed under damaged in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "damagage": {
+    "correction": "damage",
+    "reason": "Observed spelling error listed under damage in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "damagtd": {
     "correction": "damaged",
     "reason": "Observed spelling error listed under damaged in Norvig's collected spelling errors.",
@@ -5394,6 +5429,11 @@
     "reason": "Observed spelling error listed under delivered in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "delicous": {
+    "correction": "delicious",
+    "reason": "Observed spelling error listed under delicious in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "delieverd": {
     "correction": "delivered",
     "reason": "Observed spelling error listed under delivered in Norvig's collected spelling errors.",
@@ -5415,6 +5455,11 @@
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
   },
   "departsure": {
+    "correction": "departure",
+    "reason": "Observed spelling error listed under departure in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "depature": {
     "correction": "departure",
     "reason": "Observed spelling error listed under departure in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -5513,6 +5558,11 @@
     "correction": "destroyers",
     "reason": "Exact spelling correction to destroyers documented in the pinned codespell 2.4.1 dictionary.",
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
+  },
+  "desease": {
+    "correction": "disease",
+    "reason": "Observed spelling error listed under disease in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "desiened": {
     "correction": "designed",
@@ -6684,6 +6734,11 @@
     "reason": "Observed spelling error listed under employees in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "employement": {
+    "correction": "employment",
+    "reason": "Observed spelling error listed under employment in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "employies": {
     "correction": "employees",
     "reason": "Observed spelling error listed under employees in Norvig's collected spelling errors.",
@@ -6795,6 +6850,11 @@
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "enimeies": {
+    "correction": "enemies",
+    "reason": "Observed spelling error listed under enemies in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "enimies": {
     "correction": "enemies",
     "reason": "Observed spelling error listed under enemies in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -7644,6 +7704,11 @@
     "reason": "Observed spelling error listed under existence in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "exisists": {
+    "correction": "exists",
+    "reason": "Observed spelling error listed under exists in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "existiance": {
     "correction": "existence",
     "reason": "Observed spelling error listed under existence in Norvig's collected spelling errors.",
@@ -7923,6 +7988,11 @@
     "correction": "executions",
     "reason": "Exact spelling correction to executions documented in the pinned codespell 2.4.1 dictionary.",
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
+  },
+  "exuse": {
+    "correction": "excuse",
+    "reason": "Observed spelling error listed under excuse in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "exxagerate": {
     "correction": "exaggerate",
@@ -8214,6 +8284,11 @@
     "reason": "Observed spelling error listed under fight in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "figthing": {
+    "correction": "fighting",
+    "reason": "Observed spelling error listed under fighting in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "figuars": {
     "correction": "figures",
     "reason": "Observed spelling error listed under figures in Norvig's collected spelling errors.",
@@ -8459,6 +8534,16 @@
     "reason": "Observed spelling error listed under friends in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "freindship": {
+    "correction": "friendship",
+    "reason": "Observed spelling error listed under friendship in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "frendly": {
+    "correction": "friendly",
+    "reason": "Observed spelling error listed under friendly in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "frezzing": {
     "correction": "freezing",
     "reason": "Observed spelling error listed under freezing in Norvig's collected spelling errors.",
@@ -8684,6 +8769,16 @@
     "reason": "Observed spelling error listed under guardian in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "gaurdian": {
+    "correction": "guardian",
+    "reason": "Observed spelling error listed under guardian in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "gaurds": {
+    "correction": "guards",
+    "reason": "Observed spelling error listed under guards in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "gaurintee": {
     "correction": "guarantee",
     "reason": "Observed spelling error listed under guarantee in Norvig's collected spelling errors.",
@@ -8739,6 +8834,21 @@
     "reason": "Observed spelling error listed under genius in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "gentelman": {
+    "correction": "gentleman",
+    "reason": "Observed spelling error listed under gentleman in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "gentelmen": {
+    "correction": "gentlemen",
+    "reason": "Observed spelling error listed under gentlemen in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "genuinly": {
+    "correction": "genuinely",
+    "reason": "Observed spelling error listed under genuinely in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "geomeltry": {
     "correction": "geometry",
     "reason": "Observed spelling error listed under geometry in Norvig's collected spelling errors.",
@@ -8767,6 +8877,11 @@
   "geomotry": {
     "correction": "geometry",
     "reason": "Observed spelling error listed under geometry in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "georgeous": {
+    "correction": "gorgeous",
+    "reason": "Observed spelling error listed under gorgeous in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "gerdually": {
@@ -8820,6 +8935,11 @@
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "gorgious": {
+    "correction": "gorgeous",
+    "reason": "Observed spelling error listed under gorgeous in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "gorgous": {
     "correction": "gorgeous",
     "reason": "Observed spelling error listed under gorgeous in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -9073,6 +9193,11 @@
     "correction": "handkerchief",
     "reason": "Exact spelling correction to handkerchief documented in the pinned codespell 2.4.1 dictionary.",
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
+  },
+  "hapiness": {
+    "correction": "happiness",
+    "reason": "Observed spelling error listed under happiness in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "happaly": {
     "correction": "happily",
@@ -9759,6 +9884,11 @@
     "reason": "Observed spelling error listed under industry in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "industy": {
+    "correction": "industry",
+    "reason": "Observed spelling error listed under industry in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "indutrey": {
     "correction": "industry",
     "reason": "Observed spelling error listed under industry in Norvig's collected spelling errors.",
@@ -10269,7 +10399,17 @@
     "reason": "Observed spelling error listed under jealous in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "jewlery": {
+    "correction": "jewelry",
+    "reason": "Observed spelling error listed under jewelry in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "jounior": {
+    "correction": "junior",
+    "reason": "Observed spelling error listed under junior in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "jounir": {
     "correction": "junior",
     "reason": "Observed spelling error listed under junior in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -10434,6 +10574,11 @@
     "reason": "Observed spelling error listed under latest in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "latetest": {
+    "correction": "latest",
+    "reason": "Observed spelling error listed under latest in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "latiest": {
     "correction": "latest",
     "reason": "Observed spelling error listed under latest in Norvig's collected spelling errors.",
@@ -10574,6 +10719,11 @@
     "reason": "Observed spelling error listed under literally in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "litrally": {
+    "correction": "literally",
+    "reason": "Observed spelling error listed under literally in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "litriture": {
     "correction": "literature",
     "reason": "Observed spelling error listed under literature in Norvig's collected spelling errors.",
@@ -10625,6 +10775,11 @@
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "lovley": {
+    "correction": "lovely",
+    "reason": "Observed spelling error listed under lovely in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "lovyley": {
     "correction": "lovely",
     "reason": "Observed spelling error listed under lovely in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -10777,6 +10932,11 @@
   "marriad": {
     "correction": "married",
     "reason": "Observed spelling error listed under married in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "marrige": {
+    "correction": "marriage",
+    "reason": "Observed spelling error listed under marriage in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "marryid": {
@@ -11035,6 +11195,11 @@
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "minnimium": {
+    "correction": "minimum",
+    "reason": "Observed spelling error listed under minimum in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "minnimun": {
     "correction": "minimum",
     "reason": "Observed spelling error listed under minimum in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -11344,6 +11509,11 @@
     "reason": "Observed spelling error listed under namely in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "narative": {
+    "correction": "narrative",
+    "reason": "Observed spelling error listed under narrative in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "narsty": {
     "correction": "nasty",
     "reason": "Observed spelling error listed under nasty in Norvig's collected spelling errors.",
@@ -11544,6 +11714,11 @@
     "reason": "Observed spelling error listed under nervous in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "newpaper": {
+    "correction": "newspaper",
+    "reason": "Observed spelling error listed under newspaper in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "nobudy": {
     "correction": "nobody",
     "reason": "Observed spelling error listed under nobody in Norvig's collected spelling errors.",
@@ -11709,6 +11884,11 @@
     "reason": "Observed spelling error listed under often in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "offerred": {
+    "correction": "offered",
+    "reason": "Observed spelling error listed under offered in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "offoring": {
     "correction": "offering",
     "reason": "Observed spelling error listed under offering in Norvig's collected spelling errors.",
@@ -11792,6 +11972,11 @@
   "opertunity": {
     "correction": "opportunity",
     "reason": "Observed spelling error listed under opportunity in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "opinon": {
+    "correction": "opinion",
+    "reason": "Observed spelling error listed under opinion in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "opisite": {
@@ -12232,6 +12417,11 @@
   "peolpe": {
     "correction": "people",
     "reason": "Observed adjacent swap listed under people in Norvig's collected spelling errors; corpus presence alone does not establish intentional usage.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "peple": {
+    "correction": "people",
+    "reason": "Observed spelling error listed under people in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "pepole": {
@@ -13029,6 +13219,11 @@
     "reason": "Observed spelling error listed under preferred in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "pregant": {
+    "correction": "pregnant",
+    "reason": "Observed spelling error listed under pregnant in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "pregnent": {
     "correction": "pregnant",
     "reason": "Observed spelling error listed under pregnant in Norvig's collected spelling errors.",
@@ -13309,6 +13504,11 @@
     "reason": "Observed spelling error listed under problem in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "problen": {
+    "correction": "problem",
+    "reason": "Observed spelling error listed under problem in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "probleum": {
     "correction": "problem",
     "reason": "Observed spelling error listed under problem in Norvig's collected spelling errors.",
@@ -13579,10 +13779,20 @@
     "reason": "Observed spelling error listed under permanent in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "pyschology": {
+    "correction": "psychology",
+    "reason": "Observed spelling error listed under psychology in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "qeuestionnaire": {
     "correction": "questionnaire",
     "reason": "Exact spelling correction to questionnaire documented in the pinned codespell 2.4.1 dictionary.",
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
+  },
+  "quailty": {
+    "correction": "quality",
+    "reason": "Observed spelling error listed under quality in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "qualafied": {
     "correction": "qualified",
@@ -14179,6 +14389,11 @@
     "reason": "Observed spelling error listed under recently in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "reileif": {
+    "correction": "relief",
+    "reason": "Observed spelling error listed under relief in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "relasions": {
     "correction": "relations",
     "reason": "Observed spelling error listed under relations in Norvig's collected spelling errors.",
@@ -14197,6 +14412,11 @@
   "relieable": {
     "correction": "reliable",
     "reason": "Observed spelling error listed under reliable in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "religon": {
+    "correction": "religion",
+    "reason": "Observed spelling error listed under religion in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "relitive": {
@@ -14542,6 +14762,11 @@
   "retentiaon": {
     "correction": "retention",
     "reason": "Observed spelling error listed under retention in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "retirment": {
+    "correction": "retirement",
+    "reason": "Observed spelling error listed under retirement in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "reveirse": {
@@ -14982,6 +15207,11 @@
   "seroundings": {
     "correction": "surroundings",
     "reason": "Observed spelling error listed under surroundings in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "serously": {
+    "correction": "seriously",
+    "reason": "Observed spelling error listed under seriously in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "serpising": {
@@ -15534,6 +15764,11 @@
     "reason": "Observed spelling error listed under spiritual in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "spirtual": {
+    "correction": "spiritual",
+    "reason": "Observed spelling error listed under spiritual in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "spirtural": {
     "correction": "spiritual",
     "reason": "Observed spelling error listed under spiritual in Norvig's collected spelling errors.",
@@ -15567,6 +15802,11 @@
   "srict": {
     "correction": "strict",
     "reason": "Observed spelling error listed under strict in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "sshcool": {
+    "correction": "school",
+    "reason": "Observed spelling error listed under school in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "stachon": {
@@ -15732,6 +15972,11 @@
   "strog": {
     "correction": "strong",
     "reason": "Observed spelling error listed under strong in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "strugle": {
+    "correction": "struggle",
+    "reason": "Observed spelling error listed under struggle in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "studend": {
@@ -16644,6 +16889,11 @@
     "reason": "Observed spelling error listed under through in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "thruth": {
+    "correction": "truth",
+    "reason": "Observed spelling error listed under truth in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "timemout": {
     "correction": "timeout",
     "reason": "Exact spelling correction to timeout documented in the pinned codespell 2.4.1 dictionary.",
@@ -16734,6 +16984,11 @@
     "reason": "Observed spelling error listed under tournament in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "tournement": {
+    "correction": "tournament",
+    "reason": "Observed spelling error listed under tournament in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "tourneyment": {
     "correction": "tournament",
     "reason": "Observed spelling error listed under tournament in Norvig's collected spelling errors.",
@@ -16755,6 +17010,11 @@
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "tradegdy": {
+    "correction": "tragedy",
+    "reason": "Observed spelling error listed under tragedy in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "tradegy": {
     "correction": "tragedy",
     "reason": "Observed spelling error listed under tragedy in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -17474,12 +17734,22 @@
     "reason": "Observed spelling error listed under violence in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "villiage": {
+    "correction": "village",
+    "reason": "Observed spelling error listed under village in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "villige": {
     "correction": "village",
     "reason": "Observed spelling error listed under village in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "vilounce": {
+    "correction": "violence",
+    "reason": "Observed spelling error listed under violence in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "violance": {
     "correction": "violence",
     "reason": "Observed spelling error listed under violence in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
@@ -17557,6 +17827,11 @@
   "viteted": {
     "correction": "visited",
     "reason": "Observed spelling error listed under visited in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "voilence": {
+    "correction": "violence",
+    "reason": "Observed spelling error listed under violence in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "volantary": {
@@ -17782,6 +18057,11 @@
   "wishis": {
     "correction": "wishes",
     "reason": "Observed spelling error listed under wishes in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "wondeful": {
+    "correction": "wonderful",
+    "reason": "Observed spelling error listed under wonderful in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "wondoful": {

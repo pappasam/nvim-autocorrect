@@ -157,6 +157,10 @@ assert(
     == "either myself being busy edge neck."
 )
 assert(
+  run({ "ipeple quailty argueing brithday tradegy damagage.<Esc>" }, false)[1]
+    == "people quality arguing birthday tragedy damage."
+)
+assert(
   run(
     { "iwehther weather whether Wehther WEHTHER foo_wehther wehtherx.<Esc>" },
     false
@@ -212,6 +216,7 @@ local protected = "algin adust belive grammer siad teh thier form from staring "
   .. " buidling Buidling BUIDLING"
   .. " wth mayu th fo ot Wiht WIHT foo_wiht whit with form from"
   .. " where here were twere Hwere HWERE foo_hwere"
+  .. " surender slrender exisist fhilght buyin simpel howrse"
 assert(run({ "i" .. protected .. " <Esc>" }, false)[1] == protected .. " ")
 assert(
   run({ "iwiht wtih taht thsi yuo tthe knwo.<Esc>" }, false)[1]
@@ -310,7 +315,9 @@ local title_cases = {
   {
     "iDEFINATELY DeFinately foo_Definately 1Definately éDefinately Definatelyé <Esc>",
   },
-  { "iEachother Wiht Hte Teh Thier Buidl NASA SaaS OpenAI Abilityy <Esc>" },
+  {
+    "iEachother Wiht Hte Teh Thier Buidl NASA SaaS OpenAI Abilityy Surender <Esc>",
+  },
   { "ifoo-Definately Definately <Esc>", "", 0, "@,48-57,_,-" },
 }
 vim.api.nvim_clear_autocmds({ group = "NvimAutocorrect" })

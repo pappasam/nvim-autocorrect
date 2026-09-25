@@ -1,19 +1,19 @@
 {
-  "alternative_dictionary_tokens": 626455,
-  "capitalized_corrections": 29438,
+  "alternative_dictionary_tokens": 626456,
+  "capitalized_corrections": 29490,
   "capitalized_policy": {
     "destination_words": 1,
     "documentation_required": true,
     "input_case": "initial capital only",
     "minimum_input_length": 6
   },
-  "capitalized_sha256": "0f409eb5bbafe2d2ca00819fe3a281ad5bbe5d85e3cefe6a39b24408f75d6488",
+  "capitalized_sha256": "02f380037f5ec1f853ceb2e0122ae006ea9490571b3e3764e791920d04b2b261",
   "destinations": 12109,
-  "documented_frequency_exceptions": 1604,
-  "documented_multi_edit_corrections": 5282,
+  "documented_frequency_exceptions": 1652,
+  "documented_multi_edit_corrections": 5291,
   "documented_short_corrections": 1,
-  "documented_transposition_corrections": 147,
-  "entries": 1031439,
+  "documented_transposition_corrections": 148,
+  "entries": 1031494,
   "failure_counts": {},
   "failure_examples": {},
   "five_letter_preference": {
@@ -28,7 +28,7 @@
     ]
   },
   "five_letter_transposition_exceptions": 2206,
-  "frequency_five_letter_corrections": 2474,
+  "frequency_five_letter_corrections": 2476,
   "frequency_preference": {
     "minimum_frequency": 1e-05,
     "minimum_ratio": 100
@@ -43,23 +43,23 @@
     "minimum_input_length": 6,
     "single_word_alternatives": "block"
   },
-  "mapping_sha256": "29f076d3d63a7a8a797c6fc2696b2d383587f7822bfaf0507fa3c3a5207ee2c0",
+  "mapping_sha256": "6b18d9679332ff81ffdf5aa9b0f1fde57a270484a108ecfca1f28eeada0abd18",
   "packages": {
     "cmudict": "1.1.1",
     "codespell": "2.4.1",
     "wordfreq": "3.1.1"
   },
   "passed": true,
-  "preferred_frequency_corrections": 83011,
-  "preferred_transposition_corrections": 12265,
-  "protected_dictionary_tokens": 626435,
+  "preferred_frequency_corrections": 83038,
+  "preferred_transposition_corrections": 12270,
+  "protected_dictionary_tokens": 626436,
   "protected_frequency_tokens": 321180,
   "rare_alternative_transposition_corrections": 3866,
   "rejected_typos": [],
-  "reviewed_corpus_exceptions": 22,
-  "reviewed_corrections": 3564,
-  "reviewed_records": 3564,
-  "reviewed_sha256": "aec1ffe37c72dc5d4d4090438b55fab914ed8d8ad0be89b44476000a29f9d63f",
+  "reviewed_corpus_exceptions": 70,
+  "reviewed_corrections": 3620,
+  "reviewed_records": 3620,
+  "reviewed_sha256": "4ea18be69df18500b3972f778caf0687f0c864801894b888de26abfc17e9277b",
   "scowl_lists_sha256": "64834a47766ddcafff4e28918e4eaa72095a1016aa041aceb1cd4befcce251cf",
   "short_word_destinations": 372,
   "short_word_preference": {
@@ -76,7 +76,7 @@
       5
     ]
   },
-  "single_edit_corrections": 1026146,
+  "single_edit_corrections": 1026192,
   "six_letter_omission_policy": {
     "alternatives": "block regardless of frequency",
     "destination_length": 6,
@@ -84,8 +84,8 @@
     "minimum_frequency": 0.0001,
     "typo_length": 5
   },
-  "supplemental_protected_sha256": "57431aaa92d7e2e2728f0b3b6c222d51cbee168b16606419e9a3eff44946327c",
-  "supplemental_protected_tokens": 2,
+  "supplemental_protected_sha256": "b19274b1d53dd90ac9ef63f7de89b2c89e41201d62978f5682a003b784497b95",
+  "supplemental_protected_tokens": 3,
   "technical_destinations": [
     "booleans",
     "cacheable",

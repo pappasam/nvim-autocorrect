@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,031,439 lowercase typo mappings across 12,109 destinations, including 11 two-word phrases.
+The catalog contains 1,031,494 lowercase typo mappings across 12,109 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -52,7 +52,7 @@ A sole candidate needs no ambiguity preference, but still needs the frequency fl
 
 ### Opt-in initial-capital corrections
 
-`setup({ correct_capitalized = true })` permits one initial ASCII capital followed by lowercase letters. Eligibility requires an accepted lowercase mapping, at least six input letters, a single-word destination, and the same exact correction documented unambiguously in pinned codespell or `data/reviewed-corrections.json`. This selects 29,438 mappings, including `Definately` → `Definitely`, `Recieve` → `Receive`, and `Probebly` → `Probably`. Short inputs, two-word destinations, all-caps, and mixed-case tokens remain excluded. No sentence-position heuristic is used; unfamiliar names and brands remain a possible source of false corrections.
+`setup({ correct_capitalized = true })` permits one initial ASCII capital followed by lowercase letters. Eligibility requires an accepted lowercase mapping, at least six input letters, a single-word destination, and the same exact correction documented unambiguously in pinned codespell or `data/reviewed-corrections.json`. This selects 29,490 mappings, including `Definately` → `Definitely`, `Recieve` → `Receive`, and `Probebly` → `Probably`. Short inputs, two-word destinations, all-caps, and mixed-case tokens remain excluded. No sentence-position heuristic is used; unfamiliar names and brands remain a possible source of false corrections.
 
 `data/capitalized-corrections.json` materializes this subset using the same grouped lowercase syntax as the main catalog. Regenerate it after changing the catalog or evidence:
 
@@ -225,6 +225,16 @@ Each reviewed pair is a single edit and passes the existing documentary and ambi
 
 Together these additions bring the catalog to 1,031,439 mappings, preserving every prior pair. Of the 31 new inputs, 22 have five letters, six have six, and three have seven. The evidence file now contains 3,564 records, and nine of the new documented mappings also qualify for opt-in initial-capital correction. Reproduce the additions with `scripts/expand-common-words.py`, regenerate the capitalized subset, and run the full audit below.
 
+### More reviewed common-word corrections
+
+This batch adds 56 documented pairs across 52 existing destinations, including `peple` → `people`, `thruth` → `truth`, `quailty` → `quality`, `argueing` → `arguing`, `brithday` → `birthday`, and `pyschology` → `psychology`. Forty-seven pairs use one edit; nine use two. All pairs appear unambiguously in the pinned Norvig snapshot, without conflicting codespell evidence. Forty-eight inputs already occur in wordfreq and now have the exact spelling evidence needed for admission. No frequency, length, or ambiguity rules change.
+
+The nine reviewed two-edit pairs are `sshcool` → `school`, `latetest` → `latest`, `damagage` → `damage`, `lovyley` → `lovely`, `reileif` → `relief`, `jounir` → `junior`, `exisists` → `exists`, `minnimun` → `minimum`, and `tradegy` → `tragedy`. Review also compared two-edit alternatives: `exisist` remains unchanged because both `exist` and `exists` are plausible, and `fhilght` remains unchanged because `fight` and `flight` compete. The documented `tradegy` correction preserves every letter by exchanging nonadjacent `d` and `g`; this is an exact reviewed pair, not a new generated swap rule. Historical observations establish spelling evidence, not modern typo prevalence.
+
+Review rejected `surender` → `surrender` because Surender is a given name, documented on [Surender Baswana's IIT Delhi page](https://www.cse.iitd.ac.in/~sbaswana/). Adding it to `data/protected-words.json` also makes `slrender` ambiguous between `slender` and `surender`; that existing mapping is removed. The remaining prior mappings and destinations are preserved. Shorthand such as `buyin` and intentional forms such as `simpel` and `howrse` remain unchanged.
+
+The catalog now contains 1,031,494 mappings, the reviewed evidence file contains 3,620 records, and 52 additions qualify for initial-capital correction. Twenty-four new inputs have five to seven letters. Reproduce the additions with `scripts/expand-common-words.py`; the full audit separately identifies mappings to remove after protection changes. Regenerate the capitalized subset and refresh the audit together.
+
 ### Short-word expansion
 
 This batch adds 7,010 mappings to the prior 1,000,029 entries and preserves every existing mapping. It covers 357 common destinations, including 322 new ones: 929 corrections lead to three-letter words and 6,081 lead to four-letter words. The typo inputs have three letters (21), four letters (1,651), or five letters (5,338). All qualifying destination groups are included; no count-based cutoff or weaker threshold is used to fill the batch.
@@ -235,7 +245,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1031439 \
+  --source /tmp/short-word-corrections.json --expect 1031494 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -249,7 +259,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1031439 \
+  --source /tmp/common-word-corrections.json --expect 1031494 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -265,7 +275,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1031439 \
+  --source /tmp/transposition-corrections.json --expect 1031494 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -279,7 +289,7 @@ Maintenance references:
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
 - [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections, including 538 additional pairs recorded in the reviewed evidence file.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 3,026 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 3,082 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -290,7 +300,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1031439 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1031494 \
   --report data/audit.json
 ```
 

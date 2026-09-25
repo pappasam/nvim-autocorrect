@@ -4423,6 +4423,7 @@
   ],
   "arguing": [
     "agruing",
+    "argueing",
     "argumentating",
     "arrguing",
     "aruging",
@@ -6024,6 +6025,8 @@
     "beatiful",
     "beatuful",
     "beatyful",
+    "beauitful",
+    "beautful",
     "beautyfull",
     "beiatiful",
     "beitiful",
@@ -6432,6 +6435,9 @@
   ],
   "biology": [
     "biolagy"
+  ],
+  "birthday": [
+    "brithday"
   ],
   "biscuits": [
     "becuits",
@@ -12050,6 +12056,7 @@
     "cylynder"
   ],
   "damage": [
+    "damagage",
     "damamge",
     "damange",
     "dammage",
@@ -12591,6 +12598,9 @@
     "delibirately",
     "delibrately"
   ],
+  "delicious": [
+    "delicous"
+  ],
   "delightful": [
     "dilightful"
   ],
@@ -12691,6 +12701,7 @@
   ],
   "departure": [
     "departsure",
+    "depature",
     "diparture"
   ],
   "depend": [
@@ -14340,6 +14351,9 @@
     "disucussions",
     "disussions"
   ],
+  "disease": [
+    "desease"
+  ],
   "disgrace": [
     "discrace"
   ],
@@ -15559,6 +15573,7 @@
     "emplyers"
   ],
   "employment": [
+    "employement",
     "emplyment",
     "imployment"
   ],
@@ -15711,6 +15726,7 @@
     "enemyies",
     "eniemies",
     "enimeies",
+    "enimies",
     "enmenies"
   ],
   "enemy": [
@@ -17187,6 +17203,7 @@
   ],
   "exists": [
     "exhists",
+    "exisists",
     "exisits",
     "exitsts",
     "exsists",
@@ -18287,7 +18304,8 @@
     "fivety"
   ],
   "fighting": [
-    "fieghting"
+    "fieghting",
+    "figthing"
   ],
   "figure": [
     "figgure"
@@ -18974,11 +18992,15 @@
   ],
   "friendly": [
     "firendly",
-    "freindly"
+    "freindly",
+    "frendly"
   ],
   "friends": [
     "freands",
     "freinds"
+  ],
+  "friendship": [
+    "freindship"
   ],
   "frightened": [
     "fightend",
@@ -19533,9 +19555,18 @@
     "genios",
     "genious"
   ],
+  "gentleman": [
+    "gentelman"
+  ],
+  "gentlemen": [
+    "gentelmen"
+  ],
   "genuine": [
     "geniune",
     "genuin"
+  ],
+  "genuinely": [
+    "genuinly"
   ],
   "geographical": [
     "geographicial"
@@ -19615,11 +19646,13 @@
     "goning"
   ],
   "gorgeous": [
+    "georgeous",
     "gergious",
     "gordeous",
     "gordgous",
     "gorduous",
     "gorgious",
+    "gorgous",
     "gorjous",
     "gourgeous",
     "gourgous",
@@ -19895,11 +19928,15 @@
     "gardinan",
     "gauadian",
     "gaurdain",
+    "gaurdian",
     "guardean",
     "guardien",
     "guartien",
     "guirdean",
     "quardian"
+  ],
+  "guards": [
+    "gaurds"
   ],
   "guidance": [
     "guidence"
@@ -20007,6 +20044,7 @@
     "happilly"
   ],
   "happiness": [
+    "hapiness",
     "happynes"
   ],
   "harassed": [
@@ -21670,6 +21708,7 @@
   ],
   "industry": [
     "industury",
+    "industy",
     "indutrey",
     "inudstry"
   ],
@@ -23056,6 +23095,9 @@
   "jewellery": [
     "jewllery"
   ],
+  "jewelry": [
+    "jewlery"
+  ],
   "joining": [
     "joinning"
   ],
@@ -23103,7 +23145,8 @@
   ],
   "junior": [
     "iunior",
-    "jounior"
+    "jounior",
+    "jounir"
   ],
   "jurisdiction": [
     "juristiction"
@@ -23341,6 +23384,7 @@
     "lateist",
     "latesd",
     "latesit",
+    "latetest",
     "latets",
     "latiest",
     "latist",
@@ -23704,6 +23748,7 @@
     "literitally",
     "literoly",
     "literually",
+    "litrally",
     "litterally",
     "litterially",
     "liturally",
@@ -23819,7 +23864,8 @@
     "loosly"
   ],
   "lovely": [
-    "lovley"
+    "lovley",
+    "lovyley"
   ],
   "loving": [
     "loveing"
@@ -24134,7 +24180,8 @@
   ],
   "marriage": [
     "mariage",
-    "marraige"
+    "marraige",
+    "marrige"
   ],
   "married": [
     "marriad",
@@ -24675,6 +24722,7 @@
     "minneum",
     "minnimium",
     "minnimum",
+    "minnimun",
     "minninum",
     "minomom",
     "minumem",
@@ -25216,6 +25264,9 @@
     "namesapces",
     "namesspaces",
     "namspaces"
+  ],
+  "narrative": [
+    "narative"
   ],
   "nasty": [
     "narsty"
@@ -25797,6 +25848,9 @@
     "neveretheless",
     "neverthless"
   ],
+  "newspaper": [
+    "newpaper"
+  ],
   "newton": [
     "newthon"
   ],
@@ -26369,6 +26423,7 @@
     "offfer"
   ],
   "offered": [
+    "offerred",
     "offfered",
     "offred"
   ],
@@ -26629,6 +26684,7 @@
     "opreators"
   ],
   "opinion": [
+    "opinon",
     "opinyon",
     "oppinion",
     "oppinon"
@@ -28907,6 +28963,7 @@
     "perfurs"
   ],
   "pregnant": [
+    "pregant",
     "pregnent"
   ],
   "prejudice": [
@@ -29365,6 +29422,7 @@
     "problaem",
     "problam",
     "probleem",
+    "problen",
     "probleum",
     "problim",
     "probllem",
@@ -30204,7 +30262,8 @@
     "psyciology",
     "psycolegy",
     "psycology",
-    "psyology"
+    "psyology",
+    "pyschology"
   ],
   "public": [
     "pubilc",
@@ -30370,6 +30429,7 @@
   ],
   "quality": [
     "qaulity",
+    "quailty",
     "qualit"
   ],
   "quantitative": [
@@ -31537,6 +31597,7 @@
     "relyable"
   ],
   "relief": [
+    "reileif",
     "releef",
     "releif",
     "releife"
@@ -31545,7 +31606,8 @@
     "releifed"
   ],
   "religion": [
-    "religeon"
+    "religeon",
+    "religon"
   ],
   "religions": [
     "religeons"
@@ -32725,6 +32787,9 @@
     "rentention",
     "retentiaon"
   ],
+  "retirement": [
+    "retirment"
+  ],
   "retrieve": [
     "rertieve",
     "retireve",
@@ -33228,7 +33293,8 @@
     "schoal",
     "sckool",
     "scohool",
-    "shcool"
+    "shcool",
+    "sshcool"
   ],
   "science": [
     "scienee",
@@ -33838,7 +33904,8 @@
     "seriosly",
     "seriouly",
     "seriousally",
-    "seriouslly"
+    "seriouslly",
+    "serously"
   ],
   "service": [
     "ervice",
@@ -34983,6 +35050,7 @@
     "spirititual",
     "spiritural",
     "spirttual",
+    "spirtual",
     "spirtural",
     "spriritual",
     "sprirtual",
@@ -35476,7 +35544,8 @@
   ],
   "struggle": [
     "struggel",
-    "struggele"
+    "struggele",
+    "strugle"
   ],
   "struggled": [
     "struggeld",
@@ -37430,6 +37499,7 @@
     "touriment",
     "tourmment",
     "tournamant",
+    "tournement",
     "tourneyment",
     "tourniment",
     "tournmeant",
@@ -37485,6 +37555,7 @@
   ],
   "tragedy": [
     "tradegdy",
+    "tradegy",
     "tradgedy",
     "tradgey",
     "tragady",
@@ -37965,6 +38036,9 @@
     "trusthworthy",
     "trustworty",
     "trustwothy"
+  ],
+  "truth": [
+    "thruth"
   ],
   "trying": [
     "triing",
@@ -39171,6 +39245,7 @@
     "veiwing"
   ],
   "village": [
+    "villiage",
     "villige"
   ],
   "vinegar": [
@@ -39195,10 +39270,12 @@
   "violence": [
     "vilelence",
     "vilounce",
+    "violance",
     "violentce",
     "violience",
     "violince",
     "violonce",
+    "voilence",
     "volience",
     "volince"
   ],
@@ -39728,6 +39805,7 @@
     "wimmens"
   ],
   "wonderful": [
+    "wondeful",
     "wondoful",
     "wounderful"
   ],
