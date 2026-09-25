@@ -4,6 +4,7 @@ MIN_CORRECTION_FREQUENCY = 1e-5  # Ten occurrences per million words.
 MIN_FREQUENCY_RATIO = 100
 MIN_SHORT_CORRECTION_FREQUENCY = 1e-4  # One hundred occurrences per million words.
 MIN_FIVE_LETTER_FREQUENCY = 1e-4
+MIN_SIX_LETTER_OMISSION_FREQUENCY = 1e-4
 MIN_JOINED_COMPONENT_FREQUENCY = 1e-4
 # Reviewed prose preference; codespell must confirm this exact mapping as well.
 DOCUMENTED_SHORT_CORRECTIONS = {"hte": "the"}
@@ -95,6 +96,24 @@ def frequency_five_letter_correction(
         and frequencies.get(correction, 0) >= MIN_FIVE_LETTER_FREQUENCY
         and typo in keyboard_typos(correction)
         and preferred_frequency(candidates, frequencies) == correction
+    )
+
+
+def unique_six_letter_omission(
+    typo: str, correction: str, candidates: set[str], frequencies: dict[str, float]
+) -> bool:
+    """Admit a missing letter from a common six-letter word with no alternatives.
+
+    This extends length eligibility only. Input protection and corpus screening
+    remain mandatory; even a zero-frequency competing name blocks this rule.
+    """
+    return (
+        len(typo) == 5
+        and len(correction) == 6
+        and correction.isascii() and correction.isalpha() and correction.islower()
+        and frequencies.get(correction, 0) >= MIN_SIX_LETTER_OMISSION_FREQUENCY
+        and candidates == {correction}
+        and any(typo == correction[:i] + correction[i + 1:] for i in range(6))
     )
 
 
@@ -218,6 +237,8 @@ def valid_typo_length(
     if len(correction) in (3, 4):
         return frequency_short_correction(typo, correction, candidates, frequencies or {})
     if frequency_five_letter_correction(typo, correction, candidates, frequencies or {}):
+        return True
+    if unique_six_letter_omission(typo, correction, candidates, frequencies or {}):
         return True
     return len(typo) == 5 and (
         documented_correction == correction

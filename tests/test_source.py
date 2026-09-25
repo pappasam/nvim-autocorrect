@@ -48,6 +48,13 @@ assert audit["short_word_preference"] == {
     "three_four_letter_corpus_exceptions": "documented adjacent swap or repeated letter",
 }, "Short-word policy audit snapshot is stale"
 assert len(entries) == audit["entries"]
+assert audit["six_letter_omission_policy"] == {
+    "minimum_frequency": 0.0001,
+    "destination_length": 6,
+    "typo_length": 5,
+    "edit": "one missing letter",
+    "alternatives": "block regardless of frequency",
+}
 assert audit["joined_word_policy"] == {
     "minimum_input_length": 6,
     "minimum_component_frequency": MIN_JOINED_COMPONENT_FREQUENCY,

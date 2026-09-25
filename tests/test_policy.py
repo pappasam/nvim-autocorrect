@@ -17,6 +17,7 @@ from dictionary_policy import (
     valid_typo_length,
     joined_word_splits,
     valid_joined_correction,
+    unique_six_letter_omission,
 )
 
 # Evidence must match an accepted mapping; length and phrase restrictions still apply.
@@ -207,8 +208,8 @@ five_cases = [
     ("wxich", "which", {"which"}, {"which": 0.002}, False),
     ("wch", "which", {"which"}, {"which": 0.002}, False),
     ("whci", "which", {"which"}, {"which": 0.002}, False),
-    # Common six-letter destinations do not acquire an undocumented length exception.
-    ("peple", "people", {"people"}, {"people": 0.002}, False),
+    # An alternative still blocks undocumented six-letter omissions.
+    ("peple", "people", {"people", "pepple"}, {"people": 0.002}, False),
 ]
 for typo, correction, candidates, frequencies, expected in five_cases:
     assert frequency_five_letter_correction(typo, correction, candidates, frequencies) == expected
@@ -217,6 +218,31 @@ assert {"whch", "whih", "wgich", "whiich", "whicg", "whcih"} <= keyboard_typos("
 assert not {"which", "wxich", "whci"} & keyboard_typos("which")
 assert not keyboard_typos("Which")
 print(f"PASS: {len(five_cases)} common five-letter word policy cases")
+
+omission_cases = [
+    ("eithr", "either", {"either"}, {"either": 1e-4}, True),
+    ("ither", "either", {"either"}, {"either": 1e-4}, True),
+    ("eithe", "either", {"either"}, {"either": 1e-4}, True),
+    ("leter", "letter", {"letter"}, {"letter": 1e-4}, True),
+    ("eithr", "either", {"either"}, {"either": 9.9e-5}, False),
+    ("eithr", "either", {"either"}, {}, False),
+    # No frequency lead can bypass a competitor, even an unranked name.
+    ("eithr", "either", {"either", "eithra"}, {"either": 0.01}, False),
+    ("eithr", "either", {"either", "eith"}, {"either": 0.01}, False),
+    ("eithr", "either", {"either", "eiths"}, {"either": 0.01}, False),
+    ("eithr", "either", set(), {"either": 0.01}, False),
+    ("eithr", "either", {"eithra"}, {"either": 0.01}, False),
+    ("eitxr", "either", {"either"}, {"either": 0.01}, False),
+    ("ether", "Ether", {"Ether"}, {"Ether": 0.01}, False),
+    ("eitr", "either", {"either"}, {"either": 0.01}, False),
+    ("eithr", "eithers", {"eithers"}, {"eithers": 0.01}, False),
+]
+for typo, correction, candidates, frequencies, expected in omission_cases:
+    assert unique_six_letter_omission(typo, correction, candidates, frequencies) == expected
+    assert valid_typo_length(typo, correction, candidates, frequencies=frequencies) == expected
+assert not unique_six_letter_omission("either", "either", {"either"}, {"either": 0.01})
+assert not unique_six_letter_omission("eihter", "either", {"either"}, {"either": 0.01})
+print(f"PASS: {len(omission_cases)} six-letter omission cases, boundaries and competitors")
 
 def joined(typo="eachother", correction="each other", documented="each other",
            candidates=None, known=None, real=None, frequencies=None):

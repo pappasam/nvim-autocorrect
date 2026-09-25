@@ -34,6 +34,7 @@ from dictionary_policy import (
     MIN_FREQUENCY_RATIO,
     MIN_SHORT_CORRECTION_FREQUENCY,
     MIN_FIVE_LETTER_FREQUENCY,
+    MIN_SIX_LETTER_OMISSION_FREQUENCY,
     MIN_JOINED_COMPONENT_FREQUENCY,
     documented_short_correction,
     frequency_short_correction,
@@ -44,6 +45,7 @@ from dictionary_policy import (
     valid_typo_length,
     joined_word_splits,
     valid_joined_correction,
+    unique_six_letter_omission,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -149,6 +151,7 @@ def main() -> int:
     short_preferences = 0
     frequency_short_preferences = 0
     frequency_five_letter_corrections = 0
+    six_letter_omissions = 0
     reviewed_corrections = 0
     reviewed_corpus_exceptions = 0
     joined_corrections = 0
@@ -158,6 +161,8 @@ def main() -> int:
         short_preference = documented_short_correction(typo, correction, documented.get(typo))
         frequency_short = frequency_short_correction(typo, correction, neighbors, frequencies)
         frequency_five = frequency_five_letter_correction(typo, correction, neighbors, frequencies)
+        if unique_six_letter_omission(typo, correction, neighbors, frequencies):
+            six_letter_omissions += 1
         if frequency_five:
             frequency_five_letter_corrections += 1
         if typo in reviewed and reviewed[typo]["correction"] == correction:
@@ -261,6 +266,14 @@ def main() -> int:
         "documented_short_corrections": short_preferences,
         "frequency_short_corrections": frequency_short_preferences,
         "frequency_five_letter_corrections": frequency_five_letter_corrections,
+        "unique_six_letter_omissions": six_letter_omissions,
+        "six_letter_omission_policy": {
+            "minimum_frequency": MIN_SIX_LETTER_OMISSION_FREQUENCY,
+            "destination_length": 6,
+            "typo_length": 5,
+            "edit": "one missing letter",
+            "alternatives": "block regardless of frequency",
+        },
         "five_letter_preference": {
             "minimum_frequency": MIN_FIVE_LETTER_FREQUENCY,
             "minimum_ratio": MIN_FREQUENCY_RATIO,

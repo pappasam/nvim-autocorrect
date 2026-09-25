@@ -129,6 +129,16 @@ for typo, correction in pairs({
   whch = "which",
   whih = "which",
   wgich = "which",
+  eithr = "either",
+  myslf = "myself",
+  peiod = "period",
+  bieng = "being",
+  leauge = "league",
+  buisy = "busy",
+  edege = "edge",
+  ladiy = "lady",
+  loucd = "loud",
+  neack = "neck",
   probebly = "probably",
   rimember = "remember",
   thousend = "thousand",
@@ -142,6 +152,10 @@ for typo, correction in pairs({
 end
 assert(dictionary.lookup("wOuDl") == nil)
 assert(dictionary.lookup("correct") == nil)
+assert(
+  run({ "ieithr myslf bieng buisy edege neack.<Esc>" }, false)[1]
+    == "either myself being busy edge neck."
+)
 assert(
   run(
     { "iwehther weather whether Wehther WEHTHER foo_wehther wehtherx.<Esc>" },

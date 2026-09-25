@@ -1,6 +1,6 @@
 # Neovim Autocorrect
 
-Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,031,408 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
+Automatic spelling corrections for prose, using Neovim's native insert-mode abbreviations. Includes 1,031,439 lowercase typo corrections and enables them in Markdown and Git commit messages by default.
 
 Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappings (`vim.keymap.set("ia", ...)`). Tested on Neovim `v0.13.0-dev-1536+g050fa30632`. Vim is not supported.
 
@@ -48,7 +48,7 @@ require("autocorrect").setup({
 })
 ```
 
-This enables 29,429 existing mappings with documented spelling evidence, at least six input letters, and a single-word destination. All-caps, mixed-case words, short inputs, and joined phrases remain excluded from capitalization support. Known names stay protected, but unfamiliar names and brands can still collide with documented typos. Calling `setup()` without the option restores lowercase-only correction.
+This enables 29,438 existing mappings with documented spelling evidence, at least six input letters, and a single-word destination. All-caps, mixed-case words, short inputs, and joined phrases remain excluded from capitalization support. Known names stay protected, but unfamiliar names and brands can still collide with documented typos. Calling `setup()` without the option restores lowercase-only correction.
 
 ## Installation
 

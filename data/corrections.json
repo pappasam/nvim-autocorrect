@@ -105746,6 +105746,7 @@
     "bgeing",
     "bheing",
     "bieing",
+    "bieng",
     "bneing",
     "bseing",
     "bveing",
@@ -133516,6 +133517,9 @@
     "byusted",
     "ubsted",
     "vbusted"
+  ],
+  "busy": [
+    "buisy"
   ],
   "but": [
     "bgut",
@@ -176335,6 +176339,7 @@
     "cofcfee",
     "cofdee",
     "cofdfee",
+    "cofee",
     "cofeee",
     "cofefe",
     "coffcee",
@@ -183187,6 +183192,7 @@
     "cojming",
     "cokming",
     "colming",
+    "comeing",
     "comibg",
     "comieg",
     "comign",
@@ -341789,6 +341795,9 @@
     "wcstasy",
     "wecstasy"
   ],
+  "edge": [
+    "edege"
+  ],
   "edged": [
     "ecdged",
     "edbged",
@@ -345218,6 +345227,7 @@
     "eithher",
     "eithjer",
     "eithner",
+    "eithr",
     "eithre",
     "eithrer",
     "eithrr",
@@ -409743,6 +409753,7 @@
     "figjt",
     "fignht",
     "fignt",
+    "figth",
     "figtht",
     "figuht",
     "figut",
@@ -445442,6 +445453,7 @@
     "genijus",
     "genikus",
     "genios",
+    "genious",
     "genisu",
     "geniua",
     "geniuas",
@@ -478025,6 +478037,7 @@
     "gigher",
     "hbigher",
     "heigher",
+    "hgher",
     "hgigher",
     "hgiher",
     "hhigher",
@@ -555333,6 +555346,7 @@
     "itsewlf",
     "itslef",
     "itslev",
+    "itslf",
     "itsrelf",
     "itsrlf",
     "itsself",
@@ -562588,6 +562602,7 @@
     "kklled",
     "kliled",
     "klilled",
+    "klled",
     "kmilled",
     "koilled",
     "kuilled"
@@ -566696,6 +566711,9 @@
     "lzadies",
     "lzdies",
     "pladies"
+  ],
+  "lady": [
+    "ladiy"
   ],
   "lakes": [
     "laakes",
@@ -571436,6 +571454,7 @@
     "leagjue",
     "leagre",
     "leagtue",
+    "leagu",
     "leagud",
     "leaguhe",
     "leaguie",
@@ -571455,6 +571474,7 @@
     "leasgue",
     "leatgue",
     "leatue",
+    "leauge",
     "leavgue",
     "leawgue",
     "leaygue",
@@ -587413,6 +587433,9 @@
     "lotyus",
     "olotus"
   ],
+  "loud": [
+    "loucd"
+  ],
   "louder": [
     "klouder",
     "liouder",
@@ -587642,6 +587665,7 @@
     "lovewly",
     "lovfely",
     "lovgely",
+    "lovley",
     "lovrly",
     "lovsly",
     "lovvely",
@@ -587734,6 +587758,7 @@
     "lopving",
     "lovbing",
     "lovcing",
+    "loveing",
     "lovfing",
     "lovibg",
     "lovibng",
@@ -608079,6 +608104,7 @@
     "membger",
     "membher",
     "membner",
+    "membr",
     "membrer",
     "membrr",
     "membser",
@@ -623478,6 +623504,7 @@
     "momsnt",
     "momwent",
     "momwnt",
+    "monent",
     "mooment",
     "mopment",
     "mpment",
@@ -633698,6 +633725,7 @@
     "myseslf",
     "mysewlf",
     "myslef",
+    "myslf",
     "mysrelf",
     "mysrlf",
     "mysself",
@@ -638647,6 +638675,9 @@
     "nsecessity",
     "nwcessity",
     "nwecessity"
+  ],
+  "neck": [
+    "neack"
   ],
   "necklace": [
     "becklace",
@@ -647805,6 +647836,7 @@
     "notrmal",
     "npormal",
     "nprmal",
+    "nrmal",
     "nromal",
     "onrmal"
   ],
@@ -660746,6 +660778,7 @@
     "offvice",
     "ofgfice",
     "ofgice",
+    "ofice",
     "ofifce",
     "ofrfice",
     "ofrice",
@@ -662839,6 +662872,7 @@
     "onlkine",
     "onlkne",
     "onlline",
+    "onlne",
     "onlnie",
     "onloine",
     "onlone",
@@ -694983,6 +695017,7 @@
     "pedople",
     "peeople",
     "peiople",
+    "peiple",
     "pekople",
     "pekple",
     "pelople",
@@ -697725,6 +697760,7 @@
     "peeriod",
     "pefiod",
     "pefriod",
+    "peiod",
     "peirod",
     "pereiod",
     "perfiod",
@@ -829302,6 +829338,7 @@
     "erights",
     "irghts",
     "rdights",
+    "rghts",
     "rgihts",
     "ribghts",
     "ribhts",
@@ -844695,6 +844732,7 @@
     "sechool",
     "sfchool",
     "sfhool",
+    "shcool",
     "sschool",
     "svchool",
     "svhool",
@@ -964187,6 +964225,7 @@
     "thatf",
     "thatg",
     "thatr",
+    "thatt",
     "thaty",
     "thawt",
     "thayt",
@@ -993315,6 +993354,7 @@
     "truily",
     "trujly",
     "trukly",
+    "truley",
     "trulgy",
     "trulhy",
     "trulky",
@@ -1051841,6 +1051881,7 @@
     "woulpd",
     "woulr",
     "woulrd",
+    "wouls",
     "woulx",
     "woulxd",
     "wouold",

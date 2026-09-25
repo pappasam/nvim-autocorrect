@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["wordfreq==3.1.1", "cmudict==1.1.1", "codespell==2.4.1"]
 # ///
-"""Add common five-letter keyboard corrections, reviewed spellings and joined words.
+"""Add common-word keyboard corrections, reviewed spellings and joined words.
 
 Writes a separate proposal; run the full independent audit before adopting it.
 """
@@ -20,6 +20,7 @@ import wordfreq
 
 from dictionary_policy import (
     MIN_FIVE_LETTER_FREQUENCY,
+    MIN_SIX_LETTER_OMISSION_FREQUENCY,
     frequency_five_letter_correction,
     frequency_short_correction,
     keyboard_typos,
@@ -29,6 +30,7 @@ from dictionary_policy import (
     valid_typo_length,
     joined_word_splits,
     valid_joined_correction,
+    unique_six_letter_omission,
 )
 from dictionary_source import (
     load_documented_corrections, load_protected_words, load_reviewed_corrections, load_source,
@@ -56,11 +58,12 @@ def main():
             protected.add(normalized(word))
             if "-words." in path.name and level <= 80 and re.fullmatch("[A-Za-z]+", word):
                 real_words.add(word.lower())
-            if "-words." in path.name and level <= 60 and re.fullmatch("[a-z]{5}", word):
+            if "-words." in path.name and level <= 60 and re.fullmatch("[a-z]{5,6}", word):
                 destinations.add(word)
     protected.update(normalized(word) for word in cmudict.words())
     protected.update(load_protected_words(args.protected_words))
     frequencies = wordfreq.get_frequency_dict("en")
+    normalized_corpus = {normalized(word) for word in frequencies}
     reviewed = load_reviewed_corrections(args.reviewed_corrections)
     documented = load_documented_corrections(
         Path(codespell_lib.__file__).parent / "data/dictionary.txt", reviewed,
@@ -71,8 +74,13 @@ def main():
     proposed = {(typo, record["correction"]) for typo, record in reviewed.items()}
     proposed.update((typo, correction) for typo, correction in documented.items() if " " in correction)
     for correction in destinations:
-        if frequencies.get(correction, 0) >= MIN_FIVE_LETTER_FREQUENCY:
+        if len(correction) == 5 and frequencies.get(correction, 0) >= MIN_FIVE_LETTER_FREQUENCY:
             proposed.update((typo, correction) for typo in keyboard_typos(correction) if len(typo) in (4, 5))
+        elif len(correction) == 6 and frequencies.get(correction, 0) >= MIN_SIX_LETTER_OMISSION_FREQUENCY:
+            proposed.update(
+                (correction[:i] + correction[i + 1:], correction) for i in range(6)
+                if correction[:i] + correction[i + 1:] not in normalized_corpus
+            )
     additions, conflicts = {}, {}
     rejected, categories = collections.Counter(), collections.Counter()
     for typo, correction in sorted(proposed):
@@ -107,7 +115,11 @@ def main():
         if not valid_typo_length(typo, correction, candidates, documented.get(typo), frequencies):
             rejected["length"] += 1
             continue
-        if typo not in reviewed and not frequency_five_letter_correction(typo, correction, candidates, frequencies):
+        six_letter_omission = unique_six_letter_omission(typo, correction, candidates, frequencies)
+        if typo not in reviewed and not (
+            frequency_five_letter_correction(typo, correction, candidates, frequencies)
+            or six_letter_omission
+        ):
             rejected["frequency_or_ambiguity"] += 1
             continue
         # The audit needs no preference when there is no competing word. This
@@ -130,7 +142,10 @@ def main():
             conflicts[typo] = [entries.get(typo, additions.get(typo)), correction]
             continue
         additions[typo] = correction
-        categories["reviewed" if typo in reviewed else "five_letter_keyboard"] += 1
+        category = "reviewed" if typo in reviewed else (
+            "six_letter_omission" if six_letter_omission else "five_letter_keyboard"
+        )
+        categories[category] += 1
     if conflicts:
         raise ValueError(f"Existing or proposed mappings need review: {conflicts}")
     entries.update(additions)

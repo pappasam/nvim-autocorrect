@@ -120,6 +120,7 @@ with tempfile.TemporaryDirectory() as directory:
     (root / "final/english-words.20").write_text("where\nhere\nwere\ntwere\nwhat\nwheat\nwehet\n")
     (root / "final/english-words.30").write_text("which\nwich\npeople\nprobably\nremember\nthousand\n")
     (root / "final/english-words.40").write_text("each\nother\nwant\nto\nwhether\nweather\nwerther\nwether\n")
+    (root / "final/english-words.50").write_text("either\nitself\nmember\n")
     (root / "data").mkdir()
     (root / "data/dictionary.txt").write_text("buidl->build\nhte->the\nabotu->about\nwiht->with\nwth->with\nwhch->which\neachother->each other\nwantto->want to\nwehther->whether\n")
     frequencies = {
@@ -137,6 +138,8 @@ with tempfile.TemporaryDirectory() as directory:
         "each": 0.001, "other": 0.001, "want": 0.001, "to": 0.001,
         "eachother": 1e-6,
         "whether": 2e-4, "weather": 7e-5, "werther": 1e-7, "wether": 6e-7,
+        "either": 1e-4, "itself": 1e-4, "itslf": 1e-7,
+        "member": 1e-4, "mémbr": 1e-7,
     }
     modules = {
         "cmudict": SimpleNamespace(words=lambda: []),
@@ -150,6 +153,10 @@ with tempfile.TemporaryDirectory() as directory:
         audit = runpy.run_path(str(ROOT / "scripts/audit-dictionary.py"))
         source = root / "corrections.json"
         cases = [
+            ({"either": ["eithr"]}, {}, None),
+            ({"either": ["eithr"]}, {"eithr": evidence}, "protected_word_or_name"),
+            ({"either": ["eithr"]}, {"eithra": evidence}, "short_ambiguous_token"),
+            ({"itself": ["itslf"]}, {}, "undocumented_corpus_token"),
             # Control: codespell can permit this corpus token before protection.
             ({"build": ["buidl"]}, {}, None),
             # Supplemental protection overrides codespell, corpus and swap exceptions.
@@ -220,6 +227,8 @@ with tempfile.TemporaryDirectory() as directory:
             assert report["supplemental_protected_tokens"] == len(protected), report
             if failure:
                 assert report["failure_counts"].get(failure), report
+            elif "eithr" in groups.get("either", []):
+                assert report["unique_six_letter_omissions"] == 1, report
             elif "wehther" in groups.get("whether", []):
                 assert report["documented_transposition_corrections"] == 1, report
                 assert report["rare_alternative_transposition_corrections"] == 0, report
@@ -243,6 +252,11 @@ with tempfile.TemporaryDirectory() as directory:
         expand = runpy.run_path(str(ROOT / "scripts/expand-common-words.py"))
         proposal = root / "proposal.json"
         expansion_cases = [
+            ("eithr", "either", {}, False, True),
+            ("eithr", "either", {"eithr": evidence}, False, False),
+            ("eithr", "either", {"eithra": evidence}, False, False),
+            ("itslf", "itself", {}, False, False),
+            ("membr", "member", {}, False, False),
             ("proberbly", "probably", {}, True, True),
             ("requxres", "requires", {}, True, True),
             ("proberbly", "probably", {"proberbly": evidence}, True, False),

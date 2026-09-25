@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,031,408 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,031,439 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -119,7 +119,7 @@ Opt in to documented initial-capital corrections: >lua
   require("autocorrect").setup({ correct_capitalized = true })
 <
 For example, "Definately" becomes "Definitely" and "Recieve" becomes "Receive".
-The 29,429 eligible mappings must already be accepted lowercase corrections,
+The 29,438 eligible mappings must already be accepted lowercase corrections,
 documented by codespell or reviewed evidence, with at least six input letters
 and a single-word destination. Only one initial ASCII capital followed by
 lowercase ASCII letters qualifies. All-caps, mixed-case words, short inputs,
