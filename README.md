@@ -152,3 +152,9 @@ Yes. Add them to `filetypes` in `setup()`. Markdown correction skips code; `text
 ### Does it modify existing text or correct files on save?
 
 It expands words as you type in Insert or Replace mode. Saving the dictionary's source rebuilds its data; saving ordinary buffers does not rewrite their contents.
+
+### Why doesn't a typo correct when I go back to it?
+
+Neovim's native abbreviations depend on where Insert mode began. Entering Insert mode at the end of an existing typo and typing a space or pressing Ctrl-] does not correct it. Retyping only the last letter does not trigger correction either.
+
+To trigger correction, replace the whole word: put the cursor on `adjustmnet`, press `ciw`, type `adjustmnet`, then press Space. It becomes `adjustment`.
