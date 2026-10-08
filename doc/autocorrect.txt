@@ -165,6 +165,11 @@ No default key mappings are provided. Native abbreviation controls apply:
 Escape and CTRL-] preserve a token when keyword characters follow the cursor.
 Undo/redo and macros follow native abbreviation behavior. See |abbreviations|.
 
+To keep an intentional misspelling, press CTRL-V before the space or punctuation
+that would trigger correction. For example, type "definately", then CTRL-V,
+then Space to insert "definately " unchanged. This skips that expansion;
+subsequent words are corrected normally. See |abbreviations| and |i_CTRL-V|.
+
 ==============================================================================
                                                      *autocorrect-dictionary*
 5. DICTIONARY~

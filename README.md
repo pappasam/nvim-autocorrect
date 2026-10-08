@@ -95,6 +95,12 @@ Commit the source and refreshed audit; generated dictionaries are local cache fi
 
 ## FAQ
 
+### How can I prevent a correction when a misspelling is intentional?
+
+Use Neovim's built-in abbreviation bypass: in Insert mode, press Ctrl-V before the space or punctuation that would trigger the correction. For example, type `definately`, then Ctrl-V, then Space to keep `definately ` unchanged. This skips that expansion; subsequent words are corrected normally.
+
+See `:help abbreviations` and `:help i_CTRL-V`, or [Neovim's abbreviation documentation](https://neovim.io/doc/user/map/#abbreviations).
+
 ### How does it choose between possible corrections?
 
 After protecting known words, names, and corpus tokens, the dictionary can prefer a clearly dominant common correction: `abotu` → `about`. The frequency rule requires at least 10 occurrences per million words and a 100-fold lead over every alternative. Close candidates remain uncorrected; see the [full selection rules](CONTRIBUTING.md#selection-rules).
