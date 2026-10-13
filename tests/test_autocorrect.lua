@@ -139,6 +139,12 @@ for typo, correction in pairs({
   ladiy = "lady",
   loucd = "loud",
   neack = "neck",
+  aufful = "awful",
+  direnk = "drink",
+  enmeny = "enemy",
+  ftigh = "fight",
+  furiht = "fruit",
+  sheepe = "sheep",
   probebly = "probably",
   rimember = "remember",
   thousend = "thousand",
@@ -205,6 +211,10 @@ assert(
   run({ "ihte abotu seperate abilith abilityy <Esc>" }, false)[1]
     == "the about separate ability ability "
 )
+assert(
+  run({ "iaufful direnk enmeny ftigh furiht sheepe.<Esc>" }, false)[1]
+    == "awful drink enemy fight fruit sheep."
+)
 local protected = "algin adust belive grammer siad teh thier form from staring "
   .. "starting publically supercede NASA NATO SaaS OpenAI Teh Thier Seperate SEPERATE"
   .. " Definately DEFINATELY looking meeting updated payments practical partnership"
@@ -219,6 +229,9 @@ local protected = "algin adust belive grammer siad teh thier form from staring "
   .. " surender slrender exisist fhilght buyin simpel howrse"
   .. " tge tje thw wqs aqn byh nby vby dko xdo gko hje ikn iyt"
   .. " jmy myh sxo szo xso zso ujp uyp qwe wqe"
+  .. " aftr alfule appre becom clob coffe equly finol grwo happi irst naver"
+  .. " nmme notic nothc offtan ornge pliolt veiwd leuul heellp whaaat"
+  .. " ftighx foo_ftigh Ftigh FTIGH Aufful Direnk Enmeny Furiht Sheepe"
 assert(run({ "i" .. protected .. " <Esc>" }, false)[1] == protected .. " ")
 assert(
   run({ "iwiht wtih taht thsi yuo tthe knwo.<Esc>" }, false)[1]
@@ -336,6 +349,14 @@ for i, case in ipairs(title_cases) do
   )
 end
 assert(run({ "iDefinately Recieve <Esc>" }, false)[1] == "Definitely Receive ")
+assert(
+  run({ "iAufful Direnk Enmeny Ftigh Furiht Sheepe.<Esc>" }, false)[1]
+    == "Awful Drink Enemy Ftigh Fruit Sheep."
+)
+assert(
+  run({ "iOrnge Naver Equly AFTR CLOB foo_ftigh.<Esc>" }, false)[1]
+    == "Ornge Naver Equly AFTR CLOB foo_ftigh."
+)
 assert(run({ "iDefinately<Esc>", "suffix" }, false)[1] == "Definatelysuffix")
 assert(
   run({ "ADefinately <Esc>", long_prefix }, false)[1]

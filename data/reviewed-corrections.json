@@ -2444,6 +2444,11 @@
     "reason": "Observed spelling error listed under auditorium in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "aufful": {
+    "correction": "awful",
+    "reason": "Observed spelling in the pinned Norvig collection; two edits, with no competing common word within two edits in this review.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "auful": {
     "correction": "awful",
     "reason": "Observed spelling error listed under awful in Norvig's collected spelling errors.",
@@ -5854,6 +5859,11 @@
     "reason": "Exact spelling correction to directories documented in the pinned codespell 2.4.1 dictionary.",
     "source": "https://github.com/codespell-project/codespell/blob/v2.4.1/codespell_lib/data/dictionary.txt"
   },
+  "direnk": {
+    "correction": "drink",
+    "reason": "Observed spelling in the pinned Norvig collection; an inserted e and adjacent swap, preserving the first and last letters. Review of common two-edit alternatives favors the keyboard path to drink.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "direrctories": {
     "correction": "directories",
     "reason": "Exact spelling correction to directories documented in the pinned codespell 2.4.1 dictionary.",
@@ -6892,6 +6902,11 @@
   "enmenies": {
     "correction": "enemies",
     "reason": "Observed spelling error listed under enemies in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "enmeny": {
+    "correction": "enemy",
+    "reason": "Observed spelling in the pinned Norvig collection; two keyboard edits, with no competing common word within two edits in this review.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "ennocent": {
@@ -8584,6 +8599,11 @@
     "reason": "Observed spelling error listed under fruit in Norvig's collected spelling errors.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
+  "ftigh": {
+    "correction": "fight",
+    "reason": "Observed spelling in the pinned Norvig collection; this exact five-letter shuffle preserves every letter. Two-edit alternatives such as tight require changing the letters; this evidence does not authorize arbitrary shuffles.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
   "fucilities": {
     "correction": "facilities",
     "reason": "Observed spelling error listed under facilities in Norvig's collected spelling errors.",
@@ -8632,6 +8652,11 @@
   "fundumental": {
     "correction": "fundamental",
     "reason": "Observed spelling error listed under fundamental in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "furiht": {
+    "correction": "fruit",
+    "reason": "Observed spelling in the pinned Norvig collection; two edits, with no competing common word within two edits in this review.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "furnice": {
@@ -15262,6 +15287,11 @@
   "shcool": {
     "correction": "school",
     "reason": "Observed spelling error listed under school in Norvig's collected spelling errors.",
+    "source": "https://www.norvig.com/ngrams/spell-errors.txt"
+  },
+  "sheepe": {
+    "correction": "sheep",
+    "reason": "Observed spelling in the pinned Norvig collection; an extra final e. Historical English usage does not establish an intentional modern spelling; the pair passes the existing frequency and ambiguity checks.",
     "source": "https://www.norvig.com/ngrams/spell-errors.txt"
   },
   "sheuduled": {

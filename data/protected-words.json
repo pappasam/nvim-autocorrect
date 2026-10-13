@@ -1,7 +1,23 @@
 {
+  "aftr": {
+    "reason": "Abbreviation for American Federal Tax Reports used by Georgetown Law Library; preserve normalized legal references rather than expanding to after.",
+    "source": "https://guides.ll.georgetown.edu/c.php?g=271147&p=3717977"
+  },
+  "alfule": {
+    "reason": "Word in the song title Alfule Haboti, credited to Zubeen Garg; preserve the title rather than interpreting it as awful.",
+    "source": "https://music.apple.com/us/song/1715301117"
+  },
+  "appre": {
+    "reason": "Name used by the Czech fashion company Appre on its company profile; preserve the normalized brand name.",
+    "source": "https://www.linkedin.com/company/appre"
+  },
   "aqn": {
     "reason": "Stock symbol used for Algonquin Power & Utilities; preserve normalized financial references rather than expanding to an.",
     "source": "https://s25.q4cdn.com/253745149/files/doc_presentations/2022/09/AQN-Investor-Presentation-September-2022-vF.pdf"
+  },
+  "becom": {
+    "reason": "Name used by BECOM for medical software; preserve the normalized company name rather than expanding to become.",
+    "source": "https://www.becom.ag/en/"
   },
   "buidl": {
     "reason": "Intentional cryptocurrency slang for contributing to the ecosystem; preserve this spelling even though it is a transposition of build.",
@@ -15,13 +31,37 @@
     "reason": "Texting abbreviation for bless your heart; preserve intentional shorthand rather than expanding to by.",
     "source": "https://www.dictionary.com/culture/acronyms/bhy"
   },
+  "clob": {
+    "reason": "SQL type for a character large object in Oracle documentation; preserve normalized technical terminology rather than interpreting it as club.",
+    "source": "https://docs.oracle.com/en/java/javase/24/docs/api/java.sql/java/sql/Clob.html"
+  },
+  "coffe": {
+    "reason": "Spelling in the registered company name M.K.COFFE LTD; preserve the normalized name rather than expanding to coffee.",
+    "source": "https://find-and-update.company-information.service.gov.uk/company/16380898"
+  },
   "dko": {
     "reason": "Abbreviation used by the publisher for the game Divine Knockout; preserve the normalized game name rather than expanding to do.",
     "source": "https://store.steampowered.com/app/2188020/"
   },
+  "equly": {
+    "reason": "Name used by Equly for its shared-ownership product; preserve the normalized brand name rather than expanding to equally.",
+    "source": "https://www.equly.co/"
+  },
+  "finol": {
+    "reason": "Name used by Finol Oils for its lubricants business; preserve the normalized company name rather than interpreting it as final.",
+    "source": "https://www.finol.ie/oils-lubricants-grease/"
+  },
   "gko": {
     "reason": "Abbreviation for Russian treasury bills used in IMF research; preserve normalized financial terminology rather than expanding to go.",
     "source": "https://www.imf.org/external/pubs/ft/staffp/2004/02/taylor.htm"
+  },
+  "grwo": {
+    "reason": "Intentional spelling of the software company Grwo, explicitly explained by its branding agency; preserve the normalized name despite the documented typo for grow.",
+    "source": "https://www.cmcagency.co/grwo"
+  },
+  "happi": {
+    "reason": "Japanese garment name used in the Metropolitan Museum of Art collection; preserve the word rather than interpreting it as happy.",
+    "source": "https://www.metmuseum.org/art/collection/search/45189"
   },
   "hje": {
     "reason": "Abbreviation used by the Hospital of St John and St Elizabeth; preserve the normalized organization name rather than expanding to he.",
@@ -30,6 +70,10 @@
   "ikn": {
     "reason": "Abbreviation used for Ibu Kota Nusantara on its official English site; preserve the normalized place name rather than expanding to in.",
     "source": "https://ikn.go.id/en"
+  },
+  "irst": {
+    "reason": "Abbreviation for infrared search and track in Leonardo product documentation; preserve normalized technical terminology rather than expanding to first.",
+    "source": "https://electronics.leonardo.com/documents/16277707/18376519/Skyward%2B-%2BIR%2BSearch%2B%26%2BTrack%2BSystem%2B%28mm08130%29%2BHQ.pdf"
   },
   "iyt": {
     "reason": "Name used by International Yacht Training Worldwide; preserve the normalized organization name rather than expanding to it.",
@@ -43,9 +87,29 @@
     "reason": "Abbreviation for myosin heavy chain in published gene research; preserve normalized biological terminology rather than expanding to my.",
     "source": "https://pubmed.ncbi.nlm.nih.gov/15777658/"
   },
+  "naver": {
+    "reason": "Name used by NAVER Corporation; preserve the normalized company name rather than interpreting it as never.",
+    "source": "https://www.navercorp.com/en/main"
+  },
   "nby": {
     "reason": "Former stock symbol of NovaBay Pharmaceuticals, documented in its name-change announcement; preserve historical financial references rather than expanding to by.",
     "source": "https://novabay.com/pr/novabay-pharmaceuticals-announces-name-change-to-stablecoin-development-corporation-reports-initial-staking-rewards-and-provides-sky-token-holdings-update"
+  },
+  "nmme": {
+    "reason": "Abbreviation for the North American Multi-Model Ensemble in NOAA forecasting documentation; preserve normalized technical terminology rather than interpreting it as name.",
+    "source": "https://ftp.cpc.ncep.noaa.gov/NMME/archive/2026040800/users_guide.html"
+  },
+  "notic": {
+    "reason": "Name used by the Notic note-taking application; preserve the normalized product name rather than expanding to notice.",
+    "source": "https://www.getnotic.io/"
+  },
+  "offtan": {
+    "reason": "Artist name OffTan in the Apple Music catalog; preserve the normalized name rather than interpreting it as often.",
+    "source": "https://music.apple.com/us/artist/offtan/1490807417"
+  },
+  "ornge": {
+    "reason": "Name used by the Ontario air ambulance service Ornge; preserve the normalized organization name rather than expanding to orange.",
+    "source": "https://www.ornge.ca/home"
   },
   "qwe": {
     "reason": "Name of a literate-programming tool for Emacs; preserve the normalized project name rather than expanding to we.",

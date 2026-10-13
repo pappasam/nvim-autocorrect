@@ -1,6 +1,6 @@
 # Contributing to nvim-autocorrect
 
-The catalog contains 1,031,494 lowercase typo mappings across 12,109 destinations, including 11 two-word phrases.
+The catalog contains 1,031,499 lowercase typo mappings across 12,109 destinations, including 11 two-word phrases.
 
 ## Editing and rebuilding
 
@@ -52,7 +52,7 @@ A sole candidate needs no ambiguity preference, but still needs the frequency fl
 
 ### Opt-in initial-capital corrections
 
-`setup({ correct_capitalized = true })` permits one initial ASCII capital followed by lowercase letters. Eligibility requires an accepted lowercase mapping, at least six input letters, a single-word destination, and the same exact correction documented unambiguously in pinned codespell or `data/reviewed-corrections.json`. This selects 29,490 mappings, including `Definately` → `Definitely`, `Recieve` → `Receive`, and `Probebly` → `Probably`. Short inputs, two-word destinations, all-caps, and mixed-case tokens remain excluded. No sentence-position heuristic is used; unfamiliar names and brands remain a possible source of false corrections.
+`setup({ correct_capitalized = true })` permits one initial ASCII capital followed by lowercase letters. Eligibility requires an accepted lowercase mapping, at least six input letters, a single-word destination, and the same exact correction documented unambiguously in pinned codespell or `data/reviewed-corrections.json`. This selects 29,495 mappings, including `Definately` → `Definitely`, `Recieve` → `Receive`, and `Probebly` → `Probably`. Short inputs, two-word destinations, all-caps, and mixed-case tokens remain excluded. No sentence-position heuristic is used; unfamiliar names and brands remain a possible source of false corrections.
 
 `data/capitalized-corrections.json` materializes this subset using the same grouped lowercase syntax as the main catalog. Regenerate it after changing the catalog or evidence:
 
@@ -166,6 +166,16 @@ Allowing two-letter destinations while retaining three-letter inputs initially p
 
 These protections follow the existing normalization policy: an uppercase acronym or name also protects its lowercase spelling. Absence from the pinned corpora does not establish that a short token is meaningless. Future short-word proposals must still undergo manual review.
 
+### Four- and five-letter review
+
+This review adds six exact pairs from the pinned Norvig collection: `aufful` → `awful`, `direnk` → `drink`, `enmeny` → `enemy`, `ftigh` → `fight`, `furiht` → `fruit`, and `sheepe` → `sheep`. The catalog now contains 1,031,499 mappings and the reviewed evidence file contains 3,626 records. Five additions qualify for initial-capital correction; the five-letter input `ftigh` remains lowercase-only.
+
+The search covered documented four- and five-letter inputs, plus three- through six-letter inputs for four- and five-letter destinations. Candidate destinations had to occur at least 10 times per million words. Source conflicts, protected words and names, length restrictions, and competing corrections excluded most candidates. Rerunning both existing word-expansion generators before adding evidence produced no additions. A separate keyboard-variant scan of common lowercase SCOWL words at size 60 or below likewise found no eligible omissions in this scope. This was a source and candidate review, not an enumeration of every possible four- or five-letter string.
+
+Five accepted pairs require two edits; `sheepe` requires one. Manual review considered common two-edit alternatives in addition to the audit's single-edit competitors. `aufful`, `enmeny`, and `furiht` had no other word within two edits at the review's frequency floor. `direnk` has a keyboard-edit path to `drink`; competing common words require other substitutions. The exact shuffle `ftigh` preserves the letters of `fight`. These are individually documented corrections, with no new generated shuffle rule or change to length and frequency thresholds. No new four-letter inputs qualified after review.
+
+Ambiguous candidates stay unchanged: `pliolt` has keyboard paths to both `pilot` and `plot`, `veiwd` to both `viewed` and `views`, and `leuul` is close to both `level` and `legal`. Expressive repetitions such as `heellp` and `whaaat` also remain unchanged. Sixteen intentional terms and names now have explicit protections with individual source URLs: `aftr`, `alfule`, `appre`, `becom`, `clob`, `coffe`, `equly`, `finol`, `grwo`, `happi`, `irst`, `naver`, `nmme`, `notic`, `offtan`, and `ornge`. As with the preceding short-word review, uppercase names and acronyms also protect their lowercase forms. The full audit removes the existing `nothc` → `notch` mapping because the newly protected `notic` supplies a competing single-edit candidate. The net change is five mappings.
+
 ### Supplemental protected words
 
 Use `data/protected-words.json` for legitimate terms missing from the reference dictionaries. Each key is an exact lowercase ASCII token to preserve, with a nonempty `reason` and an HTTP(S) `source` URL establishing intentional usage. Sort keys alphabetically. For example:
@@ -255,7 +265,7 @@ Reproduce the expansion using the same pinned maintenance dependencies and SCOWL
 uv run scripts/expand-short-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/short-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/short-word-corrections.json --expect 1031494 \
+  --source /tmp/short-word-corrections.json --expect 1031499 \
   --report /tmp/short-word-audit.json
 ```
 
@@ -269,7 +279,7 @@ This batch adds 2,026 mappings across 214 existing destinations, preserving ever
 uv run scripts/expand-common-words.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/common-word-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/common-word-corrections.json --expect 1031494 \
+  --source /tmp/common-word-corrections.json --expect 1031499 \
   --report /tmp/common-word-audit.json
 ```
 
@@ -285,7 +295,7 @@ Reproduce the batch with the pinned maintenance references:
 uv run scripts/expand-transpositions.py --scowl /tmp/scowl-2020.12.07 \
   --output /tmp/transposition-corrections.json
 uv run scripts/audit-dictionary.py --scowl /tmp/scowl-2020.12.07 \
-  --source /tmp/transposition-corrections.json --expect 1031494 \
+  --source /tmp/transposition-corrections.json --expect 1031499 \
   --report /tmp/transposition-audit.json
 ```
 
@@ -299,7 +309,7 @@ Maintenance references:
 - [CMUdict](https://github.com/cmusphinx/cmudict), Carnegie Mellon University, package `cmudict==1.1.1`: additional words and names.
 - [wordfreq 3.1.1](https://github.com/rspeer/wordfreq), Robyn Speer and contributors: corpus screening and frequency ordering.
 - [codespell 2.4.1](https://github.com/codespell-project/codespell): independently documented corrections, including 538 additional pairs recorded in the reviewed evidence file.
-- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 3,082 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
+- [Norvig’s collected spelling errors](https://www.norvig.com/ngrams/), from Wikipedia and [Roger Mitton’s corpora](https://titan.dcs.bbk.ac.uk/~roger/corpora.html): 3,088 reviewed pairs, recorded with evidence in `data/reviewed-corrections.json`. The historical collection includes student writing; it is evidence of observed spellings, not current typo prevalence.
 
 These are maintenance dependencies only. `data/audit.json` records counts, the canonical mapping hash, reference fingerprint, versions, and results; it is not runtime input.
 
@@ -310,7 +320,7 @@ curl -fL -o /tmp/scowl.tar.gz https://deb.debian.org/debian/pool/main/s/scowl/sc
 # SHA-256: 5587667caa20c4891390c2d42dbb4d5c4c3f41bee77af1457ece3ba23fb859cc
 tar -xzf /tmp/scowl.tar.gz -C /tmp
 uv run scripts/audit-dictionary.py \
-  --scowl /tmp/scowl-2020.12.07 --expect 1031494 \
+  --scowl /tmp/scowl-2020.12.07 --expect 1031499 \
   --report data/audit.json
 ```
 
