@@ -1,4 +1,8 @@
 {
+  "aqn": {
+    "reason": "Stock symbol used for Algonquin Power & Utilities; preserve normalized financial references rather than expanding to an.",
+    "source": "https://s25.q4cdn.com/253745149/files/doc_presentations/2022/09/AQN-Investor-Presentation-September-2022-vF.pdf"
+  },
   "buidl": {
     "reason": "Intentional cryptocurrency slang for contributing to the ecosystem; preserve this spelling even though it is a transposition of build.",
     "source": "https://www.coingecko.com/en/glossary/buidl"
@@ -7,8 +11,100 @@
     "reason": "Documented inflection of intentional cryptocurrency slang BUIDL; preserve this spelling rather than correcting it to building.",
     "source": "https://www.ledger.com/academy/glossary/buidl"
   },
+  "byh": {
+    "reason": "Texting abbreviation for bless your heart; preserve intentional shorthand rather than expanding to by.",
+    "source": "https://www.dictionary.com/culture/acronyms/bhy"
+  },
+  "dko": {
+    "reason": "Abbreviation used by the publisher for the game Divine Knockout; preserve the normalized game name rather than expanding to do.",
+    "source": "https://store.steampowered.com/app/2188020/"
+  },
+  "gko": {
+    "reason": "Abbreviation for Russian treasury bills used in IMF research; preserve normalized financial terminology rather than expanding to go.",
+    "source": "https://www.imf.org/external/pubs/ft/staffp/2004/02/taylor.htm"
+  },
+  "hje": {
+    "reason": "Abbreviation used by the Hospital of St John and St Elizabeth; preserve the normalized organization name rather than expanding to he.",
+    "source": "https://hje.org.uk/privacy-policy/"
+  },
+  "ikn": {
+    "reason": "Abbreviation used for Ibu Kota Nusantara on its official English site; preserve the normalized place name rather than expanding to in.",
+    "source": "https://ikn.go.id/en"
+  },
+  "iyt": {
+    "reason": "Name used by International Yacht Training Worldwide; preserve the normalized organization name rather than expanding to it.",
+    "source": "https://www.iytworld.com/"
+  },
+  "jmy": {
+    "reason": "Gene symbol for junction-mediating and regulatory protein; preserve normalized biological terminology rather than expanding to my.",
+    "source": "https://www.ncbi.nlm.nih.gov/gene/57748"
+  },
+  "myh": {
+    "reason": "Abbreviation for myosin heavy chain in published gene research; preserve normalized biological terminology rather than expanding to my.",
+    "source": "https://pubmed.ncbi.nlm.nih.gov/15777658/"
+  },
+  "nby": {
+    "reason": "Former stock symbol of NovaBay Pharmaceuticals, documented in its name-change announcement; preserve historical financial references rather than expanding to by.",
+    "source": "https://novabay.com/pr/novabay-pharmaceuticals-announces-name-change-to-stablecoin-development-corporation-reports-initial-staking-rewards-and-provides-sky-token-holdings-update"
+  },
+  "qwe": {
+    "reason": "Name of a literate-programming tool for Emacs; preserve the normalized project name rather than expanding to we.",
+    "source": "https://www.nongnu.org/qwe/main.html"
+  },
   "surender": {
     "reason": "Given name, as used by Surender Baswana; preserve it rather than interpreting it as a misspelling of surrender.",
     "source": "https://www.cse.iitd.ac.in/~sbaswana/"
+  },
+  "sxo": {
+    "reason": "Abbreviation for search experience optimization; preserve normalized marketing terminology rather than expanding to so.",
+    "source": "https://ahrefs.com/blog/search-experience-optimization/"
+  },
+  "szo": {
+    "reason": "Abbreviation used by Slovensko zdruzenje oglasevalcev, the Slovenian advertisers association; preserve the normalized organization name rather than expanding to so.",
+    "source": "https://www.soz.si/zdruzenja/szo"
+  },
+  "tge": {
+    "reason": "Abbreviation for token generation event used in cryptocurrency publishing; preserve normalized terminology despite the documented typo for the.",
+    "source": "https://blog.kraken.com/product/360/pre-tge-playbook-part-3"
+  },
+  "thw": {
+    "reason": "Abbreviation for Technisches Hilfswerk, the German disaster-relief agency; preserve the normalized organization name despite the documented typo for the.",
+    "source": "https://ov-bueren.thw.de/unser-ortsverband/wer-was-ist-eigentlich-das-thw"
+  },
+  "tje": {
+    "reason": "Cyrillic letter name in the Unicode character charts; preserve the normalized letter name despite the documented typo for the.",
+    "source": "https://www.unicode.org/charts/PDF/U1C80.pdf"
+  },
+  "ujp": {
+    "reason": "Abbreviation used by the Ukrainian Journal of Physics; preserve the normalized publication name rather than expanding to up.",
+    "source": "https://ujp.bitp.kiev.ua/index.php/ujp/en"
+  },
+  "uyp": {
+    "reason": "Name used by UYP Pte Ltd; preserve the normalized company name rather than expanding to up.",
+    "source": "https://www.uyp.com.sg/index.php?Itemid=6&id=6&option=com_content&view=article"
+  },
+  "vby": {
+    "reason": "Code used by Swedavia for Visby Airport; preserve normalized airport references rather than expanding to by.",
+    "source": "https://www.swedavia.se/contentassets/ccbcf4fec47d4e79a1788441e6c1293c/vby-077-6.pdf"
+  },
+  "wqe": {
+    "reason": "Technical abbreviation for work queue element in IBM documentation; preserve normalized terminology rather than expanding to we.",
+    "source": "https://www.ibm.com/docs/SSGMCP_6.1.0/reference-data-areas/data-areas/DFHSKWKS.html"
+  },
+  "wqs": {
+    "reason": "Abbreviation for water quality standards used by the US EPA; preserve normalized terminology despite the documented typo for was.",
+    "source": "https://www.epa.gov/wqs-tech/what-are-water-quality-standards"
+  },
+  "xdo": {
+    "reason": "Report file extension in Oracle Analytics Publisher; preserve the technical token rather than expanding to do.",
+    "source": "https://docs.oracle.com/en/cloud/paas/analytics-cloud/acspd/to_createreportinsession_method.html"
+  },
+  "xso": {
+    "reason": "Rust crate name and abbreviation for XML Streamed Objects; preserve the technical token rather than expanding to so.",
+    "source": "https://docs.rs/xso/latest/xso/index.html"
+  },
+  "zso": {
+    "reason": "Compressed disc-image format supported by maxcso; preserve the technical token rather than expanding to so.",
+    "source": "https://github.com/unknownbrackets/maxcso"
   }
 }

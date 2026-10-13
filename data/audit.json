@@ -1,5 +1,5 @@
 {
-  "alternative_dictionary_tokens": 626456,
+  "alternative_dictionary_tokens": 626480,
   "capitalized_corrections": 29490,
   "capitalized_policy": {
     "destination_words": 1,
@@ -50,9 +50,9 @@
     "wordfreq": "3.1.1"
   },
   "passed": true,
-  "preferred_frequency_corrections": 83038,
+  "preferred_frequency_corrections": 83042,
   "preferred_transposition_corrections": 12270,
-  "protected_dictionary_tokens": 626436,
+  "protected_dictionary_tokens": 626460,
   "protected_frequency_tokens": 321180,
   "rare_alternative_transposition_corrections": 3866,
   "rejected_typos": [],
@@ -84,8 +84,8 @@
     "minimum_frequency": 0.0001,
     "typo_length": 5
   },
-  "supplemental_protected_sha256": "b19274b1d53dd90ac9ef63f7de89b2c89e41201d62978f5682a003b784497b95",
-  "supplemental_protected_tokens": 3,
+  "supplemental_protected_sha256": "7da9632a44545b9eaa19d4926ca8026063fb1730f818604a0782c4c02c591c40",
+  "supplemental_protected_tokens": 27,
   "technical_destinations": [
     "booleans",
     "cacheable",

@@ -156,6 +156,16 @@ Contraction restoration does not fit the present protection policy: SCOWL/CMUdic
 
 These exceptions never override protected input, corpus screening, destination validation, or lowercase whole-word matching. `HTE`, `Hte`, and `foo_hte` remain untouched. Other short typos can qualify under the frequency rule above; `teh` remains excluded by reference-dictionary protection. Exact overrides require explicit review and documentation here; the common short-word rule does not bypass ambiguity checks. The audit counts accepted exceptions in `documented_short_corrections`.
 
+### Two- and three-letter review
+
+An exhaustive review of all 18,252 lowercase two- and three-letter inputs against the pinned references found no missing mappings under the existing rules. The catalog has 22 three-letter inputs and no shorter inputs; rerunning `expand-short-words.py` adds nothing. Of the 676 two-letter combinations, 579 are dictionary-protected and the remaining 97 occur in wordfreq. The minimum input length remains three.
+
+Codespell documents `tge`/`tje` → `the` and `wqs` → `was`; Norvig also documents `thw` → `the`. Manual review found intentional uses for all four: token generation events, the Cyrillic letter tje, water quality standards, and Germany's Technisches Hilfswerk. They are now explicitly protected, with sources in `data/protected-words.json`. Documentary typo evidence does not override these uses, so the short corpus rule remains unchanged.
+
+Allowing two-letter destinations while retaining three-letter inputs initially produced 20 keyboard candidates that passed dictionary protection, corpus screening, and the 100-fold frequency requirement: `aqn` → `an`; `byh`/`nby`/`vby` → `by`; `dko`/`xdo` → `do`; `gko` → `go`; `hje` → `he`; `ikn` → `in`; `iyt` → `it`; `jmy`/`myh` → `my`; `sxo`/`szo`/`xso`/`zso` → `so`; `ujp`/`uyp` → `up`; and `qwe`/`wqe` → `we`. None had observed typo evidence in the checked codespell and Norvig sources. Manual review found a documented intentional use for every candidate, including texting shorthand, organization names, financial symbols, genes, and software terminology. All 20 are now protected with individual sources. No two-letter destination rule or new corrections are introduced.
+
+These protections follow the existing normalization policy: an uppercase acronym or name also protects its lowercase spelling. Absence from the pinned corpora does not establish that a short token is meaningless. Future short-word proposals must still undergo manual review.
+
 ### Supplemental protected words
 
 Use `data/protected-words.json` for legitimate terms missing from the reference dictionaries. Each key is an exact lowercase ASCII token to preserve, with a nonempty `reason` and an HTTP(S) `source` URL establishing intentional usage. Sort keys alphabetically. For example:

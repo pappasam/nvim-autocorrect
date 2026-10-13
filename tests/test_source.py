@@ -25,6 +25,7 @@ with tempfile.TemporaryDirectory() as directory:
             assert entries == case["expected"], case["name"]
 
 entries = load_source(ROOT / "data/corrections.json")
+assert all(len(typo) >= 3 for typo in entries), "One- and two-letter inputs must remain untouched"
 canonical = json.dumps(entries, sort_keys=True, separators=(",", ":")).encode()
 audit = json.loads((ROOT / "data/audit.json").read_text())
 assert audit["passed"] and not audit["failure_counts"], "Dictionary audit failed"

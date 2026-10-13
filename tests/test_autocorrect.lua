@@ -217,6 +217,8 @@ local protected = "algin adust belive grammer siad teh thier form from staring "
   .. " wth mayu th fo ot Wiht WIHT foo_wiht whit with form from"
   .. " where here were twere Hwere HWERE foo_hwere"
   .. " surender slrender exisist fhilght buyin simpel howrse"
+  .. " tge tje thw wqs aqn byh nby vby dko xdo gko hje ikn iyt"
+  .. " jmy myh sxo szo xso zso ujp uyp qwe wqe"
 assert(run({ "i" .. protected .. " <Esc>" }, false)[1] == protected .. " ")
 assert(
   run({ "iwiht wtih taht thsi yuo tthe knwo.<Esc>" }, false)[1]
