@@ -11,6 +11,8 @@ function M.bucket(word)
 end
 
 function M.open(path)
+  -- The standalone builder uses bucket() without changing its runtimepath.
+  local filter = require("autocorrect.filter")
   local fd = assert(vim.uv.fs_open(path, "r", 438))
   local function read(size, offset)
     local bytes = assert(vim.uv.fs_read(fd, size, offset))
@@ -23,8 +25,24 @@ function M.open(path)
     local size = assert(vim.uv.fs_fstat(fd)).size
     assert(header_size <= size - 8, "Truncated abbreviation header")
     header = vim.mpack.decode(read(header_size, 8))
-    assert(header[1] == 4, "Unsupported abbreviation dictionary version")
+    assert(header[1] == 5, "Unsupported abbreviation dictionary version")
     assert(type(header[5]) == "string", "Missing dictionary fingerprint")
+    local offset = 0
+    for index = 1, 256 do
+      local location = header[4][index]
+      assert(
+        location[1] == offset
+          and type(location[2]) == "number"
+          and type(location[3]) == "number"
+          and location[3] >= 1
+          and location[3] % 1 == 0
+          and location[2] > location[3]
+          and type(location[4]) == "string"
+          and #location[4] == 16,
+        "Invalid abbreviation partition"
+      )
+      offset = offset + location[2]
+    end
     local last = header[4][256]
     assert(
       8 + header_size + last[1] + last[2] == size,
@@ -36,6 +54,7 @@ function M.open(path)
     error(err)
   end
   local buckets = {}
+  local filters = {}
   local dictionary = {
     count = header[2],
     max_length = header[3],
@@ -54,8 +73,19 @@ function M.open(path)
     local bucket = M.bucket(word)
     if not buckets[bucket] then
       local location = header[4][bucket]
+      local offset = 8 + header_size + location[1]
+      if filters[bucket] == nil then
+        local bytes = read(location[3], offset)
+        -- A damaged optimization must not suppress an exact dictionary hit.
+        filters[bucket] = vim.fn.sha256(bytes):sub(1, 16) == location[4]
+            and bytes
+          or false
+      end
+      if filters[bucket] and not filter.contains(filters[bucket], word) then
+        return nil
+      end
       local partition =
-        vim.mpack.decode(read(location[2], 8 + header_size + location[1]))
+        vim.mpack.decode(read(location[2] - location[3], offset + location[3]))
       local entries = partition[1]
       local expanded = {}
       for index = 1, #entries, 2 do
@@ -66,6 +96,7 @@ function M.open(path)
         eligible[typo] = true
       end
       buckets[bucket] = { expanded, eligible }
+      filters[bucket] = nil
     end
     local partition = buckets[bucket]
     local correction = partition[1][word]

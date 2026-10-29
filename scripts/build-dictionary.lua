@@ -7,6 +7,7 @@ local config = vim.fs.dirname(
 local dictionary = dofile(config .. "/lua/autocorrect/dictionary.lua")
 local source = dofile(config .. "/lua/autocorrect/source.lua")
 local cache = dofile(config .. "/lua/autocorrect/cache.lua")
+local filter = dofile(config .. "/lua/autocorrect/filter.lua")
 local fingerprint = cache.fingerprint(config)
 local corrections = source.load(config .. "/data/corrections.json")
 local capitalized = source.load(config .. "/data/capitalized-corrections.json")
@@ -43,14 +44,17 @@ for index, typos in ipairs(buckets) do
       table.insert(eligible, typo)
     end
   end
-  local chunk = vim.mpack.encode({ entries, eligible })
-  locations[index] = { offset, #chunk }
+  local membership = filter.build(typos)
+  local chunk = membership .. vim.mpack.encode({ entries, eligible })
+  -- A checksum detects damaged filter bits before they can hide corrections.
+  locations[index] =
+    { offset, #chunk, #membership, vim.fn.sha256(membership):sub(1, 16) }
   chunks[index] = chunk
   offset = offset + #chunk
 end
 -- Arrays keep the output deterministic across Lua hash iteration orders.
 local header =
-  vim.mpack.encode({ 4, count, max_length, locations, fingerprint })
+  vim.mpack.encode({ 5, count, max_length, locations, fingerprint })
 local bytes = ("%08x"):format(#header) .. header .. table.concat(chunks)
 local output = cache.path(config)
 output = vim.uv.fs_realpath(output) or output

@@ -18,6 +18,7 @@ function M.fingerprint(root)
     "scripts/build-dictionary.lua",
     "lua/autocorrect/source.lua",
     "lua/autocorrect/dictionary.lua",
+    "lua/autocorrect/filter.lua",
     "lua/autocorrect/cache.lua",
   }) do
     local stat = assert(vim.uv.fs_stat(root .. "/" .. name))

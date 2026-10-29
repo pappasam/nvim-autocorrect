@@ -17,7 +17,7 @@ Table of Contents
 1. INTRODUCTION~
 
 nvim-autocorrect expands lowercase misspellings using native insert-mode
-abbreviations. It includes 1,031,494 typo mappings and defaults to Markdown and
+abbreviations. It includes 1,031,499 typo mappings and defaults to Markdown and
 Git commit buffers. No external dictionaries are needed while editing.
 
 Requires a recent Neovim with vim.uv, vim.system, and Lua abbreviation mappings.
@@ -30,7 +30,8 @@ recognized comments in labeled fences; other filetypes except text and
 gitcommit correct only recognized comments. See
 |autocorrect-context|. Existing text is not rewritten on save.
 
-The dictionary is partitioned and read on demand. Buffers share its cache.
+The dictionary is partitioned and read on demand. Compact membership filters
+reject most misses without decoding a partition. Buffers share its cache.
 During insertion, at most two internal abbreviations are installed. Existing
 user abbreviations take precedence. Normal mode retains no plugin abbreviations.
 
@@ -92,6 +93,13 @@ code from nested prose
 when a Markdown parser is available. Without it, lines starting with four
 spaces or a tab are conservatively excluded, including indented list prose.
 
+Markdown also protects reference-link destinations (including a destination on
+the following line), HTML tags and attributes, and YAML frontmatter without a
+parser or syntax highlighting. Text between HTML tags and reference-link titles
+remains eligible. Unfinished tags, including quoted attributes across lines,
+stay protected until they close. A first-line --- opens frontmatter, which stays
+protected until a closing --- or ... line. Later --- lines do not open metadata.
+
 For all other filetypes except text and gitcommit, correction requires a
 recognized comment. Tree-sitter is preferred and does not require highlighting
 to be enabled. When a parser is unavailable or fails, existing Vim syntax
@@ -101,14 +109,19 @@ Strings (including docstrings) and executable code are excluded.
 
 Backtick spans and backtick/tilde fenced examples in comments are excluded,
 including unfinished delimiters and consecutive comment lines. Existing case
-and identifier protections still apply. Recognizable URL/email tokens are
-excluded in Markdown and comments; Markdown link destinations are excluded
-too. This is delimiter-based protection, not a complete Markdown parser or a
+and identifier protections still apply. Recognizable URL/email tokens and paths
+are excluded in Markdown, Git commits, and comments; Markdown link destinations
+are excluded too. Slash-separated tokens, absolute/relative Windows paths, and
+a slash or backslash typed after a word are treated conservatively as paths.
+This is delimiter-based protection, not a complete Markdown parser or a
 classifier for unmarked code examples. An unmatched backtick can suppress
 correction until its matching delimiter or a blank line.
 
-The text and gitcommit filetypes retain whole-buffer correction. Existing
-user abbreviations remain authoritative and are not restricted by these checks.
+Git commits also protect backtick spans and fenced examples, without needing a
+parser. All fenced content stays unchanged, including comments. Indented commit
+prose remains eligible. The text filetype retains whole-buffer correction.
+Existing user abbreviations remain authoritative and are not restricted by
+these checks.
 
 correct_capitalized~
 Type: Boolean
@@ -119,7 +132,7 @@ Opt in to documented initial-capital corrections: >lua
   require("autocorrect").setup({ correct_capitalized = true })
 <
 For example, "Definately" becomes "Definitely" and "Recieve" becomes "Receive".
-The 29,490 eligible mappings must already be accepted lowercase corrections,
+The 29,495 eligible mappings must already be accepted lowercase corrections,
 documented by codespell or reviewed evidence, with at least six input letters
 and a single-word destination. Only one initial ASCII capital followed by
 lowercase ASCII letters qualifies. All-caps, mixed-case words, short inputs,

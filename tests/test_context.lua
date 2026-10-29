@@ -125,9 +125,123 @@ local function markdown_cases(syntax, embedded_comments)
     "jidefinately <Esc>ggccprose<Esc>jAdefinately <Esc>",
     { "prose", "definately definitely ", "```" }
   )
+
+  -- Structured Markdown stays protected even without syntax or a parser.
+  md(
+    { "" },
+    'i[docs]: definately "definately"<CR>definately <Esc>',
+    { '[docs]: definately "definitely"', "definitely " }
+  )
+  md({ "" }, "i[docs]: ./definately/<Esc>", { "[docs]: ./definately/" })
+  md({ "" }, "i[docs]: <definately><Esc>", { "[docs]: <definately>" })
+  md(
+    { "[label](https://example.com/definately)" },
+    "0lciwdefinately <Esc>",
+    { "[definitely ](https://example.com/definately)" }
+  )
+  md(
+    { "[docs]:", "" },
+    "GA  definately<CR>definately <Esc>",
+    { "[docs]:", "  definately", "definitely " }
+  )
+  md({ "" }, "i> [docs]: definately<Esc>", { "> [docs]: definately" })
+  md({ "" }, "i[^note]: definately <Esc>", { "[^note]: definitely " })
+  md(
+    { "" },
+    'i<a href="definately">definately</a> definately <Esc>',
+    { '<a href="definately">definitely</a> definitely ' }
+  )
+  md(
+    { "<a", '  href="', '">text</a>', "" },
+    "jAdefinately <Esc>GAdefinately <Esc>",
+    { "<a", '  href="definately ', '">text</a>', "definitely " }
+  )
+  md(
+    { "" },
+    'i<a title="x > definately" data-name=definately>definately <Esc>',
+    { '<a title="x > definately" data-name=definately>definitely ' }
+  )
+  md({ "" }, "i`<a` definately <Esc>", { "`<a` definitely " })
+  md(
+    { "" },
+    'i<a title="`definately">definately <Esc>',
+    { '<a title="`definately">definitely ' }
+  )
+  md({ "" }, "i\\<definately <Esc>", { "\\<definitely " })
+  md(
+    { "" },
+    "i---<CR>definately: definately<CR>---<CR>definately <Esc>",
+    { "---", "definately: definately", "---", "definitely " }
+  )
+  md(
+    { "---", "", "...", "" },
+    "jAdefinately: value<Esc>GAdefinately <Esc>",
+    { "---", "definately: value", "...", "definitely " }
+  )
+  md({ "---", "" }, "GAdefinately: value<Esc>", { "---", "definately: value" })
+  md(
+    { "prose", "---", "" },
+    "GAdefinately <Esc>",
+    { "prose", "---", "definitely " }
+  )
+  -- Changing an earlier tag/frontmatter delimiter invalidates cached state.
+  md(
+    { "---", "" },
+    "GAdefinately <Esc>ggccprose<Esc>GAdefinately <Esc>",
+    { "prose", "definately definitely " }
+  )
+  md(
+    { "<a", "" },
+    "GAdefinately <Esc>ggA><Esc>GAdefinately <Esc>",
+    { "<a>", "definately definitely " }
+  )
+end
+
+local function technical_cases(ft, syntax)
+  check(
+    ft,
+    { "" },
+    "i/tmp/definately/file.txt ./definately ../definately ~/definately definately/file.txt definately <Esc>",
+    {
+      "/tmp/definately/file.txt ./definately ../definately ~/definately definately/file.txt definitely ",
+    },
+    syntax
+  )
+  check(
+    ft,
+    { "" },
+    "idocs\\definately definately\\file.txt definately <Esc>",
+    { "docs\\definately definately\\file.txt definitely " },
+    syntax
+  )
+  check(
+    ft,
+    { "" },
+    "iC:\\definately\\file.txt .\\definately \\\\server\\definately definately <Esc>",
+    {
+      "C:\\definately\\file.txt .\\definately \\\\server\\definately definitely ",
+    },
+    syntax
+  )
+  check(
+    ft,
+    { "" },
+    "ihttps://example.com/definately www.definately.com definately@example.com definately <Esc>",
+    {
+      "https://example.com/definately www.definately.com definately@example.com definitely ",
+    },
+    syntax
+  )
 end
 
 local function comment_cases(syntax)
+  check(
+    "lua",
+    { "" },
+    "i-- ./definately docs\\definately definately <Esc>",
+    { "-- ./definately docs\\definately definitely " },
+    syntax
+  )
   check(
     "lua",
     { "" },
@@ -201,6 +315,8 @@ assert(vim.treesitter.get_parser(0, "lua"))
 assert(vim.treesitter.get_parser(0, "c"))
 markdown_cases(false, true)
 comment_cases(false)
+technical_cases("markdown")
+technical_cases("gitcommit")
 check(
   "markdown",
   { "[label](definately)" },
@@ -215,6 +331,8 @@ vim.treesitter.get_parser = function()
 end
 markdown_cases(true)
 comment_cases(true)
+technical_cases("markdown", true)
+technical_cases("gitcommit", true)
 check(
   "lua",
   { "" },
@@ -225,10 +343,39 @@ check(
 
 -- No parser and no syntax: Markdown still has lexical protection; code is off.
 markdown_cases(false)
+technical_cases("markdown")
+technical_cases("gitcommit")
 check("lua", { "" }, "i-- definately <Esc>", { "-- definately " })
 check("unknown", { "" }, "idefinately <Esc>", { "definately " })
 check("text", { "" }, "idefinately <Esc>", { "definitely " })
 check("gitcommit", { "" }, "idefinately <Esc>", { "definitely " })
+check(
+  "gitcommit",
+  { "" },
+  "i`definately` definately <Esc>",
+  { "`definately` definitely " }
+)
+check(
+  "gitcommit",
+  { "```lua", "-- ", "```", "" },
+  "jAdefinately <Esc>GAdefinately <Esc>",
+  { "```lua", "-- definately ", "```", "definitely " }
+)
+check(
+  "gitcommit",
+  { "---", "" },
+  "GAdefinately <Esc>",
+  { "---", "definitely " }
+)
+-- Plain text keeps its existing whole-buffer behavior.
+check("text", { "" }, "i/tmp/definately <Esc>", { "/tmp/definitely " })
+-- Reusing a buffer under a different filetype must not retain YAML state.
+vim.bo.filetype = "markdown"
+vim.api.nvim_buf_set_lines(0, 0, -1, false, { "---", "definately" })
+local context = require("autocorrect.context")
+assert(not context.allowed(vim.api.nvim_get_current_buf(), 1, 0, 10, " "))
+vim.bo.filetype = "gitcommit"
+assert(context.allowed(vim.api.nvim_get_current_buf(), 1, 0, 10, " "))
 vim.treesitter.get_parser = get_parser
 
 -- Reconfiguration keeps context checks and capitalization independent.

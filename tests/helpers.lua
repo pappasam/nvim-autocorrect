@@ -11,6 +11,7 @@ function M.fixture()
     "lua/autocorrect/context.lua",
     "lua/autocorrect/markdown.lua",
     "lua/autocorrect/dictionary.lua",
+    "lua/autocorrect/filter.lua",
     "lua/autocorrect/source.lua",
     "lua/autocorrect/maintenance.lua",
     "lua/autocorrect/cache.lua",

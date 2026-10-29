@@ -141,7 +141,7 @@ local function syntax_context(row, col, is_markdown)
     local linked = vim.fn.synIDattr(vim.fn.synIDtrans(id), "name"):lower()
     if is_markdown then
       if
-        name:match("^markdownurl")
+        (name:match("^markdownurl") and not name:match("^markdownurltitle"))
         or name == "markdownautomaticlink"
         or name == "markdownyamlhead"
       then
@@ -161,7 +161,7 @@ end
 
 function M.allowed(buf, row, col, end_col, key)
   local ft = vim.bo[buf].filetype
-  if ft == "text" or ft == "gitcommit" then
+  if ft == "text" then
     return true
   end
   if key == "@" then
@@ -169,28 +169,45 @@ function M.allowed(buf, row, col, end_col, key)
   end
   local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
   local prefix = line:sub(1, end_col)
-  local token = (line:sub(1, col):reverse():match("^%S*") or ""):reverse()
-    .. (line:sub(col + 1):match("^%S*") or "")
+  -- Delimiters separate prose labels from their URLs/attributes. Looking at
+  -- both sides also protects a word being retyped inside an existing path.
+  local token_chars = "[^%s%(%)%[%]<>\"'`]"
+  local token = (
+    line:sub(1, col):reverse():match("^" .. token_chars .. "*") or ""
+  ):reverse() .. (line:sub(col + 1):match("^" .. token_chars .. "*") or "")
   if
     token:find("://", 1, true)
     or token:match("^www%.")
     or token:find("@", 1, true)
+    or token:find("/", 1, true)
+    or token:match("^[A-Za-z]:\\")
+    or token:match("^%.?%.?\\")
+    or token:match("^~\\")
+    or token:match("[%w_.%-]\\[%w_.%-]")
+    or key == "/"
+    or key == "\\"
   then
     return false
   end
   local is_markdown = ft == "markdown"
-  if is_markdown then
+  if is_markdown or ft == "gitcommit" then
     local protected, fenced_content = markdown.protected(buf, row, prefix)
     if fenced_content then
+      if not is_markdown then
+        return false
+      end
       local ok, allowed = pcall(fenced_comment, buf, row, col, end_col)
       return ok and allowed == true
     end
     if
       protected
       or prefix:match("%]%([^)]*$")
-      or not syntax_context(row, col, true)
+      or (is_markdown and not syntax_context(row, col, true))
     then
       return false
+    end
+    if not is_markdown then
+      return true
     end
     -- Most prose needs no parse. In particular, reparsing a growing Markdown
     -- paragraph on every separator makes sustained insertion quadratic.

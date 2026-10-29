@@ -144,7 +144,7 @@ bytes = assert(vim.uv.fs_read(fd, assert(vim.uv.fs_fstat(fd)).size, 0))
 assert(vim.uv.fs_close(fd))
 local size = assert(tonumber(bytes:sub(1, 8), 16))
 local header = vim.mpack.decode(bytes:sub(9, 8 + size))
-header[1] = 3
+header[1] = 4
 local old_header = vim.mpack.encode(header)
 assert(#old_header == size)
 fd = assert(vim.uv.fs_open(output, "w", 420))

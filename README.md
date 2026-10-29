@@ -10,7 +10,7 @@ Requires a recent Neovim with `vim.uv`, `vim.system`, and Lua abbreviation mappi
 - Protects Markdown code while correcting recognized comments inside labeled fences; in enabled programming filetypes, corrects only recognized comments.
 - Preserves capitalized words by default, with optional initial-capital correction for documented typos. Acronyms, mixed-case words, identifiers, and longer words containing a typo remain protected.
 - Uses native abbreviation behavior for punctuation, undo/redo, macros, and Ctrl-V bypass.
-- Loads dictionary partitions on demand and shares them across buffers.
+- Uses compact membership filters to avoid loading dictionary partitions for most misses; shares loaded data across buffers.
 - Installs at most two internal abbreviations during insertion, regardless of dictionary size.
 - Respects existing user abbreviations and provides no default key mappings.
 - Builds and caches the dictionary automatically, with background rebuilds after source changes.
@@ -38,7 +38,9 @@ require("autocorrect").setup({
 
 Markdown skips inline code and indented code. Inside labeled fences such as `python` or `bash`, it corrects comments when Tree-sitter recognizes the embedded language; code and strings stay unchanged. Only `markdown` needs to be enabled in `filetypes` for this. Missing parsers, unavailable language injections, and fenced blocks with parse errors leave the block untouched.
 
-In other filetypes besides `text` and `gitcommit`, only comments identified by Tree-sitter or existing syntax highlighting qualify; executable code and strings stay unchanged. Without either form of comment detection, correction stays off in that buffer. Backtick code spans, fenced examples, and recognizable URLs in comments are protected too. See `:help autocorrect-context` for details and fallback behavior.
+Markdown also protects reference-link destinations, HTML tags and attributes, and YAML frontmatter without requiring syntax highlighting or parsers. Recognizable URLs, email addresses, and paths are protected in Markdown, Git commits, and programming comments. Git commits also protect inline code and fenced examples. Plain `text` buffers retain whole-buffer correction.
+
+In other filetypes besides `text` and `gitcommit`, only comments identified by Tree-sitter or existing syntax highlighting qualify; executable code and strings stay unchanged. Without either form of comment detection, correction stays off in that buffer. Backtick code spans and fenced examples in comments are protected too. See `:help autocorrect-context` for details and fallback behavior.
 
 To also correct documented initial-capital typos such as `Definately` → `Definitely` and `Recieve` → `Receive`:
 
@@ -147,7 +149,7 @@ Apostrophe restoration remains excluded: the reference dictionaries protect form
 
 ### Can I use it in other filetypes?
 
-Yes. Add them to `filetypes` in `setup()`. Markdown correction skips code; `text` and `gitcommit` retain whole-buffer correction. All other filetypes correct only recognized comments. This means adding a programming filetype enables correction in its comments without enabling it in code or strings.
+Yes. Add them to `filetypes` in `setup()`. Markdown and Git commit correction protect code examples and recognizable technical tokens; `text` retains whole-buffer correction. All other filetypes correct only recognized comments. This means adding a programming filetype enables correction in its comments without enabling it in code or strings.
 
 ### Does it modify existing text or correct files on save?
 
